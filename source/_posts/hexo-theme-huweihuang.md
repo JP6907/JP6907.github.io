@@ -1,34 +1,52 @@
 ---
-title: "[Hexo] Theme BeanTech"
+title: "[Hexo] Theme HuWeihuang"
 catalog: true
-date: 2017-03-18 10:51:24
+toc_nav_num: true
+date: 2017-09-18 10:51:24
 subtitle: "This is hexo theme Demo."
-header-img: "Demo.png"
+header-img: "/img/article_header/article_header.png"
 tags:
 - Hexo
-- Blog
 catagories:
 - Hexo
----
-> Ported Theme of [Hux Blog](https://github.com/Huxpro/huxpro.github.io), Thank [Huxpro](https://github.com/Huxpro) for designing such a flawless theme.
-> 
-> This BeanTech theme created by [YuHsuan](http://beantech.org) modified from the original Porter [Kaijun](http://kaijun.rocks/hexo-theme-huxblog/)
+updateDate: 2018-12-23 22:26:24
+# top: 1
 
-# [Live Demo](http://beantech.org)
 ---
-![BeanTech Desktop](http://beantech.org/img/beantech-desktop.png)
+> This HuWeihuang theme created by [HuWeihuang](http://www.huweihuang.com/) modified from the original Porter [YuHsuan](https://github.com/YenYuHsuan/hexo-theme-beantech)
 
-# Usage
----
-I publish the whole project for your convenience, so you can just follow the instruction down below, then you can easily customiz your own blog!
+# Live Demo
 
-Let's begin!!!
+Hu Weihuang Blog : [www.huweihuang.com](http://www.huweihuang.com/)
+
+![Theme HuWeihuang](https://res.cloudinary.com/dqxtn0ick/image/upload/v1553666111/blog/blog.jpg)
+
+# Install Hexo
+
+Install Node.js  and Git
+
+```shell
+#For Mac
+brew install node
+brew install git
+```
+
+Install hexo
+
+```shell
+npm install hexo-cli -g
+
+#For more:https://hexo.io/zh-cn/index.html
+```
+
+# Theme Usage
 
 ## Init
+
 ---
 ```bash
-git clone https://github.com/YenYuHsuan/hexo-theme-beantech.git ./hexo-beantech
-cd hexo-beantech
+git clone https://github.com/huweihuang/hexo-theme-huweihuang.git ./hexo-huweihuang
+cd hexo-huweihuang
 npm install
 ```
 
@@ -77,12 +95,7 @@ You can decide to show post tags or not.
 ```yml
 home_posts_tag: true
 ```
-![home_posts_tag-true](home_posts_tag-true.png)
-```yml
-home_posts_tag: false
-```
-![home_posts_tag-false](home_posts_tag-false.png)
-
+![home_posts_tag-true](/img/article/tag.png)
 ### Markdown render
 My markdown render engine plugin is [hexo-renderer-markdown-it](https://github.com/celsomiranda/hexo-renderer-markdown-it).
 ```yml
@@ -123,5 +136,5 @@ hexo deploy # hexo will push the static files automatically into the specific br
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <!-- Place this tag where you want the button to render. -->
 
-Please <a class="github-button" href="https://github.com/YenYuHsuan/hexo-theme-beantech" data-icon="octicon-star" aria-label="Star YenYuHsuan/hexo-theme-beantech on GitHub">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/YenYuHsuan" aria-label="Follow @YenYuHsuan on GitHub">Follow</a> would also be appreciated!
+Please <a class="github-button" href="https://github.com/huweihuang/hexo-theme-huweihuang" data-icon="octicon-star" aria-label="Star huweihuang/hexo-theme-huweihuang on GitHub">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/huweihuang" aria-label="Follow @huweihuang on GitHub">Follow</a> would also be appreciated!
 Peace!
