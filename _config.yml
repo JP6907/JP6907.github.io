@@ -203,6 +203,11 @@ data-fixed: true
   # data-mini:
   # data-autoplay:    
 
+
+# Livere评论系统
+Livere:
+livere_uid:  MTAyMC80NjIwNi8yMjcxNw==
+
 # Reward
 reward: false
 reward_comment: 赞赏一下
