@@ -12,6 +12,8 @@ tags:
 # Spark Application 提交
 
 > Spark版本：2.4.0
+
+
 &emsp;下面分析过程为Spark Standalone运行模式，Spark Standalone是一种典型的Master-Slave架构，在这种模式下，主要包括三个组件：Master、Worker、Driver，这里的Driver我们以运行在客户端的Client模式。
 
 ## 1.启动脚本
@@ -73,7 +75,8 @@ CLASS="org.apache.spark.deploy.worker.Worker"
 ```
 这时，Spark集群的Master节点和Worker已经全部启动，Worker会向Master完成注册，并定时向Master发送心跳，使得Master节点可以知道该Worker节点属于活跃状态。
 
+> 未完待续
 
 >本文作者：ZJP
 版权声明：本文为博主原创文章，遵循 [CC 4.0 BY-SA](http://creativecommons.org/licenses/by-sa/4.0/) 版权协议，转载请附上原文出处链接和本声明。
-本文链接：
+本文链接：http://zhoujiapeng.top/article/spark-application/
