@@ -38,7 +38,11 @@
                         <span class="meta">
                             Posted by <%- page.author || config.author %> on
                             <%= page.date.format(config.date_format) %>
-                        </span>
+                            <!-- 不蒜子阅读量统计 -->
+                            <% if (theme.busuanzi && theme.busuanzi.enable){ %> 
+                            <i class="icon-smile icon"></i>        | 阅读量 <span id="busuanzi_value_page_pv"></span>  
+                            <% } %>
+                        </span>                  
                     </div>
                 <% } else { %>
                     <div class="site-heading">

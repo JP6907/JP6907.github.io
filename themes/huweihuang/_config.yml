@@ -5,3 +5,7 @@
 # https://github.com/chriskempson/tomorrow-theme
 # night yilia - https://github.com/litten/hexo-theme-yilia
 highlight_theme: night eighties
+
+# 是否开启访问量统计功能(不蒜子)
+busuanzi:
+ enable: true
