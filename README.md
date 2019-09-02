@@ -1,20 +1,20 @@
-> Ported Theme of [Hux Blog](https://github.com/Huxpro/huxpro.github.io), Thank [Huxpro](https://github.com/Huxpro) for designing such a flawless theme.
+> Ported Theme of [huweihuang](https://github.com/huweihuang/huweihuang.github.io), Thank [huweihuang](https://github.com/huweihuang/hexo-theme-huweihuang) for designing such a flawless theme.
 >
-> This HuWeihuang theme created by [HuWeihuang](http://www.huweihuang.com/) modified from the original Porter [YuHsuan](https://github.com/YenYuHsuan/hexo-theme-beantech).
+> This zjp theme created by [zhoujiapeng](http://www.zhoujiapeng.top) modified from the original Porter [huweihuang](https://github.com/huweihuang/hexo-theme-huweihuang).
 > 
-> This theme has been published to the [hexo theme list](https://hexo.io/themes/).
+
 
 # Live Demo
 
-Hu Weihuang Blog : [www.huweihuang.com](http://www.huweihuang.com/)
+Zhou JiaPeng Blog : [www.zhoujiapeng.top](http://www.zhoujiapeng.top)
 
-![Theme_HuWeihuang](https://res.cloudinary.com/dqxtn0ick/image/upload/v1553666111/blog/blog.jpg)
+![Blog demo](source/img/article/blog-demo.png)
 
 # Copyright Notice
 
 **You can free to use this theme, but you need to keep the following copyright notice on the website.**
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1537879475/header/copyright.png" width="55%">
+<img src="source/img/article/copyright.png" width="55%">
 
 # Install Hexo
 
@@ -39,8 +39,8 @@ npm install hexo-cli -g
 ## Init
 
 ```bash
-git clone https://github.com/huweihuang/hexo-theme-huweihuang.git ./hexo-huweihuang
-cd hexo-huweihuang
+git clone https://github.com/JP6907/hexo-theme-zjp.git ./hexo-zjp
+cd hexo-zjp
 npm install
 ```
 
@@ -88,7 +88,7 @@ You can decide to show post tags or not.
 ```yml
 home_posts_tag: true
 ```
- ![tag](https://raw.githubusercontent.com/huweihuang/hexo-theme-huweihuang/master/source/img/article/tag.png)
+ ![tag](source/img/article/post-tag.png)
 ### Markdown render
 My markdown render engine plugin is [hexo-renderer-markdown-it](https://github.com/celsomiranda/hexo-renderer-markdown-it).
 ```yml
@@ -123,5 +123,5 @@ hexo deploy # hexo will push the static files automatically into the specific br
 ```
 
 # Have fun ^_^ 
-Please <a class="github-button" href="https://github.com/huweihuang/hexo-theme-huweihuang" data-icon="octicon-star" aria-label="Star huweihuang/hexo-theme-huweihuang on GitHub">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/huweihuang" aria-label="Follow @huweihuang on GitHub">Follow</a> would also be appreciated!
+Please <a class="github-button" href="https://github.com/JP6907/hexo-theme-zjp" data-icon="octicon-star" aria-label="Star JP6907/hexo-theme-zjp on GitHub">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/JP6907" aria-label="Follow @JP6907 on GitHub">Follow</a> would also be appreciated!
 Peace!

@@ -1,26 +1,25 @@
 ---
-title: "[Hexo] Theme HuWeihuang"
+title: "[Hexo] Theme zjp"
 catalog: true
 toc_nav_num: true
-date: 2017-09-18 10:51:24
+date: 2019-09-02 10:51:24
 subtitle: "This is hexo theme Demo."
 header-img: "/img/article_header/article_header.png"
 tags:
 - Hexo
 catagories:
 - Hexo
-updateDate: 2018-12-23 22:26:24
+updateDate: 2019-09-02 10:51:24
 # top: 1
 
 ---
-> This HuWeihuang theme created by [HuWeihuang](http://www.huweihuang.com/) modified from the original Porter [YuHsuan](https://github.com/YenYuHsuan/hexo-theme-beantech)
+> This zjp theme created by [zhoujiapeng](http://www.zhoujiapeng.top) modified from the original Porter [HuWeihuang](https://github.com/huweihuang/hexo-theme-huweihuang)
 
 # Live Demo
 
-Hu Weihuang Blog : [www.huweihuang.com](http://www.huweihuang.com/)
+Zhou JiaPeng Blog : [www.zhoujiapeng.top](http://www.zhoujiapeng.top)
 
-![Theme HuWeihuang](https://res.cloudinary.com/dqxtn0ick/image/upload/v1553666111/blog/blog.jpg)
-
+![Blog demo](/img/article/blog-demo.png)
 # Install Hexo
 
 Install Node.js  and Git
@@ -45,8 +44,8 @@ npm install hexo-cli -g
 
 ---
 ```bash
-git clone https://github.com/huweihuang/hexo-theme-huweihuang.git ./hexo-huweihuang
-cd hexo-huweihuang
+git clone https://github.com/JP6907/hexo-theme-zjp.git ./hexo-zjp
+cd hexo-zjp
 npm install
 ```
 
@@ -95,7 +94,7 @@ You can decide to show post tags or not.
 ```yml
 home_posts_tag: true
 ```
-![home_posts_tag-true](/img/article/tag.png)
+![home_posts_tag-true](/img/article/post-tag.png)
 ### Markdown render
 My markdown render engine plugin is [hexo-renderer-markdown-it](https://github.com/celsomiranda/hexo-renderer-markdown-it).
 ```yml
@@ -136,5 +135,5 @@ hexo deploy # hexo will push the static files automatically into the specific br
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <!-- Place this tag where you want the button to render. -->
 
-Please <a class="github-button" href="https://github.com/huweihuang/hexo-theme-huweihuang" data-icon="octicon-star" aria-label="Star huweihuang/hexo-theme-huweihuang on GitHub">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/huweihuang" aria-label="Follow @huweihuang on GitHub">Follow</a> would also be appreciated!
+Please <a class="github-button" href="https://github.com/JP6907/hexo-theme-zjp" data-icon="octicon-star" aria-label="Star JP6907/hexo-theme-zjp on GitHub">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/JP6907" aria-label="Follow @JP6907 on GitHub">Follow</a> would also be appreciated!
 Peace!
