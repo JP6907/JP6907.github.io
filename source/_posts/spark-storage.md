@@ -8,10 +8,14 @@ tags:
 - spark
 - 大数据
 - 源码阅读
+categories:
+  - Spark
 ---
 
 
 # Spark储存体系
+
+> Spark版本：2.4.0
 
 ## 1.储存体系架构
 &emsp;简单来说，Spark 储存体系是各个 Driver 和 Executor 实例中的 BlockManager 所组成的，但从一个整体上看，Spark 储存体系包含很多组件，如图所示。
@@ -594,4 +598,4 @@ def cache(): this.type = persist()
 &nbsp;
 >本文作者：ZJP
 版权声明：本文为博主原创文章，遵循 [CC 4.0 BY-SA](http://creativecommons.org/licenses/by-sa/4.0/) 版权协议，转载请附上原文出处链接和本声明。
-本文链接：http://zhoujiapeng.top/article/spark-storage/
+本文链接：http://zhoujiapeng.top/Spark/spark-storage/

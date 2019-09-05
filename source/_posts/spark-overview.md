@@ -7,6 +7,8 @@ header-img: "/img/article_header/article_header.png"
 tags: 
 - spark
 - 大数据
+categories:
+  - Spark
 ---
 
 
@@ -79,4 +81,4 @@ Stage | 每个job可以被分解为更小的task集，每个task集成为一个s
 
 >本文作者：ZJP
 版权声明：本文为博主原创文章，遵循 [CC 4.0 BY-SA](http://creativecommons.org/licenses/by-sa/4.0/) 版权协议，转载请附上原文出处链接和本声明。
-本文链接：http://zhoujiapeng.top/article/spark-overview/
+本文链接：http://zhoujiapeng.top/Spark/spark-overview/

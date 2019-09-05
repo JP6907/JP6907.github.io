@@ -7,7 +7,7 @@ subtitle: "This is hexo theme Demo."
 header-img: "/img/article_header/article_header.png"
 tags:
 - Hexo
-catagories:
+categories:
 - Hexo
 updateDate: 2019-09-02 10:51:24
 # top: 1

@@ -8,6 +8,8 @@ tags:
 - spark
 - 大数据
 - 源码阅读
+categories:
+  - Spark
 ---
 
 # Spark 容错机制
@@ -270,4 +272,4 @@ private[spark] def getOrCompute(partition: Partition, context: TaskContext): Ite
 &nbsp;
 >本文作者：ZJP
 版权声明：本文为博主原创文章，遵循 [CC 4.0 BY-SA](http://creativecommons.org/licenses/by-sa/4.0/) 版权协议，转载请附上原文出处链接和本声明。
-本文链接：http://zhoujiapeng.top/article/spark-fault-tolerant/
+本文链接：http://zhoujiapeng.top/Spark/spark-fault-tolerant/
