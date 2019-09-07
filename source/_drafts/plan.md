@@ -18,3 +18,14 @@ tags:
 
 ### JVM 内存回收策略
 
+### 分区器
+
+### dagschedulr
+
+###  类型
+
+### ShuffledRDD 怎么生成
+
+### dependency
+
+### Partitioner

@@ -32,7 +32,11 @@ categories:
 - [《Spark源码阅读 之 容错机制》](http://zhoujiapeng.top/Spark/spark-fault-tolerant/)
 - [《Spark源码阅读 之 Storage储存模块》](http://zhoujiapeng.top/Spark/spark-storage/)
 - [《Spark源码阅读 之 共享变量》](http://zhoujiapeng.top/Spark/spark-share-variable/)
-- 《Spark 性能调优》
+- [《Spark 性能调优》](http://zhoujiapeng.top/Spark/spark-tuning/)
+- 《Spark源码阅读 之 DAGScheduler 详解》
+- 《Spark源码阅读 之 Dependency 实现》
+- 《Spark源码阅读 之 Task 详解》
+- 《Spark源码阅读 之 Partitioner 详解》
 
 ## 参考资料
 
