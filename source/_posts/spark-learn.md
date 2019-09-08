@@ -1,16 +1,19 @@
 ---
-title: spark 学习汇总
+title: Spark 学习汇总
+subtitle: 目录
 catalog: true
-subtitle: spark learn
-header-img: "/img/article_header/article_header.png"
+header-img: /img/article_header/article_header.png
 tags:
-- spark
-- 大数据
+  - spark
+  - 大数据
 categories:
-- Spark
+  - Spark
+top: 1
+date: 2019-09-08 10:50:24
 ---
 
-# spark 学习汇总
+
+# Spark 学习汇总
 
 > Spark版本：2.4.0
 
@@ -33,10 +36,11 @@ categories:
 - [《Spark源码阅读 之 Storage储存模块》](http://zhoujiapeng.top/Spark/spark-storage/)
 - [《Spark源码阅读 之 共享变量》](http://zhoujiapeng.top/Spark/spark-share-variable/)
 - [《Spark 性能调优》](http://zhoujiapeng.top/Spark/spark-tuning/)
+- [《Spark源码阅读 之 Partitioner 详解》](http://zhoujiapeng.top/Spark/spark-partitioner/)
+- [《Spark源码阅读 之 Dependency 详解》](http://zhoujiapeng.top/Spark/spark-dependency/)
 - 《Spark源码阅读 之 DAGScheduler 详解》
-- 《Spark源码阅读 之 Dependency 实现》
 - 《Spark源码阅读 之 Task 详解》
-- 《Spark源码阅读 之 Partitioner 详解》
+
 
 ## 参考资料
 
