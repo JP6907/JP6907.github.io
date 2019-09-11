@@ -8,7 +8,6 @@ tags:
 
 ### 内存池模型
 
-### 分区规则
 
 ### shuffle机制
 
@@ -18,14 +17,11 @@ tags:
 
 ### JVM 内存回收策略
 
-### 分区器
 
-### dagschedulr
+Driver、Master
 
-###  类型
+local模式下 Driver、Master、Worker运行在同一个 JVM 中
 
-### ShuffledRDD 怎么生成
-
-### dependency
-
-### Partitioner
+运行在独立的 JVM 中
+standlone 模式下，StandaloneSchedulerBackend 会创建一个 Driver：StandaloneAppClient
+Worker 创建 额外 Executor 进程去运行 task

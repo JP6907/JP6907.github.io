@@ -40,6 +40,7 @@ date: 2019-09-08 10:50:24
 - [《Spark源码阅读 之 Dependency 详解》](http://zhoujiapeng.top/Spark/spark-dependency/)
 - [《Spark源码阅读 之 DAGScheduler 详解》](http://zhoujiapeng.top/Spark/spark-dagscheduler/)
 - [《Spark源码阅读 之 Task 详解》](http://zhoujiapeng.top/Spark/spark-task/)
+- [《Spark源码阅读 之 部署模式》](http://zhoujiapeng.top/Spark/spark-deploy-mode/)
 - 《Spark 任务调度 之 数据本地性》
 
 
