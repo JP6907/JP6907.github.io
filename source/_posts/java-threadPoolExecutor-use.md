@@ -1,15 +1,17 @@
 ---
 title: 线程池 之 ThreadPoolExecutor 使用
-catalog: true
 subtitle: ThreadPoolExecutor 使用
-header-img: "/img/article_header/article_header.png"
+catalog: true
+header-img: /img/article_header/article_header.png
 tags:
-- java
-- 编程语言
-- 并发
+  - java
+  - 编程语言
+  - 并发
 categories:
-- java
+  - java
+date: 2019-09-25 19:31:40
 ---
+
 
 # ThreadPoolExecutor 使用
 
@@ -46,14 +48,15 @@ public ThreadPoolExecutor(int corePoolSize,
     }
 ```
 |  序号   | 名称  |  	类型   | 含义  |
-|  ----  | ----  |
+|  ----  | ----  |----  |----  |
+| 1 | corePoolSize | int                    | 核心线程数量  |
 | 2 | maximumPoolSize | int                    | 最大线程池大小  |
 | 3 | keepAliveTime   | long                   | 线程最大空闲时间|
 | 4 | unit            | TimeUnit               | 时间单位       |
 | 5 | workQueue       | BlockingQueue<Runnable>| 线程等待队列    |
 | 6 | threadFactory   | ThreadFactory          |线程创建工厂     |
 
-&emsp;如果对这些参数作用有疑惑的请看[ThreadPoolExecutor]()概述。知道了各个参数的作用后，我们开始构造符合我们期待的线程池。接下来我们看一下JDK预定义的几种线程池。
+&emsp;如果对这些参数作用有疑惑的请看 [ThreadPoolExecutor](http://zhoujiapeng.top/java/java-threadPoolExecutor-overview/) 概述。知道了各个参数的作用后，我们开始构造符合我们期待的线程池。接下来我们看一下JDK预定义的几种线程池。
 
 ## 2. 预定义线程池
 
@@ -143,7 +146,7 @@ public static ExecutorService newSingleThreadExecutor() {
                                     new LinkedBlockingQueue<Runnable>()));
     }
 ```
-- 单线程 (corePoolSize==maximumPoolSize==1)
+- 单线程 (corePoolSize\==maximumPoolSize==1)
 - 无界队列 (LinkedBlockingQueue)
 
 &emsp;这里使用了newFixedThreadPool(1)，但是多了一层 FinalizableDelegatedExecutorService 包装，这一层有什么用呢，写个dome来解释一下：
@@ -188,7 +191,7 @@ public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) 
     }
 ```
 &emsp;newScheduledThreadPool调用的是ScheduledThreadPoolExecutor的构造方法，而ScheduledThreadPoolExecutor继承了ThreadPoolExecutor，构造是还是调用了其父类的构造方法。
-&emsp;更多关于 ScheduledThreadPoolExecutor 的介绍可以参考文章[《线程池 之 ScheduledThreadPoolExecutor概述》]()。
+&emsp;更多关于 ScheduledThreadPoolExecutor 的介绍可以参考文章[《线程池 之 ScheduledThreadPoolExecutor概述》](http://zhoujiapeng.top/java/java-scheduledthreadPoolExecutor/)。
 
 &emsp;下面是一个简单的例子。创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。
 ```java
@@ -345,6 +348,10 @@ MyTask [name = 5 ] is running on my-thread-1
 &emsp;corePoolSize为2，一开始会依次创建两个线程执行task1和task2，接下来task3和task4会进入队列，task5和task6进来之后，由于maximumPoolSize为4，因此继续会创建两个线程，之后线程数量达到了maximumPoolSize，并且任务队列也满了，因此task7、8、9会被拒绝。
 &emsp;通过自定义线程池，我们可以更好的让线程池为我们所用，更加适应我的实际场景。
 
-> 参考：https://www.jianshu.com/p/f030aa5d7a28
+
+&nbsp;
+&nbsp;
+> 参考：
+https://www.jianshu.com/p/f030aa5d7a28
 https://blog.csdn.net/wtopps/article/details/80682267
 

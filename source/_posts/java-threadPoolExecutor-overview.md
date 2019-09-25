@@ -1,15 +1,17 @@
 ---
 title: 线程池 之 ThreadPoolExecutor 概述
-catalog: true
 subtitle: ThreadPoolExecutor 概述
-header-img: "/img/article_header/article_header.png"
+catalog: true
+header-img: /img/article_header/article_header.png
 tags:
-- java
-- 编程语言
-- 并发
+  - java
+  - 编程语言
+  - 并发
 categories:
-- java
+  - java
+date: 2019-09-25 19:31:24
 ---
+
 
 
 # ThreadPoolExecutor 概述
@@ -66,7 +68,7 @@ public ThreadPoolExecutor(int corePoolSize,
 
 ### 2.2 prestartCoreThread 核心线程预启动
 &emsp;在默认情况下，只有当新任务到达时，才开始创建和启动核心线程，但是我们可以使用 prestartCoreThread() 和 prestartAllCoreThreads() 方法动态调整。
-如果使用非空队列构建池，则可能需要预先启动线程。
+&emsp;如果使用非空队列构建池，则可能需要预先启动线程。
 |  方法   | 作用  |
 |  ----  | ----  |
 | prestartCoreThread()  | 创建一个空闲任务线程等待任务的到达 |
@@ -92,7 +94,7 @@ setKeepAliveTime(Long.MAX_VALUE，TimeUnit.NANOSECONDS);
 
 - 如果当前线程池任务线程数量小于核心线程池数量，执行器总是优先创建一个任务线程，而不是从线程队列中取一个空闲线程。
 - 如果当前线程池任务线程数量大于核心线程池数量，执行器总是优先从线程队列中取一个空闲线程，而不是创建一个任务线程。
-- 如果当前线程池任务线程数量大于核心线程池数量，且队列中无空闲任务线程，将会创建一个任务线程，直到超出 maximumPoolSize，如果超出 maximumPoolSize，则任务将会被拒绝。通过设定的拒绝策略来处理（2.6）。
+- 如果当前线程池任务线程数量大于核心线程池数量，且队列中无空闲任务线程，将会创建一个任务线程，直到超出 maximumPoolSize，如果超出 maximumPoolSize，则任务将会被拒绝。通过设定的拒绝策略来处理。
 
 这个过程参考2.1中的线程任务处理流程图。
 
@@ -118,6 +120,8 @@ setKeepAliveTime(Long.MAX_VALUE，TimeUnit.NANOSECONDS);
 - DiscardOldestPolicy：如果执行程序尚未关闭，则丢弃阻塞队列中最靠前的任务，然后重试执行新任务（如果再次失败，则重复此过程）。
 
 &emsp;我们可以自己定义RejectedExecutionHandler，以适应特殊的容量和队列策略场景中,但需要非常小心，尤其是当策略仅用于特定容量或排队策略时。
+
+&emsp;关于阻塞队列的更多介绍可以参考文章[《Java 阻塞队列》](http://zhoujiapeng.top/java/java-blockingQueue/)。
 
 ### 2.7 Hook methods 钩子方法
 &emsp;ThreadPoolExecutor为提供了每个任务执行前后提供了钩子方法，重写beforeExecute(Thread，Runnable)和afterExecute(Runnable，Throwable)方法来操纵执行环境； 例如，重新初始化ThreadLocals，收集统计信息或记录日志等。此外，terminated()在Executor完全终止后需要完成后会被调用，可以重写此方法，以执行任殊处理。
@@ -146,6 +150,8 @@ ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSiz
 ### 2.9 Finalization 关闭
 &emsp;如果程序中不再持有线程池的引用，并且线程池中没有线程时，线程池将会自动关闭。如果希望确保即使用户忘记调用 shutdown()方法也可以回收未引用的线程池，那么必须通过设置适当的 keep-alive times 并设置allowCoreThreadTimeOut(boolean)。一般情况下，线程池启动后建议手动调用shutdown()关闭。
 
+&nbsp;
+&nbsp;
 > 参考 : 
 ThreadPoolExecutor.java 源码注释
 https://www.jianshu.com/p/c41e942bcd64

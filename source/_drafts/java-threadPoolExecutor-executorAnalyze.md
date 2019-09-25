@@ -327,6 +327,8 @@ private Runnable getTask() {
 
 &emsp;总结，ThreadPoolExecutor的执行主要围绕Worker，Worker 实现了 AbstractQueuedSynchronizer 并继承了 Runnable，其对锁的妙运用，值得思考。
 
-> 参考：https://www.jianshu.com/p/23cb8b903d2c
+&nbsp;
+> 参考：
+https://www.jianshu.com/p/23cb8b903d2c
 https://www.cnblogs.com/zaizhoumo/p/7794818.html
 《Java并发编程之美》
