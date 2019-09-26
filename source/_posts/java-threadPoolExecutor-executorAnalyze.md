@@ -1,15 +1,17 @@
 ---
 title: 线程池 之 ThreadPoolExecutor 执行原理
-catalog: true
 subtitle: ThreadPoolExecutor 执行原理
-header-img: "/img/article_header/article_header.png"
+catalog: true
+header-img: /img/article_header/article_header.png
 tags:
-- java
-- 编程语言
-- 并发
+  - java
+  - 编程语言
+  - 并发
 categories:
-- java
+  - java
+date: 2019-09-26 09:27:55
 ---
+
 
 # ThreadPoolExecutor 执行原理
 

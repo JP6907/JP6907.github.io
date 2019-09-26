@@ -8,7 +8,7 @@ tags:
   - 大数据
 categories:
   - Spark
-top: 1
+top: 100
 date: 2019-09-08 10:50:24
 ---
 
@@ -42,6 +42,7 @@ date: 2019-09-08 10:50:24
 - [《Spark源码阅读 之 Task 详解》](http://zhoujiapeng.top/Spark/spark-task/)
 - [《Spark源码阅读 之 部署模式》](http://zhoujiapeng.top/Spark/spark-deploy-mode/)
 - 《Spark 任务调度 之 数据本地性》
+- 《Spark Shuffle 机制解析》
 
 
 ## 参考资料

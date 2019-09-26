@@ -1,15 +1,17 @@
 ---
 title: 线程池 之 ThreadPoolExecutor 状态控制
-catalog: true
 subtitle: ThreadPoolExecutor 状态控制
-header-img: "/img/article_header/article_header.png"
+catalog: true
+header-img: /img/article_header/article_header.png
 tags:
-- java
-- 编程语言
-- 并发
+  - java
+  - 编程语言
+  - 并发
 categories:
-- java
+  - java
+date: 2019-09-26 09:28:04
 ---
+
 
 
 # 线程池 之 ThreadPoolExecutor 状态控制
@@ -132,4 +134,4 @@ https://www.jianshu.com/p/18065a78178b
 https://blog.csdn.net/wtopps/article/details/80682267
 https://www.cnblogs.com/zaizhoumo/p/7794818.html
 
-> 文章只做学习记录，非商业用途。如有侵权,请联系删除
+> (文章只做学习记录，非商业用途。如有侵权,请联系删除！)

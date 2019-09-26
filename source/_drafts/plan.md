@@ -25,3 +25,6 @@ local模式下 Driver、Master、Worker运行在同一个 JVM 中
 运行在独立的 JVM 中
 standlone 模式下，StandaloneSchedulerBackend 会创建一个 Driver：StandaloneAppClient
 Worker 创建 额外 Executor 进程去运行 task
+
+
+scala　　闭包
