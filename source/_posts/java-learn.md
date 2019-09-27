@@ -25,13 +25,15 @@ date: 2019-09-26 09:45:58
 - [《Java 内存模型》](http://zhoujiapeng.top/java/java-memoryModel/)
 - 《Java 一些变量类型的特殊规则》
 
+
 #### 参考资料
 - 《深入理解Java虚拟机》
 --- 
 
 ## 并发
 #### 笔记
-- 《Java 并发编程 之 Unsafe 类解析》
+- [《Java 并发编程 之 Unsafe 类解析》](http://zhoujiapeng.top/java/java-unsafe)
+- [《Java 并发编程 之 ABA 问题》](http://zhoujiapeng.top/java/java-aba-question)
 - 《Java 并发编程 之 BlockingQueue》
 - 《Java 并发编程 之 AbstractQueuedSynchronizer》
 - [《线程池 之 ThreadPoolExecutor 概述》](http://zhoujiapeng.top/java/java-threadPoolExecutor-overview/)
