@@ -97,7 +97,7 @@ public class ThreadLocalRandomTest {
         }
     }
 ```
-&emsp;这里的 SEED 是代表 Thread 类里面 threadLocalRandomSeed 变量的偏移量，Unsafe可以通过这个偏移量来获取到储存在每个 Thread 实例中的 seed，而 threadLocalRandomProbe 是用来判断是否初始化使用的。
+&emsp;这里的 SEED 是代表 Thread 类里面 threadLocalRandomSeed 变量的偏移量，Unsafe可以通过这个偏移量来获取到储存在每个 Thread 实例中的 seed，而 threadLocalRandomProbe 在这里是用来判断是否初始化使用的，在其它地方会有其他用途（如 [LongAdder](http://zhoujiapeng.top/java/java-atomicOperationClass) 类中用来决定应该访问cells数组的哪个元素）。
 &emsp;下面是获取 ThreadLocalRandom 实例的 current() 方法：
 ```java
 static final ThreadLocalRandom instance = new ThreadLocalRandom();
