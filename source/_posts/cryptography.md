@@ -1,13 +1,15 @@
 ---
 title: 密码学基础 - 群、环、域
-catalog: true
 subtitle: 群、环、域 的基本概念
+catalog: true
 header-img: /img/article_header/article_header.png
 tags:
-- 密码学
+  - 密码学
 categories:
-- cryptography
+  - cryptography
+date: 2019-10-09 21:21:36
 ---
+
 
 
 # 密码学基础-群、环、域
