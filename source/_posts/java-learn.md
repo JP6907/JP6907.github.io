@@ -35,7 +35,7 @@ date: 2019-09-26 09:45:58
 #### 笔记
 - [《Java 并发编程 之 Unsafe 类解析》](http://zhoujiapeng.top/java/java-unsafe)
 - [《Java 并发编程 之 ABA 问题》](http://zhoujiapeng.top/java/java-aba-question)
-- 《Java 并发编程 之 BlockingQueue》
+- [《Java 并发编程 之 BlockingQueue》](http://zhoujiapeng.top/java/java-blockingQueue)
 - [《Java 并发编程 之 AbstractQueuedSynchronizer》](http://zhoujiapeng.top/java/java-AbstractQueuedSynchronizer)
 - [《Java 并发编程 之 ThreadLocalRandom》](http://zhoujiapeng.top/java/java-threadLocalRandom)
 - [《Java 并发编程 之 原子操作类》](http://zhoujiapeng.top/java/java-atomicOperationClass)

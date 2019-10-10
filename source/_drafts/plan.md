@@ -30,3 +30,5 @@ Worker 创建 额外 Executor 进程去运行 task
 scala　　闭包
 
 FutureTask
+
+cyclierBarrier
