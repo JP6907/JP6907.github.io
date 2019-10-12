@@ -45,8 +45,10 @@ date: 2019-09-26 09:45:58
 - [《线程池 之 ThreadPoolExecutor 执行原理》](http://zhoujiapeng.top/java/java-threadPoolExecutor-executorAnalyze/)
 - [《线程池 之 ScheduledThreadPoolExecutor 概述》](http://zhoujiapeng.top/java/java-scheduledthreadPoolExecutor/)
 - 《优雅地关闭线程池》
-- 《Java 并发编程 之 CyclicBarrier》
 - [《Java 并发编程 之 synchronized 的实现原理》](http://zhoujiapeng.top/java/java-synchronized)
+- [《Java 线程同步器 之 CountDownLatch 原理剖析》](http://zhoujiapeng.top/java/java-CountDownLatch)
+- [《Java 线程同步器 之 CyclicBarrier 原理剖析》](http://zhoujiapeng.top/java/java-CyclicBarrier)
+- [《Java 线程同步器 之 Semaphore 原理剖析》](http://zhoujiapeng.top/java/java-Semaphore)
 
 #### 参考资料和博客收藏
 - 《Java并发编程之美》
