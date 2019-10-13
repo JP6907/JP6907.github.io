@@ -329,4 +329,6 @@ public class SynchronizedMethod
 5. synchronized锁是读写互斥并且 读读也互斥，ReentrantReadWriteLock 分为读锁和写锁，而读锁可以同时被多个线程持有，适合于读多写少场景的并发。
 &nbsp;
 &nbsp;
->原文链接：https://www.cnblogs.com/zaizhoumo/p/7700161.html
+>参考：
+https://www.cnblogs.com/zaizhoumo/p/7700161.html
+https://www.cnblogs.com/hapjin/p/4678773.html
