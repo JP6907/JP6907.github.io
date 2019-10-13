@@ -33,7 +33,7 @@ date: 2019-09-26 09:45:58
 
 ## 并发
 #### 笔记
-- 《Java 并发编程 之 线程基础》
+- [《Java 并发编程 之 线程基础》](http://zhoujiapeng.top/java/java-thread-base)
 - 《Java 并发编程 之 ThreadLocal》
 - 《Java 并发编程 之 锁的概述》
 - [《Java 并发编程 之 Unsafe 类解析》](http://zhoujiapeng.top/java/java-unsafe)
@@ -41,7 +41,7 @@ date: 2019-09-26 09:45:58
 - [《Java 并发编程 之 BlockingQueue》](http://zhoujiapeng.top/java/java-blockingQueue)
 - [《Java 并发编程 之 AbstractQueuedSynchronizer》](http://zhoujiapeng.top/java/java-AbstractQueuedSynchronizer)
 - [《Java 并发编程 之 ThreadLocalRandom》](http://zhoujiapeng.top/java/java-threadLocalRandom)
-- [《Java 并发编程 之 原子操作类》](http://zho     ujiapeng.top/java/java-atomicOperationClass)
+- [《Java 并发编程 之 原子操作类》](http://zhoujiapeng.top/java/java-atomicOperationClass)
 - [《线程池 之 ThreadPoolExecutor 概述》](http://zhoujiapeng.top/java/java-threadPoolExecutor-overview/)
 - [《线程池 之 ThreadPoolExecutor 使用》](http://zhoujiapeng.top/java/java-threadPoolExecutor-use/)
 - [《线程池 之 ThreadPoolExecutor 状态控制》](http://zhoujiapeng.top/java/java-threadPoolExecutor-statusControl/)
