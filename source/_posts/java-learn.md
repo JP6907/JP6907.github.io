@@ -34,7 +34,7 @@ date: 2019-09-26 09:45:58
 ## 并发
 #### 笔记
 - [《Java 并发编程 之 线程基础》](http://zhoujiapeng.top/java/java-thread-base)
-- 《Java 并发编程 之 ThreadLocal》
+- [《Java 并发编程 之 ThreadLocal》](http://zhoujiapeng.top/java/java-ThreadLocal)
 - 《Java 并发编程 之 锁的概述》
 - [《Java 并发编程 之 Unsafe 类解析》](http://zhoujiapeng.top/java/java-unsafe)
 - [《Java 并发编程 之 ABA 问题》](http://zhoujiapeng.top/java/java-aba-question)
