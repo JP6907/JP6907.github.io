@@ -16,9 +16,24 @@ date: 2019-10-11 15:50:37
 # synchronized 的实现原理
 
 ## synchronized 常见三种使用方法：　
-- 1）普通同步方法，锁是当前实例；
-- 2）静态同步方法，锁是当前类的Class实例，Class数据存在永久代中，是该类的一个全局锁；
+- 1）普通同步方法，锁是当前实例，即对象锁；
+```java
+public synchronized void increase() {
+    i++;
+}
+```
+- 2）静态同步方法，锁是当前类的Class实例，Class数据存在永久代中，是该类的一个全局锁，即类锁；
+```java
+public static synchronized void increase() {
+    i++;
+}
+```
 - 3）对于同步代码块，锁是synchronized括号里配置的对象。
+```java
+synchronized (a) {
+        System.out.println("...");
+    }
+```
 
 Java中的每个对象都可以作为锁。当一个线程访问同步代码块时，需要首先获取锁，退出代码块或抛出异常时必须释放锁。
 
@@ -301,6 +316,17 @@ public class SynchronizedMethod
 | 轻量级锁 |           竞争的线程不会阻塞，提高了响应速度           |      长时间得不到锁的线程使用自旋消耗CPU     |  追求响应速度。同步代码执行非常快  |
 | 重量级锁 |            线程竞争不会使用自旋，不会消耗CPU           |       线程出现竞争时会阻塞，响应速度慢       |   追求吞吐量。同步代码执行时间长   |
 
+
+## synchronized 的一些理解
+1. 相对于ReentrantLock而言，synchronized锁是**重量级锁**，重量级体现在活跃性差一点。synchronized锁是内置锁，意味着JVM能基于synchronized锁做一些优化：比如增加锁的粒度(锁粗化)、锁消除。
+
+2. 在synchronized锁上阻塞的线程是不可中断的：线程A获得了synchronized锁，当线程B也去获取synchronized锁时会被阻塞。而且，线程B无法被其他线程中断(不可中断的阻塞)，而ReentrantLock锁能实现可中断的阻塞。
+
+3. synchronized锁释放是自动的，当线程执行退出synchronized锁保护的同步代码块时，会自动释放synchronized锁。而ReentrantLock需要显示地释放：即在try-finally块中释放锁。
+
+4. 线程在竞争synchronized锁时是非公平的：假设synchronized锁目前被线程A占有，线程B请求锁未果，被放入队列中，线程C请求锁未果，也被 放入队列中，线程D也来请求锁，恰好此时线程A将锁释放了，那么线程D将跳过队列中所有的等待线程(即：线程B和线程C)并获得这个锁。而ReentrantLock能够实现锁的公平性。
+
+5. synchronized锁是读写互斥并且 读读也互斥，ReentrantReadWriteLock 分为读锁和写锁，而读锁可以同时被多个线程持有，适合于读多写少场景的并发。
 &nbsp;
 &nbsp;
 >原文链接：https://www.cnblogs.com/zaizhoumo/p/7700161.html
