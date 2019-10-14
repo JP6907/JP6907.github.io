@@ -1,5 +1,5 @@
 ---
-title: Java 并发编程 之 BlockingQueue
+title: Java 并发容器 之 BlockingQueue
 subtitle: 阻塞队列详解
 catalog: true
 header-img: /img/article_header/article_header.png
