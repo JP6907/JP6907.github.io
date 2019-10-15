@@ -142,6 +142,13 @@ public final static class FilledLong{
 &emsp;前面我们说到，为了使得处理器内部的运算单元能够尽量被充分利用，处理器可能会对输入的代码进行**乱序执行优化**，处理器会在计算之后将乱序执行的结果重组，保证该结果与顺序执行的结果是一致的，与处理器的乱序执行优化类似，Java 虚拟机的即时编译器中也有类似的**指令重排序优化**。Java程序中天然的有序性可以总结为一句话：如果在本线程内观察，所有操作都是有序的；如果在一个线程观察另外一个线程，所有操作都是无序的。后半句是指“指令重排序“现象和”工作内存与主内存同步延迟“现象。
 &emsp;Java提供了volaile和synchronized两个关键字来保证线程之间操作的有序性，volaile关键字本身就包含了禁止指令重排序的语义(可以参考文章《Java 一些变量类型的特殊规则》），而synchronized则是由”一个变量在同一时刻只允许一条线程对其进行lock操作“这条规则获得的，这条规则决定了持有同一个锁的两个同步块只能串行地进入。
 
+## 3. volatile 的语义
+[《volatile 的特殊规则和 long&&double 的非原子协定》](http://zhoujiapeng.top/java/java-special-variable)
+
+## 4. long&&double 的非原子协定
+[《volatile 的特殊规则和 long&&double 的非原子协定》](http://zhoujiapeng.top/java/java-special-variable)
+
+
 &nbsp;
 &nbsp;
 > 参考：
