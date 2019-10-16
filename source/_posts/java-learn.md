@@ -24,6 +24,8 @@ date: 2019-09-26 09:45:58
 - [《Java 自动装箱的陷阱》](http://zhoujiapeng.top/java/java-risk-of-autoboxing/)
 - [《Java 内存模型》](http://zhoujiapeng.top/java/java-memoryModel/)
 - [《volatile 的特殊规则和 long&&double 的非原子协定》](http://zhoujiapeng.top/java/java-special-variable)
+- [《深入理解Java虚拟机 之 Java内存区域》](http://zhoujiapeng.top/java/java-memory-area)
+- [《深入理解Java虚拟机 之 OutOfMemoryError 异常实战》](http://zhoujiapeng.top/java/java-oom-test)
 
 
 #### 参考资料
