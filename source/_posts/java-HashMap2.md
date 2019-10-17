@@ -1,7 +1,7 @@
 ---
 title: 深入理解 HashMap(二)
-catalog: true
 subtitle: HashMap
+catalog: true
 header-img: /img/article_header/article_header.png
 tags:
   - java
@@ -9,58 +9,55 @@ tags:
   - jdk
 categories:
   - java
+date: 2019-10-17 14:30:12
 ---
 
+
 # 深入理解 HashMap(二)
-接着上一篇文章[《深入理解 HashMap(一)》](http://zhoujiapeng.top/java/java-HashMap)，我们继续分析 HashMap。
+&emsp;接着上一篇文章[《深入理解 HashMap(一)》](http://zhoujiapeng.top/java/java-HashMap)，我们继续分析 HashMap。
 
-本文首先介绍 HashMap 中的 hash 算法和索引计算方法，它们都经过了一定的优化，在 get 和 put 函数中均会用到。接着会详细介绍 get 和 put 的过程，理解了这两个过程，就基本上掌握了 HashMap 的整体流程。
+&emsp;本文首先介绍 HashMap 中的 hash 算法和索引计算方法，它们都经过了一定的优化，在 get 和 put 函数中均会用到。接着会详细介绍 get 和 put 的过程，理解了这两个过程，就基本上掌握了 HashMap 的整体流程。
 
-## Hash 算法
-普通的 Hash 表可能会使用
+## 1. Hash 算法
+&emsp;普通的 Hash 表可能会使用
 ```java
 key.hashCode() 
 ```
-来计算key的hash，但是 HashMap 有自己的散列算法：
+&emsp;来计算key的hash，但是 HashMap 有自己的散列算法：
 ```java
 static final int hash(Object key) {
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
 ```
-我们知道, int类型是32位的, h ^ h >>> 16 其实就是将hashCode的高16位和低16位进行异或, 这充分利用了高半位和低半位的信息, 对低位进行了扰动, 目的是为了使该hashCode映射成数组下标时可以更均匀, 详细的解释可以参考[这里](https://www.zhihu.com/question/20733617/answer/111577937)。
+&emsp;我们知道, int类型是32位的, h ^ h >>> 16 其实就是将hashCode的高16位和低16位进行异或, 这充分利用了高半位和低半位的信息, 对低位进行了扰动, 目的是为了使该hashCode映射成数组下标时可以更均匀, 详细的解释可以参考[这里](https://www.zhihu.com/question/20733617/answer/111577937)。
 
-另外, 从这个函数中, 我们还可以得到一个意外收获:
-HashMap中key值可以为null, 且null值一定存储在数组的第一个位置.
-
+&emsp;另外, 从这个函数中, 我们还可以得到一个意外收获: HashMap中key值可以为null, 且null值一定存储在数组的第一个位置。
 
 
-## 优化的索引计算
-对于一般的 Hash 表，可能会这样来将 key 映射成 index：
+
+## 2. 优化的索引计算
+&emsp;对于一般的 Hash 表，可能会这样来将 key 映射成 index：
 ```java
 h % n
 ```
-但是在 HashMap 中会通过这样的方式来计算索引：
+&emsp;但是在 HashMap 中会通过这样的方式来计算索引：
 ```java
 (n - 1) & hash
 ```
-这个位运算，实际上是对取余运算的优化。由于hash桶数组的大小一定是2的幂次方，因此能够这样优化，即：
+&emsp;这个位运算，实际上是对取余运算的优化。由于hash桶数组的大小一定是2的幂次方，因此能够这样优化，即：
 ```java
 h % n = (n - 1) & hash
 ```
 
 思路是这样的，bi是b二进制第i位的值：
-
 b % 2<sup>i</sup> = (2<sup>N</sup>b<sub>N</sub> + 2<sup>N-1</sup>b<sub>N-1</sub>+ ... + 2<sup>i</sup>b<sub>i</sub> + ... 2<sup>0</sup>b<sub>0</sub>) % 2<sup>i</sup>
-
 设x >= i，则一定有 2<sup>x</sup>b<sub>x</sub> % 2i = 0
-
 所以，上面的式子展开后就是：
 b % 2<sup>i</sup> = 2<sup>i-1</sup>b<sub>i-1</sub> + 2<sup>i-2</sup>b<sub>i-1</sub> + ... 2<sup>0</sup>b<sub>0</sub>
 结果就是只保留低于第i位的所有数据。
 
 反映到二进制上来说，以8位二进制举个例子：
-
 对于 h % n：
 显然2的幂次方N的二进制位是只有一个1的。8的二进制为000001000，1在第3位。
 任何一个数B对N求余，反映二进制上，就是高于等于第3位的置0，低于的保留。如10111010 % 00001000 = 00000010
@@ -69,17 +66,17 @@ b % 2<sup>i</sup> = 2<sup>i-1</sup>b<sub>i-1</sub> + 2<sup>i-2</sup>b<sub>i-1</s
 
 
 
-由于取模运算是十分耗时的，而索引计算在 HashMap 中是非常常见的操作，将取模操作转化成&运算能够很大程度上提高效率。
+&emsp;**由于取模运算是十分耗时的，而索引计算在 HashMap 中是非常常见的操作，将取模操作转化成&运算能够很大程度上提高效率**。
 
-## get函数
+## 3. get函数
 ```java
 public V get(Object key) {
     Node<K,V> e;
     return (e = getNode(hash(key), key)) == null ? null : e.value;
 }
 ```
-get 函数先是调用 hash 对 key 做一次 hash 运算之后再调用 getNode 函数。
-hash 运算在上面已经分析过了，我们看一下 getNode 函数：
+&emsp;get 函数先是调用 hash 对 key 做一次 hash 运算之后再调用 getNode 函数。
+&emsp;hash 运算在上面已经分析过了，我们看一下 getNode 函数：
 ```java
 final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
@@ -107,7 +104,7 @@ final Node<K,V> getNode(int hash, Object key) {
         return null;
     }
 ```
-getNode 的思路为：
+&emsp;getNode 的思路为：
 - table 非空且 key 在 table 中对应位置上存在数据
     - 否：返回 null
     - 是：
@@ -117,8 +114,7 @@ getNode 的思路为：
             - 链表：遍历链表查找
 
 
-## put函数
-
+## 4. put函数
 
 ```java
 public V put(K key, V value) {
@@ -185,21 +181,22 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
         if (++size > threshold)
             //扩容
             resize();
+        //作为插入之后的回调函数，目前这个函数的空的
         afterNodeInsertion(evict);
         return null;
     }
 ```
 
 
-思路大概是这样的逻辑：
-
+&emsp;putVal 的思路为：
 - 1.判断table是否分配，如果没有就先分配空间，和前面提到的“延时分配”对应起来。
 - 2.同样，根据hash值定位hash桶数组的位置。然后：
-    - 2.2 该位置为null。直接创建一个节点插入。
-    - 2.3 该位置为平衡树。调用TreeNode的一个方法完成插入，具体逻辑在这个方法里。
-    - 2.4 该位置为链表。遍历链表，进行插入。会出现两种情况：
-        - 遍历到链表尾，说明这个key不存在，应该直接在链表尾插入。但是这导致链表增长，需要触发链表重构成红黑树的判断逻辑。
-        - 在链表上找到一个key相同的节点，根据 onlyIfAbsent 参数决定是否要使用新数据覆盖旧数据
+    - 2.1 该位置为null。直接创建一个节点插入。
+    - 2.2 该位置不为null
+        - 2.2.1 该位置为平衡树。调用 putTreeVal 将节点插入红黑树。
+        - 2.2.2 该位置为链表。遍历链表，进行插入。会出现两种情况：
+            - 遍历到链表尾，说明这个key不存在，应该直接在链表尾插入。但是这导致链表增长，需要触发链表重构成红黑树的判断逻辑。
+            - 在链表上找到一个key相同的节点，根据 onlyIfAbsent 参数决定是否要使用新数据覆盖旧数据
 - 3. 判断插入数据后 size 是否会超过阈值，如果超过，执行扩容操作。
 
 
