@@ -1,27 +1,92 @@
 ---
-title: java-ConcurrentHashMap
+title: Java 并发容器 之 ConcurrentHashMap
 catalog: true
-subtitle:
-header-img:
+subtitle: ConcurrentHashMap
+header-img: /img/article_header/article_header.png
 tags:
+  - java
+  - 编程语言
+  - 并发
+categories:
+  - java
 ---
 
+说实话，Java8 ConcurrentHashMap 源码真心不简单，最难的在于扩容，数据迁移操作不容易看懂。
 
+# ConcurrentHashMap
+本文主要分析 JDK1.8 中的 ConcurrentHashMap。
+## 1. 概述
+HashMap 是我们日常最常见的一种容器，它以键值对的形式完成对数据的存储，但众所周知，它在高并发的情境下是不安全的。ConcurrentHashMap 是 HashMap 的并发版本，它是线程安全的，并且在高并发的情境下，性能优于 HashMap 很多。
 
-````java
-private transient volatile int sizeCtl;
+jdk 1.7 采用分段锁技术，整个 Hash 表被分成多个段，每个段中会对应一个 Segment 段锁，段与段之间可以并发访问，但是多线程想要操作同一个段是需要获取锁的。所有的 put，get，remove 等方法都是根据键的 hash 值对应到相应的段中，然后尝试获取锁进行访问。
+
+![HashMap](https://github.com/JP6907/Pic/blob/master/java/ConcurrentHashMapJDK7.png?raw=true)
+(图片来源网络)
+
+jdk 1.8 取消了基于 Segment 的分段锁思想，改用 CAS + synchronized 控制并发操作，在某些方面提升了性能。并且追随 1.8 版本的 HashMap 底层实现，使用数组+链表+红黑树进行数据存储。本篇主要介绍 1.8 版本的 ConcurrentHashMap 的具体实现。
+
+![HashMap](https://github.com/JP6907/Pic/blob/master/java/ConcurrentHashMap.png?raw=true)
+(图片来源网络)
+
+毕竟 ConcurrentHaspMap 只在 HashMap 的基础上实现的，两者在思想会有很多重叠的地方，建议先阅读文章[《深入理解 HashMap》](http://zhoujiapeng.top/java/java-HashMap)之后再来阅读本文，可能会理解得比较透彻。
+
+## 2. 重要属性和构造函数
+首先看一下一些重要的属性
+```java
+    //代表整个Hash表，容量总是2的n次幂
+    transient volatile Node<K,V>[] table;
+    //临时表，用于哈希表扩容，扩容完成后会被重置为 null。
+    private transient volatile Node<K,V>[] nextTable;
+
+    //baseCount+counterCells用来记录总元素的数量
+    private transient volatile long baseCount;
+    //2的n次幂
+    private transient volatile CounterCell[] counterCells;
+    //自旋锁，用于操作CounterCells
+    private transient volatile int cellsBusy;
+
+    //非常重要的属性，下面详细介绍
+    private transient volatile int sizeCtl;
+
+    //扩容时迁移数据用的，偏移量
+    private transient volatile int transferIndex;    
 ```
-这是一个重要的属性，无论是初始化哈希表，还是扩容 rehash 的过程，都是需要依赖这个关键属性的。该属性有以下几种取值：
+可以看到，这里用了baseCount+counterCells数组来记录元素总量，它的思想和 LongAddr 一样，主要是为了解决CAS自旋在高并发情况下的性能问题，具体可以参考文章[《Java 并发编程 之 原子操作类》](http://zhoujiapeng.top/java/java-atomicOperationClass)，
+LongAddr，这里简单介绍一下：
+它的方法是在内部维护多个 Cell 变量，多个线程对 value 的 CAS 操作可以分散到多个 Cell 变量上，减少了争夺共享资源的并发量，最后,在获取元素总数量时, 是把所有 Cell 变量的 value 值累加后再加上 baseCount 返回。
+
+另外，这里有一个非常重要的属性：sizeCtl。无论是初始化哈希表，还是扩容 rehash 的过程，都是需要依赖这个关键属性的。该属性有以下几种取值：
 - 0：默认值
 - -1：代表哈希表正在进行初始化
 - 大于0：相当于 HashMap 中的 threshold，表示阈值
 - 小于-1：代表有多个线程正在进行扩容
 
+这个属性的使用是比较复杂的，在后面分析扩容过程结合实际场景再给出更详细的介绍。
+
+接下来看一下构造函数：
+```java
+public ConcurrentHashMap(int initialCapacity) {
+        if (initialCapacity < 0)
+            throw new IllegalArgumentException();
+        int cap = ((initialCapacity >= (MAXIMUM_CAPACITY >>> 1)) ?
+                   MAXIMUM_CAPACITY :
+                   tableSizeFor(initialCapacity + (initialCapacity >>> 1) + 1));
+        this.sizeCtl = cap;
+    }
+```
+这个初始化方法有点意思，通过提供初始容量，计算了 sizeCtl，sizeCtl = (1.5 * initialCapacity + 1)，然后向上取最近的 2 的 n 次方。这里的 (initialCapacity >>> 1) 就等于 0.5*initialCapacity。例如， initialCapacity 为 10，那么得到 sizeCtl 为 16，如果 initialCapacity 为 11，得到 sizeCtl 为 32。
+
+
+## 2. put 方法
+对于 HashMap 来说，多线程并发添加元素会导致数据丢失等并发问题，那么 ConcurrentHashMap 又是如何做到并发添加的呢？
+
+ForwardingNode 
+
+
 ```java
 public V put(K key, V value) {
         return putVal(key, value, false);
     }
-
     /** Implementation for put and putIfAbsent */
     final V putVal(K key, V value, boolean onlyIfAbsent) {
         if (key == null || value == null) throw new NullPointerException();
@@ -39,6 +104,7 @@ public V put(K key, V value) {
             else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
                 if (casTabAt(tab, i, null,
                              new Node<K,V>(hash, key, value, null)))
+                    //跳出循环
                     break;                   // no lock when adding to empty bin
             }
             //MOVED说明该桶的首节点是 Forwarding 类型
@@ -52,7 +118,7 @@ public V put(K key, V value) {
                 //获取该头节点的监视器锁，准备插入新的节点
                 synchronized (f) { 
                     if (tabAt(tab, i) == f) {
-                        if (fh >= 0) { // 头结点的 hash 值大于 0，说明是链表？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+                        if (fh >= 0) { // 头结点的 hash 值大于 0，说明是链表
                             //binCount随着链表的遍历增长
                             binCount = 1;
                             //遍历链表
@@ -108,6 +174,93 @@ public V put(K key, V value) {
         return null;
     }
 ```
+代码中的注释已经说明了大致每一步的操作，下面总结一下整个流程：
+- table是否初始化
+    - 否，初始化
+    - 是，根据key计算索引位置，该位置是否有数据
+        - 无，CAS 插入一个新节点
+        - 有，是否为 MOVED，即正在扩容？
+            - 是，协助扩容
+            - 否，锁住头节点，在该桶插入新的节点
+- 最后，判断插入新节点后长度是否超过阈值
+    - 是，判断Hash表长度是否小于64
+        - 是，Hash 表扩容
+        - 否，链表转化为红黑树
+
+建议对照着这个框架再次走读一下代码，能够更清晰地把握整个脉络。
+
+put的主要流程解释完了，但却留下几个问题：
+1. 为什么节点的Hash会等于MOVED？(fh = f.hash) == MOVED
+2. Hash表的初始化在并发情况下是怎么进行的？initTable()
+3. 等于MOVED的时候需要协助扩容，那么协助扩容是怎么进行的？helpTransfer()
+4. 什么情况下会触发扩容？treeifyBin()
+
+下面具体分析一下这几个问题。
+
+
+## 3. MOVED & ForwardingNode
+首先看一下 ForwardingNode 的结构：
+```java
+static final class ForwardingNode<K,V> extends Node<K,V> {
+        final Node<K,V>[] nextTable;
+        ForwardingNode(Node<K,V>[] tab) {
+            super(MOVED, null, null, null);
+            this.nextTable = tab;
+        }
+        ...
+    }
+```
+可以看到，ForwardingNode 的构造函数将 MOVED 作为参数传入了父类的构造函数：
+```java
+Node(int hash, K key, V val, Node<K,V> next) {
+            this.hash = hash;
+            this.key = key;
+            this.val = val;
+            this.next = next;
+        }
+```
+Node 的 hash 被设置成了 MOVED，它的意思是标志当前的Hash表正处于扩容的状态，而且当前桶的数据已经迁移到了新的table。
+在 transfer 函数进行数据迁移的时候有这样的操作：
+```java
+ForwardingNode<K,V> fwd = new ForwardingNode<K,V>(nextTab);
+...
+setTabAt(tab, i, fwd);
+```
+其他线程一旦看到该位置的 hash 值为 MOVED，就不会进行迁移，跳过该节点
+
+另外，ForwardingNode 里面还有一个属性 nextTable，它是对全局 nextTable 的引用，所有参与扩容的线程都会想将数据迁移到全局的 nextTable，扩容完成之后 nextTable 会被赋给全局 table，然后 nextTable 被置为 null。
+
+
+## 4.
+## 5.
+## 6.
+
+
+
+
+
+resizeStamp
+
+
+put
+putVal  initTable    helpTransfer  treeifyBin  addCount
+
+initTable
+treeifyBin  tryPresize
+tryPresize 扩容  resizeStamp
+resizeStamp
+transfer
+helpTransfer
+
+addCount  -> LongAdder
+remove replaceNode
+size
+sumCount
+get
+clear
+
+
+
 
 ```java
 private final Node<K,V>[] initTable() {
@@ -746,6 +899,9 @@ public void clear() {
             addCount(delta, -1);
     }
 ```
+
+
+操作HashMap的时候遇到其它线程正在扩容的，不是阻塞等待，而是主动加入帮助扩容
 
 https://www.cnblogs.com/zaizhoumo/p/7709755.html
 https://www.cnblogs.com/yangming1996/p/8031199.html
