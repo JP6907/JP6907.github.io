@@ -269,6 +269,7 @@ resizeStamp 返回的是一个不超过16位的整数，且第16位为1，0~15�
 
 (resizeStamp(n) << RESIZE_STAMP_SHIFT) + 2 表示当前只有一个线程正在工作，相对应的，如果 (sc - 2) == resizeStamp(n) << RESIZE_STAMP_SHIFT，说明当前线程就是最后一个还在扩容的线程，那么会将 finishing 标识为 true，并在下一次循环中退出扩容方法。
 
+加上这个数据检验标识能够确保扩容的时候所有线程都是在对相同大小的table进行操作。
 
 
 helpTransfer 也会调用 transfer
@@ -348,9 +349,14 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
             Node<K,V> f; int fh;
 
             //while 循环计算负责迁移的桶的区间
+            // advance 为 true 表示可以进行下一个位置的迁移了
+            // 简单理解结局：i 指向了 transferIndex，bound 指向了 transferIndex-stride
             while (advance) {
                 int nextIndex, nextBound;
+                //--i，向下一个位置迁移
+                //移动后判断是否超出边界
                 if (--i >= bound || finishing)
+                    //暂时置为false，当前节点迁移结束才会变成true
                     advance = false;
                 //transferIndex <= 0 说明已经没有需要迁移的桶了
                 else if ((nextIndex = transferIndex) <= 0) {
@@ -363,6 +369,7 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                          (this, TRANSFERINDEX, nextIndex,
                           nextBound = (nextIndex > stride ?
                                        nextIndex - stride : 0))) {
+                    //(bound,i]
                     bound = nextBound;
                     i = nextIndex - 1;
                     advance = false;
@@ -373,11 +380,14 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                 int sc;
                 //如果整张表已经完成迁移
                 if (finishing) {
+                    //清除缓存
                     nextTable = null;
                     table = nextTab;
+                    //修改sizeCtl
                     sizeCtl = (n << 1) - (n >>> 1);
                     return;
                 }
+                //设置sizeCtl，当前参与迁移的线程数量-1
                 if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) {
                     //(resizeStamp(n) << RESIZE_STAMP_SHIFT) + 2 
                     //相等说明只有当前线程在迁移数据，不等说明还有其它线程
@@ -398,20 +408,29 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                 advance = true; // already processed
             else {//进行实际的迁移节点操作
                 //加锁
+                //f为首节点
                 synchronized (f) {
                     if (tabAt(tab, i) == f) {
                         Node<K,V> ln, hn;
+                        // 下面这一块和 Java7 中的 ConcurrentHashMap 迁移是差不多的，
+                        // 需要将链表一分为二，
+                        // 找到原链表中的 lastRun，然后 lastRun 及其之后的节点是一起进行迁移的
+                        // lastRun 之前的节点需要进行克隆，然后分到两个链表中
                         if (fh >= 0) {//链表的迁移操作
+                            //n只有一位是1
                             int runBit = fh & n;//这东西是什么？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
                             Node<K,V> lastRun = f;
                             //整个 for 循环为了找到整个桶中最后连续的 fh & n 不变的结点？？？？？？？？？？？？？？？？？？？？
+                            //整个for循环是为了找到最后一段连续节点 p.hash & n 都相同的节点
                             for (Node<K,V> p = f.next; p != null; p = p.next) {
                                 int b = p.hash & n;
+                                //是否与前驱节点相同
                                 if (b != runBit) {
                                     runBit = b;
                                     lastRun = p;
                                 }
                             }
+                            //lastRun连接着后面其余节点的连接
                             if (runBit == 0) {
                                 ln = lastRun;
                                 hn = null;
@@ -424,18 +443,25 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                             //如果fh&n不变的链表的runbit都是0，则nextTab[i]内元素ln前逆序，ln及其之后顺序
                             //否则，nextTab[i+n]内元素全部相对原table逆序
                             //这是通过一个节点一个节点的往nextTab添加
+                            //lastRun后面的节点，已经连接到 ln 或者 hn 上了
+                            //拷贝 lastRun前面的节点
                             for (Node<K,V> p = f; p != lastRun; p = p.next) {
                                 int ph = p.hash; K pk = p.key; V pv = p.val;
                                 if ((ph & n) == 0)
+                                    //前插法
                                     ln = new Node<K,V>(ph, pk, pv, ln);
                                 else
                                     hn = new Node<K,V>(ph, pk, pv, hn);
                             }
                             //把两条链表整体迁移到nextTab中
+                            // 其中的一个链表放在新数组的位置 i
                             setTabAt(nextTab, i, ln);
+                            // 另一个链表放在新数组的位置 i+n
                             setTabAt(nextTab, i + n, hn);
-                            //将原桶标识位已经处理
+                            // 将原数组该位置处设置为 fwd，代表该位置已经处理完毕，
+                            // 其他线程一旦看到该位置的 hash 值为 MOVED，就不会进行迁移了
                             setTabAt(tab, i, fwd);
+                            //迁移完成之后，设置为true，代表该位置已经迁移完毕，允许向下一个节点移动
                             advance = true;
                         }
                         //红黑树的复制算法
@@ -465,6 +491,7 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                                     ++hc;
                                 }
                             }
+                             // 如果一分为二后，节点数少于 8，那么将红黑树转换回链表
                             ln = (lc <= UNTREEIFY_THRESHOLD) ? untreeify(lo) :
                                 (hc != 0) ? new TreeBin<K,V>(lo) : t;
                             hn = (hc <= UNTREEIFY_THRESHOLD) ? untreeify(hi) :
@@ -472,6 +499,7 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                             setTabAt(nextTab, i, ln);
                             setTabAt(nextTab, i + n, hn);
                             setTabAt(tab, i, fwd);
+                            //迁移完成之后，设置为true，允许向下一个节点移动
                             advance = true;
                         }
                     }
@@ -481,18 +509,32 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
     }
 ```
 
+当我们成功的添加完成一个结点，最后是需要判断添加操作后是否会导致哈希表达到它的阈值，并针对不同情况决定是否需要进行扩容，还有 CAS 式更新哈希表实际存储的键值对数量。这些操作都封装在 addCount 这个方法中，当然 putVal 方法的最后必然会调用该方法进行处理。下面我们看看该方法的具体实现，该方法主要做两个事情。一是更新 baseCount，二是判断是否需要扩容。
 
+更新数量的思想和 LongAdder 一样
+http://zhoujiapeng.top/java/java-atomicOperationClass/
+它的方法是在内部维护多个 Cell 变量，多个线程对 value 的 CAS 操作可以分散到多个 Cell 变量上，减少了争夺共享资源的并发量，最后,在获取 LongAdder 当前值时, 是把所有 Cell 变量的 value 值累加后再加上 base 返回。
 ```java
 private final void addCount(long x, int check) {
+        /**
+         * 第一部分，更新 baseCount
+         */
         CounterCell[] as; long b, s;
         if ((as = counterCells) != null ||
+            //更性 baseCount 为 b+x
             !U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
+            //如果更新失败
+            
             CounterCell a; long v; int m;
             boolean uncontended = true;
             if (as == null || (m = as.length - 1) < 0 ||
                 (a = as[ThreadLocalRandom.getProbe() & m]) == null ||
                 !(uncontended =
                   U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
+                //高并发下 CAS 失败会执行 fullAddCount 方法
+                // See LongAdder version for explanation
+                //这里借鉴了 LongAdder 的思想
+                //http://zhoujiapeng.top/java/java-atomicOperationClass/
                 fullAddCount(x, uncontended);
                 return;
             }
@@ -500,6 +542,9 @@ private final void addCount(long x, int check) {
                 return;
             s = sumCount();
         }
+        /**
+         * 判断是否需要扩容
+         */
         if (check >= 0) {
             Node<K,V>[] tab, nt; int n, sc;
             while (s >= (long)(sc = sizeCtl) && (tab = table) != null &&
@@ -522,6 +567,185 @@ private final void addCount(long x, int check) {
     }
 ```
 
+
+```java
+public V remove(Object key) {
+        return replaceNode(key, null, null);
+    }
+final V replaceNode(Object key, V value, Object cv) {
+        int hash = spread(key.hashCode());
+        for (Node<K,V>[] tab = table;;) {
+            Node<K,V> f; int n, i, fh;
+            //如果table为空，或者找不到key，直接返回
+            if (tab == null || (n = tab.length) == 0 ||
+                (f = tabAt(tab, i = (n - 1) & hash)) == null)
+                break;
+            //正在迁移，协助迁移
+            else if ((fh = f.hash) == MOVED)
+                tab = helpTransfer(tab, f);
+            else {//找到对应的桶
+                V oldVal = null;
+                boolean validated = false;
+                synchronized (f) {
+                    if (tabAt(tab, i) == f) {
+                        if (fh >= 0) {//链表
+                            validated = true;
+                            //遍历链表
+                            for (Node<K,V> e = f, pred = null;;) {
+                                K ek;
+                                if (e.hash == hash &&
+                                    ((ek = e.key) == key ||
+                                     (ek != null && key.equals(ek)))) {
+                                    V ev = e.val;
+                                    if (cv == null || cv == ev ||
+                                        (ev != null && cv.equals(ev))) {
+                                        oldVal = ev;
+                                        if (value != null)
+                                            e.val = value;
+                                        else if (pred != null)
+                                            pred.next = e.next;
+                                        else
+                                            setTabAt(tab, i, e.next);
+                                    }
+                                    break;
+                                }
+                                pred = e;
+                                if ((e = e.next) == null)
+                                    break;
+                            }
+                        }
+                        else if (f instanceof TreeBin) {//树
+                            validated = true;
+                            TreeBin<K,V> t = (TreeBin<K,V>)f;
+                            TreeNode<K,V> r, p;
+                            if ((r = t.root) != null &&
+                                (p = r.findTreeNode(hash, key, null)) != null) {
+                                V pv = p.val;
+                                if (cv == null || cv == pv ||
+                                    (pv != null && cv.equals(pv))) {
+                                    oldVal = pv;
+                                    if (value != null)
+                                        p.val = value;
+                                    else if (t.removeTreeNode(p))
+                                        setTabAt(tab, i, untreeify(t.first));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (validated) {
+                    if (oldVal != null) {
+                        if (value == null)
+                            //更新数量
+                            addCount(-1L, -1);
+                        return oldVal;
+                    }
+                    break;
+                }
+            }
+        }
+        return null;
+    }
+```
+
+
+```java
+public int size() {
+        long n = sumCount();
+        return ((n < 0L) ? 0 :
+                (n > (long)Integer.MAX_VALUE) ? Integer.MAX_VALUE :
+                (int)n);
+    }
+//和LongAddr一样，sum=baseCount+CounterCell[]
+final long sumCount() {
+        CounterCell[] as = counterCells; CounterCell a;
+        long sum = baseCount;
+        if (as != null) {
+            for (int i = 0; i < as.length; ++i) {
+                if ((a = as[i]) != null)
+                    sum += a.value;
+            }
+        }
+        return sum;
+    }
+```
+
+get 方法可以根据指定的键，返回对应的键值对，由于是读操作，所以不涉及到并发问题。
+get 方法从来都是最简单的，这里也不例外：
+
+1、计算 hash 值 
+2、根据 hash 值找到数组对应位置: (n - 1) & h 
+3、根据该位置处结点性质进行相应查找
+
+如果该位置为 null，那么直接返回 null 就可以了
+如果该位置处的节点刚好就是我们需要的，返回该节点的值即可
+如果该位置节点的 hash 值小于 0，说明正在扩容，或者是红黑树，后面我们再介绍 find 方法
+如果以上 3 条都不满足，那就是链表，进行遍历比对即可
+
+```java
+public V get(Object key) {
+        Node<K,V>[] tab; Node<K,V> e, p; int n, eh; K ek;
+        //计算hash
+        int h = spread(key.hashCode());
+        //定位到对应的桶
+        if ((tab = table) != null && (n = tab.length) > 0 &&
+            (e = tabAt(tab, (n - 1) & h)) != null) {
+            //头节点就是
+            if ((eh = e.hash) == h) {
+                if ((ek = e.key) == key || (ek != null && key.equals(ek)))
+                    return e.val;
+            }
+             // 如果头结点的 hash 小于 0，说明 正在扩容，或者该位置是红黑树
+            else if (eh < 0)
+                return (p = e.find(h, key)) != null ? p.val : null;
+            //遍历链表
+            while ((e = e.next) != null) {
+                if (e.hash == h &&
+                    ((ek = e.key) == key || (ek != null && key.equals(ek))))
+                    return e.val;
+            }
+        }
+        return null;
+    }
+```
+
+clear 方法将删除整张哈希表中所有的键值对，删除操作也是一个桶一个桶的进行删除。
+```java
+public void clear() {
+        long delta = 0L; // negative number of deletions
+        int i = 0;
+        Node<K,V>[] tab = table;
+        //遍历表中的所有桶
+        while (tab != null && i < tab.length) {
+            int fh;
+            Node<K,V> f = tabAt(tab, i);
+            if (f == null)
+                ++i;
+            //正在扩容
+            else if ((fh = f.hash) == MOVED) {
+                tab = helpTransfer(tab, f);
+                i = 0; // restart
+            }
+            else {
+                synchronized (f) {
+                    if (tabAt(tab, i) == f) {
+                        //首节点
+                        Node<K,V> p = (fh >= 0 ? f :
+                                       (f instanceof TreeBin) ?
+                                       ((TreeBin<K,V>)f).first : null);
+                        while (p != null) {
+                            --delta;
+                            p = p.next;
+                        }
+                        setTabAt(tab, i++, null);
+                    }
+                }
+            }
+        }
+        if (delta != 0L)
+            addCount(delta, -1);
+    }
+```
 
 https://www.cnblogs.com/zaizhoumo/p/7709755.html
 https://www.cnblogs.com/yangming1996/p/8031199.html
