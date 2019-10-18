@@ -8,8 +8,14 @@ tags:
 
 
 
-
-
+````java
+private transient volatile int sizeCtl;
+```
+这是一个重要的属性，无论是初始化哈希表，还是扩容 rehash 的过程，都是需要依赖这个关键属性的。该属性有以下几种取值：
+- 0：默认值
+- -1：代表哈希表正在进行初始化
+- 大于0：相当于 HashMap 中的 threshold，表示阈值
+- 小于-1：代表有多个线程正在进行扩容
 
 ```java
 public V put(K key, V value) {
@@ -29,7 +35,7 @@ public V put(K key, V value) {
                 tab = initTable();
             //根据hash找到相应的索引位置
             //如果该位置上为空，则使用CAS向该位置插入一个节点
-            //这里给f赋值了
+            //注意这里给f和i赋值了
             else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
                 if (casTabAt(tab, i, null,
                              new Node<K,V>(hash, key, value, null)))
@@ -37,6 +43,7 @@ public V put(K key, V value) {
             }
             //MOVED说明该桶的首节点是 Forwarding 类型
             //Forwarding 类型说明正在扩容，但是该位置的数据已经完成迁移，需要协助扩容
+            //协助扩容完成之后重新循环
             else if ((fh = f.hash) == MOVED)
                 //协助扩容
                 tab = helpTransfer(tab, f);
@@ -85,8 +92,8 @@ public V put(K key, V value) {
                 }
                 //不等于0说明上面插入了新的节点
                 if (binCount != 0) {
-                    //红黑树的binCount = 2，只有链表的情况才有可能是条件成立
-                    //链表长度超过预制，
+                    //红黑树的binCount = 2
+                    //链表长度超过阈值，只有链表的情况才有可能是条件成立
                     if (binCount >= TREEIFY_THRESHOLD)
                         // 这个方法和 HashMap 中稍微有一点点不同，那就是它不是一定会进行红黑树转换，
                         // 如果当前数组的长度小于 64，那么会选择进行数组扩容，而不是转换为红黑树
@@ -110,9 +117,10 @@ private final Node<K,V>[] initTable() {
             if ((sc = sizeCtl) < 0)
                 //暂时放弃初始化，下一次循环在次重试
                 Thread.yield(); // lost initialization race; just spin
+            //进入这里可能不是第一次循环，可能其他线程已经完成了初始化
             else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
                 try {
-                    //可能其它线程已经完成了table的初始化
+                    //可能其它线程已经完成了table的初始化，需要再次判断
                     if ((tab = table) == null || tab.length == 0) {
                         // DEFAULT_CAPACITY 默认初始容量是 16
                         int n = (sc > 0) ? sc : DEFAULT_CAPACITY;
@@ -123,6 +131,7 @@ private final Node<K,V>[] initTable() {
                         sc = n - (n >>> 2);
                     }
                 } finally {
+                    //初始化结束之后，设置为阈值
                     sizeCtl = sc;
                 }
                 break;
@@ -184,8 +193,10 @@ private final void tryPresize(int size) {
                     try {
                         if (table == tab) {
                             @SuppressWarnings("unchecked")
+                            //next table 新的table
                             Node<K,V>[] nt = (Node<K,V>[])new Node<?,?>[n];
                             table = nt;
+                            //新的阈值 0.75n
                             sc = n - (n >>> 2);
                         }
                     } finally {
@@ -197,27 +208,68 @@ private final void tryPresize(int size) {
                 break;
             else if (tab == table) {
                 //返回一个 16 位长度的扩容校验标识？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+                //第16位为1
                 int rs = resizeStamp(n);
-                if (sc < 0) {//这里是干嘛的？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
-                    Node<K,V>[] nt;
+                if (sc < 0) {// sc = sizeCtl 有其它线程正在扩容
+                    Node<K,V>[] nt;\
+                    //RESIZE_STAMP_SHIFT=16,不带符号右移动16，取高16位，高16位为数据检验标识
+                    //(sc >>> RESIZE_STAMP_SHIFT) != rs 数据检验标识错误
+                    //sc == rs + 1 ？？？？？？？？？？？？？？？？？？？？？？？？
+
                     if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||
                         sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||
                         transferIndex <= 0)
                         break;
                     if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
                         //数据迁移
+                        //nt = nextTable
+                        //已经有其它线程开始扩容，所以nt不为null
+                        //表示迁移到已经存在的 nextTable
+                        //tranfer 内部不需要去初始化 nextTable
                         transfer(tab, nt);
                 }
+                //当前没有其它线程在扩容，当前线程是第一个开始扩容的线程
                 //将 sizeCtl 设置为 (rs << RESIZE_STAMP_SHIFT) + 2)
                 //这是一个比较大的负数，表示参与扩容的线程增加了？？？？？？？？？？？？？？？？？？？？？
+                //设置sc的高16位为rs，低16位为 2，表示当前只有一个线程正在工作
+                //rs的第16位为1，RESIZE_STAMP_SHIFT=16
+                //设置之后sc的最高位为1，所以sc<0
+                //因为初始化时设置sc=-1，而 -1(补码) = 1111 111 .... 1111 (32个1)，
+                //可能存在 (rs << RESIZE_STAMP_SHIFT) + k = -1 的情况
+                //所以从2开始， +2 表示 只有一个线程
                 else if (U.compareAndSwapInt(this, SIZECTL, sc,
                                              (rs << RESIZE_STAMP_SHIFT) + 2))
                     //数据迁移
+                    //传入的是null
+                    //表示当前线程是第一个开始扩容的线程，transfer 内部会初始化 nextTable
                     transfer(tab, null);
             }
         }
     }
 ```
+```java
+static final int resizeStamp(int n) {
+        //如果 n<2^31:
+        //  Integer.numberOfLeadingZeros(n) > 0
+        //如果 n=2^31
+        //  Integer.numberOfLeadingZeros(n) = 0
+        // (1 << (RESIZE_STAMP_BITS - 1) = 0000 0000 0000 0000 1000 0000 0000 0000
+        // 做与运算
+        //因为 n = 2^k 有且只有一位是1，
+        //Integer.numberOfLeadingZeros(n) 返回n最高非零位前面的0的个数，用这个很小的数来代表 n
+        //可以确保15位以下能够储存
+        return Integer.numberOfLeadingZeros(n) | (1 << (RESIZE_STAMP_BITS - 1));
+    }
+```
+resizeStamp 返回的是一个不超过16位的整数，且第16位为1，0~15位跟 table 的大小 n 有关
+当正在扩容是，resizeStamp 会被设置到 sc(sizeCtl) 的高16位，所以 sc 会成为一个负数
+    
+我们说过 resizeStamp(n) 返回的是对 n 的一个数据校验标识，占 16 位。而 RESIZE_STAMP_SHIFT 的值为 16，那么位运算后，整个表达式必然在右边空出 16 个零。
+也正如我们所说的，sizeCtl 的高 16 位为数据校验标识，低 16 为表示正在进行扩容的线程数量。
+
+(resizeStamp(n) << RESIZE_STAMP_SHIFT) + 2 表示当前只有一个线程正在工作，相对应的，如果 (sc - 2) == resizeStamp(n) << RESIZE_STAMP_SHIFT，说明当前线程就是最后一个还在扩容的线程，那么会将 finishing 标识为 true，并在下一次循环中退出扩容方法。
+
+
 
 helpTransfer 也会调用 transfer
 让当前线程去协助扩容
@@ -329,8 +381,11 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                 if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) {
                     //(resizeStamp(n) << RESIZE_STAMP_SHIFT) + 2 
                     //相等说明只有当前线程在迁移数据，不等说明还有其它线程
+                    //如果 (sc - 2) == resizeStamp(n) << RESIZE_STAMP_SHIFT，说明当前线程就是最后一个还在扩容的线程，
+                    //还有线程在扩容
                     if ((sc - 2) != resizeStamp(n) << RESIZE_STAMP_SHIFT)
                         return;
+                    //没有线程在扩容，设置为true
                     finishing = advance = true;
                     i = n; // recheck before commit
                 }

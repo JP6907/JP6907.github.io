@@ -26,7 +26,7 @@ date: 2019-09-26 09:45:58
 - [《volatile 的特殊规则和 long&&double 的非原子协定》](http://zhoujiapeng.top/java/java-special-variable)
 - [《深入理解Java虚拟机 之 Java内存区域》](http://zhoujiapeng.top/java/java-memory-area)
 - [《深入理解Java虚拟机 之 OutOfMemoryError 异常实战》](http://zhoujiapeng.top/java/java-oom-test)
-- 《深入理解Java虚拟机 之 垃圾收集算法》
+- [《深入理解Java虚拟机 之 垃圾收集算法》](http://zhoujiapeng.top/java/java-jvm-GC-alogrithm)
 - 《深入理解Java虚拟机 之 内存分配策略》
 
 
