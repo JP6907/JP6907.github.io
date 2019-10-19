@@ -220,7 +220,7 @@ Node(int hash, K key, V val, Node<K,V> next) {
         }
 ```
 Node 的 hash 被设置成了 MOVED，它的意思是标志当前的Hash表正处于扩容的状态，而且当前桶的数据已经迁移到了新的table。
-在 transfer 函数进行数据迁移的时候有这样的操作：
+在 transfer 函数里面，当 Hash 表中的某个桶的数据迁移结束之后，就会该桶头节点设置为 ForwardingNode：
 ```java
 ForwardingNode<K,V> fwd = new ForwardingNode<K,V>(nextTab);
 ...
@@ -231,37 +231,8 @@ setTabAt(tab, i, fwd);
 另外，ForwardingNode 里面还有一个属性 nextTable，它是对全局 nextTable 的引用，所有参与扩容的线程都会想将数据迁移到全局的 nextTable，扩容完成之后 nextTable 会被赋给全局 table，然后 nextTable 被置为 null。
 
 
-## 4.
-## 5.
-## 6.
-
-
-
-
-
-resizeStamp
-
-
-put
-putVal  initTable    helpTransfer  treeifyBin  addCount
-
-initTable
-treeifyBin  tryPresize
-tryPresize 扩容  resizeStamp
-resizeStamp
-transfer
-helpTransfer
-
-addCount  -> LongAdder
-remove replaceNode
-size
-sumCount
-get
-clear
-
-
-
-
+## 4. initTable()
+initTable 方法是一个初始化哈希表的操作，可能会有多个线程同时调用这个方法，但它同时只允许一个线程进行初始化操作。它的并发问题是通过对 sizeCtl 进行一个 CAS 操作来控制的。
 ```java
 private final Node<K,V>[] initTable() {
         Node<K,V>[] tab; int sc;
@@ -293,11 +264,16 @@ private final Node<K,V>[] initTable() {
         return tab;
     }
 ```
+该方法的核心思想就是，只允许一个线程对表进行初始化，如果不巧有其他线程进来了，那么会让其他线程交出 CPU 等待下次系统调度。这样，保证了表同时只会被一个线程初始化。sizeCtl 为 -1 的时候就表示有其它线程正在执行初始化操作。
 
 
-
-这个方法和 HashMap 中稍微有一点点不同，那就是它不是一定会进行红黑树转换，
-如果当前数组的长度小于 64，那么会选择进行数组扩容，而不是转换为红黑树
+## 5. treeifyBin()
+在 putVal 方法的最后，当判断插入节点之后数量超过阈值，就有可能触发扩容操作：
+```java
+if (binCount >= TREEIFY_THRESHOLD)
+    treeifyBin(tab, i);
+```
+treeifyBin 这个方法和 HashMap 中稍微有一点点不同，那就是它不是一定会进行红黑树转换，如果当前数组的长度小于 64，那么会选择进行数组扩容，而不是转换为红黑树。
 ```java
 private final void treeifyBin(Node<K,V>[] tab, int index) {
         Node<K,V> b; int n, sc;
@@ -329,15 +305,21 @@ private final void treeifyBin(Node<K,V>[] tab, int index) {
         }
     }
 ```
-
-扩容操作，扩容后数组容量为原来的 2 倍。
+treeifyBin 函数的逻辑比较简单，扩容是调用 tryPresize 函数，扩容后数组容量为原来的 2 倍。
 ```java
+//size为目标容量
 private final void tryPresize(int size) {
+        /**
+         * 1.计算新table的容量
+         */
         //取最近的 2 的 n 次方。
         int c = (size >= (MAXIMUM_CAPACITY >>> 1)) ? MAXIMUM_CAPACITY :
             tableSizeFor(size + (size >>> 1) + 1);
         int sc;
         while ((sc = sizeCtl) >= 0) {//可以执行扩容操作
+            /**
+             * 2. 初始化table
+             */
             Node<K,V>[] tab = table; int n;
             //如果未初始化，则初始化，和 initTable 函数差不多
             if (tab == null || (n = tab.length) == 0) {
@@ -360,19 +342,23 @@ private final void tryPresize(int size) {
             else if (c <= sc || n >= MAXIMUM_CAPACITY)
                 break;
             else if (tab == table) {
-                //返回一个 16 位长度的扩容校验标识？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
-                //第16位为1
+                //返回一个 16 位长度的扩容校验标识
+                //第16位为1，1~15位和table的长度有关
                 int rs = resizeStamp(n);
+                /**
+                 * 3.1 已经有其它线程正在扩容
+                 */
                 if (sc < 0) {// sc = sizeCtl 有其它线程正在扩容
                     Node<K,V>[] nt;\
-                    //RESIZE_STAMP_SHIFT=16,不带符号右移动16，取高16位，高16位为数据检验标识
-                    //(sc >>> RESIZE_STAMP_SHIFT) != rs 数据检验标识错误
-                    //sc == rs + 1 ？？？？？？？？？？？？？？？？？？？？？？？？
-
+                    //RESIZE_STAMP_SHIFT=16,不带符号右移动16，取高16位，高16位为扩容检验标识
+                    //(sc >>> RESIZE_STAMP_SHIFT) != rs 扩容检验标识错误
+                    //sc == rs + 1 没有线程正在扩容，前面判断 sc<0，所以表示有线程正在初始化table
+                    //sc == rs + MAX_RESIZERS 当前参与扩容的线程数量已经达到上限
                     if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||
                         sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||
                         transferIndex <= 0)
                         break;
+                    //sc+1，当前线程加入扩容
                     if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
                         //数据迁移
                         //nt = nextTable
@@ -381,17 +367,14 @@ private final void tryPresize(int size) {
                         //tranfer 内部不需要去初始化 nextTable
                         transfer(tab, nt);
                 }
+                /**
+                 * 3.2 没有其它线程正在扩容
+                 */
                 //当前没有其它线程在扩容，当前线程是第一个开始扩容的线程
                 //将 sizeCtl 设置为 (rs << RESIZE_STAMP_SHIFT) + 2)
-                //这是一个比较大的负数，表示参与扩容的线程增加了？？？？？？？？？？？？？？？？？？？？？
-                //设置sc的高16位为rs，低16位为 2，表示当前只有一个线程正在工作
-                //rs的第16位为1，RESIZE_STAMP_SHIFT=16
-                //设置之后sc的最高位为1，所以sc<0
-                //因为初始化时设置sc=-1，而 -1(补码) = 1111 111 .... 1111 (32个1)，
-                //可能存在 (rs << RESIZE_STAMP_SHIFT) + k = -1 的情况
-                //所以从2开始， +2 表示 只有一个线程
+                // 参与扩容的线程数量是从+1开始，+2表示只有一个线程参与扩容，也就是当前线程
                 else if (U.compareAndSwapInt(this, SIZECTL, sc,
-                                             (rs << RESIZE_STAMP_SHIFT) + 2))
+                                               (rs << RESIZE_STAMP_SHIFT) + 2))
                     //数据迁移
                     //传入的是null
                     //表示当前线程是第一个开始扩容的线程，transfer 内部会初始化 nextTable
@@ -400,33 +383,39 @@ private final void tryPresize(int size) {
         }
     }
 ```
+tryPresize 的思路大概为：
+- 1.计算新table的容量
+- 2.如果table还未初始化，则初始化它
+- 3.通过sizeCtl判断是否有其它线程正在扩容
+    - 3.1 有其它线程正在扩容，此时nextTable不为null，当前线程加入扩容，协助将数据迁移到nextTable
+    - 3.2 没有其它线程正在扩容，当前线程第一个开始扩容，此时nextTable为null，当前线程会在transfer方法里面初始化nextTable
+
+注意，当线程加入扩容的时候，需要验证扩容检验标识，每一次扩容，table的每一个新容量都会对应一个独一无二的检验标识，这个标识会被保存在 sizeCtl 里面，这能够确保所有线程都是在协助table扩容到相同大小。
+数据检验标识可以通过 resizeStamp 函数生成，下面我们看一下这个函数。
+
+## 6. resizeStamp(int n)
 ```java
 static final int resizeStamp(int n) {
-        //如果 n<2^31:
-        //  Integer.numberOfLeadingZeros(n) > 0
-        //如果 n=2^31
-        //  Integer.numberOfLeadingZeros(n) = 0
-        // (1 << (RESIZE_STAMP_BITS - 1) = 0000 0000 0000 0000 1000 0000 0000 0000
-        // 做与运算
-        //因为 n = 2^k 有且只有一位是1，
-        //Integer.numberOfLeadingZeros(n) 返回n最高非零位前面的0的个数，用这个很小的数来代表 n
-        //可以确保15位以下能够储存
-        return Integer.numberOfLeadingZeros(n) | (1 << (RESIZE_STAMP_BITS - 1));
-    }
+    return Integer.numberOfLeadingZeros(n) | (1 << (RESIZE_STAMP_BITS - 1));
+}
 ```
-resizeStamp 返回的是一个不超过16位的整数，且第16位为1，0~15位跟 table 的大小 n 有关
-当正在扩容是，resizeStamp 会被设置到 sc(sizeCtl) 的高16位，所以 sc 会成为一个负数
-    
-我们说过 resizeStamp(n) 返回的是对 n 的一个数据校验标识，占 16 位。而 RESIZE_STAMP_SHIFT 的值为 16，那么位运算后，整个表达式必然在右边空出 16 个零。
-也正如我们所说的，sizeCtl 的高 16 位为数据校验标识，低 16 为表示正在进行扩容的线程数量。
+这个函数很短，将 Integer.numberOfLeadingZeros(n) 和 (1 << (RESIZE_STAMP_BITS - 1)) 做与运算。
+Integer.numberOfLeadingZeros(n) 函数的作用是返回无符号整型n的最高非零位前面的0的个数，包括符号位在内。
+举例来说：
+n = 1 = 0000 0000 .... 0001, 前面有31个0，所以结果是31
+n = 8 = 0000 0000 .... 1000, 前面有28个0，所以结果是28
+需要注意的是，table的容量，也就是n，总是为2的k次幂，n=2^k，也就是 n 的二进制表示只有一位是1，其它位都是0，所以 n 和 Integer.numberOfLeadingZeros(n) 是一一对应的，用这个很小的数来代表 n，可以确保15位以下能够储存。
+再看一下后面部分，这里的 RESIZE_STAMP_BITS =16，所以 (1 << (RESIZE_STAMP_BITS - 1)) = 1000 0000 0000 0000，用这个数和 Integer.numberOfLeadingZeros(n) 做与运算，resizeStamp 最终返回的是一个16位的整数，并且最高位为1，这个数对每次扩容都是不一样的，所以可以作为每次扩容时的数据检验标识。而这里为什么要将第16位置为1呢？
+我们知道，当 sizeCtl < -1 的时候，代表有多个线程正在执行扩容操作，此时 sizeCtl 的高16位会作为扩容检验标识，低16位则为 参与扩容的线程数量-1。回到 tryPresize 函数部分，可以看到，在代码3.2 那里，第一个开始扩容的线程会调用 resizeStamp 生成扩容检验标识 rs，然后设置 sizeCtl：
+```java
+U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2)
+```
+RESIZE_STAMP_SHIFT=16，此时sc的高16位为扩容检验标识rs，低16位为2，并且此时sc的最高位是1，也就是sc是一个负数，低16位表示参与扩容的线程数量+1.如果是从 1 开始，则有可能导致sc=-1，而sc=-1已经有特殊含义，表示正在初始化table，因此低16位是从2开始的。这也就解释了为什么当 sc<-1 时，表示当前正在执行扩容操作。
 
-(resizeStamp(n) << RESIZE_STAMP_SHIFT) + 2 表示当前只有一个线程正在工作，相对应的，如果 (sc - 2) == resizeStamp(n) << RESIZE_STAMP_SHIFT，说明当前线程就是最后一个还在扩容的线程，那么会将 finishing 标识为 true，并在下一次循环中退出扩容方法。
 
-加上这个数据检验标识能够确保扩容的时候所有线程都是在对相同大小的table进行操作。
-
-
-helpTransfer 也会调用 transfer
-让当前线程去协助扩容
+## 6. helpTransfer()
+在 tryPresize 函数里面最终会调用 transfer 函数去执行真正的数据迁移操作，transfer 函数比较长，留着[下一篇文章]()介绍，我们先来看一下 helpTransfer 函数，这个函数最终也会调用 transfer 函数。
+helpTransfer 从字面上理解就是帮助转移，也就时协助扩容：
 ```java
 final Node<K,V>[] helpTransfer(Node<K,V>[] tab, Node<K,V> f) {
         Node<K,V>[] nextTab; int sc;
@@ -435,14 +424,13 @@ final Node<K,V>[] helpTransfer(Node<K,V>[] tab, Node<K,V> f) {
         //nextTable是新table的引用
         if (tab != null && (f instanceof ForwardingNode) &&
             (nextTab = ((ForwardingNode<K,V>)f).nextTable) != null) {
-            //返回一个 16 位长度的扩容校验标识
+            //扩容校验标识
             int rs = resizeStamp(tab.length);
             while (nextTab == nextTable && table == tab &&
                    (sc = sizeCtl) < 0) {
-                //sizeCtl 如果处于扩容状态的话
-                //前 16 位是数据校验标识，后 16 位是当前正在扩容的线程总数
-                //这里判断校验标识是否相等，如果校验符不等或者扩容操作已经完成了，直接退出循环，不用协助它们扩容了
-                //？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+                //(sc >>> RESIZE_STAMP_SHIFT) != rs 扩容检验标识错误
+                //sc == rs + 1 没有线程正在扩容，前面判断 sc<0，所以表示有线程正在初始化table
+                //sc == rs + MAX_RESIZERS 当前参与扩容的线程数量已经达到上限
                 if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||
                     sc == rs + MAX_RESIZERS || transferIndex <= 0)
                     break;
@@ -461,12 +449,44 @@ final Node<K,V>[] helpTransfer(Node<K,V>[] tab, Node<K,V> f) {
 
 
 
-数据迁移：transfer
+
+
+resizeStamp
+
+
+put
+putVal  initTable    helpTransfer  treeifyBin  addCount
+
+initTable
+treeifyBin  tryPresize
+tryPresize 扩容  resizeStamp
+resizeStamp
+transfer
+helpTransfer
+
+addCount  -> LongAdder
+remove replaceNode
+size
+sumCount
+get
+clear
+
+
+
+
+
+
+
+接着上一篇文章，我们继续分析 ConcurrentHashMap
+
+
+
+真正执行数据迁移的是 transfer 函数，transfer 函数非常的长：
 ```java
 private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
         /**
          * 第一部分
-         * 完成单个线程能处理的最少桶结点个数的计算和一些属性的初始化操作。
+         * 计算单个线程能处理的最少桶结点个数和一些属性的初始化操作。
          */
         int n = tab.length, stride;
         //计算单个线程允许处理的最少table桶首节点个数，不能小于 16
@@ -501,21 +521,30 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
         for (int i = 0, bound = 0;;) {
             Node<K,V> f; int fh;
 
+            /**
+             * 2.1 计算当前线程当前允许操作的桶索引区间
+             */
             //while 循环计算负责迁移的桶的区间
             // advance 为 true 表示可以进行下一个位置的迁移了
             // 简单理解结局：i 指向了 transferIndex，bound 指向了 transferIndex-stride
             while (advance) {
                 int nextIndex, nextBound;
+                /**
+                 * 2.1.1 i还在区间内
+                 */
                 //--i，向下一个位置迁移
                 //移动后判断是否超出边界
                 if (--i >= bound || finishing)
-                    //暂时置为false，当前节点迁移结束才会变成true
+                    //还在区间内，暂时置为false，当前节点迁移结束才会变成true
                     advance = false;
                 //transferIndex <= 0 说明已经没有需要迁移的桶了
                 else if ((nextIndex = transferIndex) <= 0) {
                     i = -1;
                     advance = false;
                 }
+                /**
+                 * 2.1.2 更新操作区间
+                 */
                 //更新 transferIndex
                 //为当前线程分配任务，处理的桶结点区间为（nextBound,nextIndex）
                 else if (U.compareAndSwapInt
@@ -528,10 +557,14 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                     advance = false;
                 }
             }
-            //当前线程的所有任务完成
+            /**
+             * 2.2 当前线程的所有任务完成
+             */
             if (i < 0 || i >= n || i + n >= nextn) {
                 int sc;
-                //如果整张表已经完成迁移
+                /**
+                 * 2.2.1 如果整张表已经完成迁移，更新 table 和 sizeCtl
+                 */
                 if (finishing) {
                     //清除缓存
                     nextTable = null;
@@ -542,6 +575,9 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                 }
                 //设置sizeCtl，当前参与迁移的线程数量-1
                 if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) {
+                    /**
+                     * 2.2.2 其它线程还在扩容，只更新 sizeCtl 标志
+                     */
                     //(resizeStamp(n) << RESIZE_STAMP_SHIFT) + 2 
                     //相等说明只有当前线程在迁移数据，不等说明还有其它线程
                     //如果 (sc - 2) == resizeStamp(n) << RESIZE_STAMP_SHIFT，说明当前线程就是最后一个还在扩容的线程，
@@ -553,27 +589,35 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                     i = n; // recheck before commit
                 }
             }
-            //待迁移桶为空，那么在此位置 CAS 添加 ForwardingNode 结点标识该桶已经被处理过了
+            /**
+             * 第三部分：桶处理过程
+             */
+            /**
+             * 3.1 待迁移桶为空，那么在此位置 CAS 添加 ForwardingNode 结点标识该桶已经被处理过了
+             */
             else if ((f = tabAt(tab, i)) == null)
                 advance = casTabAt(tab, i, null, fwd);
-            //如果扫描到 ForwardingNode，说明此桶已经被处理过了，跳过即可
+            /**
+             * 3.2 如果扫描到 ForwardingNode，说明此桶已经被处理过了，跳过即可
+             */
             else if ((fh = f.hash) == MOVED)
                 advance = true; // already processed
-            else {//进行实际的迁移节点操作
+            /**
+             * 3.3 进行实际的迁移节点操作
+             */
+            else {
                 //加锁
                 //f为首节点
                 synchronized (f) {
                     if (tabAt(tab, i) == f) {
                         Node<K,V> ln, hn;
-                        // 下面这一块和 Java7 中的 ConcurrentHashMap 迁移是差不多的，
-                        // 需要将链表一分为二，
+                        // 将原链表一分为二，插入到新的table
                         // 找到原链表中的 lastRun，然后 lastRun 及其之后的节点是一起进行迁移的
                         // lastRun 之前的节点需要进行克隆，然后分到两个链表中
                         if (fh >= 0) {//链表的迁移操作
-                            //n只有一位是1
-                            int runBit = fh & n;//这东西是什么？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+                            //n=2^k 只有一位是1
+                            int runBit = fh & n;//0或1，用来帮助将原链表拆分成两条子链表
                             Node<K,V> lastRun = f;
-                            //整个 for 循环为了找到整个桶中最后连续的 fh & n 不变的结点？？？？？？？？？？？？？？？？？？？？
                             //整个for循环是为了找到最后一段连续节点 p.hash & n 都相同的节点
                             for (Node<K,V> p = f.next; p != null; p = p.next) {
                                 int b = p.hash & n;
@@ -592,12 +636,8 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
                                 hn = lastRun;
                                 ln = null;
                             }
-                            //？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
-                            //如果fh&n不变的链表的runbit都是0，则nextTab[i]内元素ln前逆序，ln及其之后顺序
-                            //否则，nextTab[i+n]内元素全部相对原table逆序
-                            //这是通过一个节点一个节点的往nextTab添加
+                            //将lastRun前面的节点插入到子链表中
                             //lastRun后面的节点，已经连接到 ln 或者 hn 上了
-                            //拷贝 lastRun前面的节点
                             for (Node<K,V> p = f; p != lastRun; p = p.next) {
                                 int ph = p.hash; K pk = p.key; V pv = p.val;
                                 if ((ph & n) == 0)
@@ -661,6 +701,290 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
         }
     }
 ```
+
+transfer 的整体过程为：
+- 1.计算单个线程能处理的最少桶结点个数和一些属性的初始化操作。
+- 2.并发扩容控制的核心。
+    - 2.1 计算当前线程当前允许操作的桶索引区间
+        - 2.1.1 i还在区间内，索引向下一个位置移动
+        - 2.1.2 超出区间，更新操作区间
+    - 2.2 如果当前线程的所有任务完成
+        - 2.2.1 如果整张表已经完成迁移，更新 table 和 sizeCtl
+        - 2.2.2 其它线程还在扩容，只更新 sizeCtl 标志
+- 3.桶处理过程
+    - 3.1 待迁移桶为空，那么在此位置 CAS 添加 ForwardingNode 结点标识该桶已经被处理过了
+    - 3.2 如果扫描到 ForwardingNode，说明此桶已经被处理过了，跳过即可
+    - 3.3 加锁，进行实际的迁移节点操作，分为链表和红黑树两种情况，迁移结束后设置该位置为 ForwardingNode，标识该桶已经被处理
+
+上面的代码比较长，我们分段来分析。
+第一部分是计算单个线程能处理的最少桶结点个数(步长stribe)和一些属性的初始化操作。
+```java
+/**
+         * 第一部分
+         * 计算单个线程能处理的最少桶结点个数和一些属性的初始化操作。
+         */
+        int n = tab.length, stride;
+        //计算单个线程允许处理的最少table桶首节点个数，不能小于 16
+        if ((stride = (NCPU > 1) ? (n >>> 3) / NCPU : n) < MIN_TRANSFER_STRIDE)
+            stride = MIN_TRANSFER_STRIDE; // subdivide range
+        //刚开始扩容，初始化nextTab
+        if (nextTab == null) {            // initiating
+            try {
+                @SuppressWarnings("unchecked")
+                Node<K,V>[] nt = (Node<K,V>[])new Node<?,?>[n << 1];
+                nextTab = nt;
+            } catch (Throwable ex) {      // try to cope with OOME
+                sizeCtl = Integer.MAX_VALUE;
+                return;
+            }
+            nextTable = nextTab;
+            //transferIndex 指向最后一个桶，方便从后向前遍历 
+            transferIndex = n;
+        }
+        int nextn = nextTab.length;
+        //定义 ForwardingNode 用于标记迁移完成的桶
+        ForwardingNode<K,V> fwd = new ForwardingNode<K,V>(nextTab);
+```
+这里需要注意的是，transferIndex 会在 nextTab 初始化的时候被设置 transferIndex = n，指向旧 table 的最后一个位置。transferIndex 是一个全局的变量，桶迁移过程是从最后一个位置往前遍历的，transferIndex 指向最新完成迁移(或者已经被分配给某个线程，将被处理)的桶位置。
+
+下面看一下第二部分的代码，首先看2.1，计算操作区间：
+```java
+        transferIndex = n;
+        ......
+/**
+             * 2.1 计算当前线程当前允许操作的桶索引区间
+             */
+            //while 循环计算负责迁移的桶的区间
+            // advance 为 true 表示可以进行下一个位置的迁移了
+            // 简单理解结局：i 指向了 transferIndex，bound 指向了 transferIndex-stride
+            while (advance) {
+                int nextIndex, nextBound;
+                /**
+                 * 2.1.1 i还在区间内
+                 */
+                //--i，向下一个位置迁移
+                //移动后判断是否超出边界
+                if (--i >= bound || finishing)
+                    //还在区间内，暂时置为false，当前节点迁移结束才会变成true
+                    advance = false;
+                //transferIndex <= 0 说明已经没有需要迁移的桶了
+                else if ((nextIndex = transferIndex) <= 0) {
+                    i = -1;
+                    advance = false;
+                }
+                /**
+                 * 2.1.2 更新操作区间
+                 */
+                //更新 transferIndex
+                //为当前线程分配任务，处理的桶结点区间为（nextBound,nextIndex）
+                else if (U.compareAndSwapInt
+                         (this, TRANSFERINDEX, nextIndex,
+                          nextBound = (nextIndex > stride ?
+                                       nextIndex - stride : 0))) {
+                    //(bound,i]
+                    bound = nextBound;
+                    i = nextIndex - 1;
+                    advance = false;
+                }
+            }
+```
+
+在进行实际的数据迁移之前，要先计算当前线程允许操作的桶索引区间，单个线程允许处理的最少table桶首节点个数，不能小于 16，这个数量称为 stribe，步长。i 作为操作的桶索引，每一次允许操作的桶索引区间为（nextBound,nextIndex），其中 nextBound = nextIndex - stride。nextIndex 一开始等于 transferIndex，每个线程领取一个长度为 stribe 的区间，然后将 transferIndex 设置为 transferIndex - stribe：
+```java
+//这里设置了nextIndex
+else if ((nextIndex = transferIndex) <= 0) {
+                    i = -1;
+                    advance = false;
+                }
+//这里使用 UnSafe 设置 全局 transferIndex 为 transferIndex - stribe
+else if (U.compareAndSwapInt
+                         (this, TRANSFERINDEX, nextIndex,
+                          nextBound = (nextIndex > stride ?
+                                       nextIndex - stride : 0))) {
+                    //这里确定了操作区间为（bound,nextIndexs）
+                    bound = nextBound;
+                    i = nextIndex - 1;
+                    advance = false;
+                }
+```
+举例来说，原table的长度 n = 128，stribe = 16
+线程1首先进入扩容，设置 transferIndex = 128，transferIndex > 0，则领取操作区间 (112,128],然后设置 transferIndex 为 112
+接着线程2进入协助扩容，此时 transferIndex = 112 > 0,领取操作区间(96,112],然后设置 transferIndex 为 96
+接着线程1完成(112,128]区间的数据迁移，再次尝试领取操作区间，此时 transferIndex = 96 > 0 ，领取区间 (80,96]，然后设置 transferIndex 为 80
+....
+直至 transferIndex <= 0
+通过这种方式，就能够实现多个线程同时迁移不同的区间，做到并行化。
+
+接下来看代码2.2，当线程完成当前区间任务，且领取不到新的区间时，此时有两种情况：
+- 1.所有线程已经完成了所有区间的数据迁移
+- 2.还有其它线程正在迁移某个区间
+
+是否还存在其它线程正在迁移是通过 sizeCtl 来判断的
+sizeCtl = resizeStamp(n) << RESIZE_STAMP_SHIFT + 2 表示只有一个线程在参与迁移，因此如果 (sc - 2) != resizeStamp(n) << RESIZE_STAMP_SHIFT 则说明还存在其它线程
+```java
+ /**
+             * 2.2 当前线程的所有任务完成
+             */
+            if (i < 0 || i >= n || i + n >= nextn) {
+                int sc;
+                /**
+                 * 2.2.1 如果整张表已经完成迁移，更新 table 和 sizeCtl
+                 */
+                if (finishing) {
+                    //清除缓存
+                    nextTable = null;
+                    table = nextTab;
+                    //修改sizeCtl
+                    sizeCtl = (n << 1) - (n >>> 1);
+                    return;
+                }
+                //设置sizeCtl，当前参与迁移的线程数量-1
+                if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) {
+                    /**
+                     * 2.2.2 其它线程还在扩容，只更新 sizeCtl 标志
+                     */
+                    //(resizeStamp(n) << RESIZE_STAMP_SHIFT) + 2 
+                    //相等说明只有当前线程在迁移数据，不等说明还有其它线程
+                    //如果 (sc - 2) == resizeStamp(n) << RESIZE_STAMP_SHIFT，说明当前线程就是最后一个还在扩容的线程，
+                    //还有线程在扩容
+                    if ((sc - 2) != resizeStamp(n) << RESIZE_STAMP_SHIFT)
+                        return;
+                    //没有线程在扩容，设置为true
+                    finishing = advance = true;
+                    i = n; // recheck before commit
+                }
+            }
+```
+
+接下来看一下第三部分具体的桶处理过程，3.1和3.2比较简单，我们看一下3.3实际的迁移节点操作：
+```java
+/**
+             * 3.3 进行实际的迁移节点操作
+             */
+            else {
+                //加锁
+                //f为首节点
+                synchronized (f) {
+                    if (tabAt(tab, i) == f) {
+                        Node<K,V> ln, hn;
+                        // 将原链表一分为二，插入到新的table
+                        // 找到原链表中的 lastRun，然后 lastRun 及其之后的节点是一起进行迁移的
+                        // lastRun 之前的节点需要进行克隆，然后分到两个链表中
+                        if (fh >= 0) {//链表的迁移操作
+                            //n=2^k 只有一位是1
+                            int runBit = fh & n;//0或1，用来帮助将原链表拆分成两条子链表
+                            Node<K,V> lastRun = f;
+                            //整个for循环是为了找到最后一段连续节点 p.hash & n 都相同的节点
+                            for (Node<K,V> p = f.next; p != null; p = p.next) {
+                                int b = p.hash & n;
+                                //是否与前驱节点相同
+                                if (b != runBit) {
+                                    runBit = b;
+                                    lastRun = p;
+                                }
+                            }
+                            //lastRun连接着后面其余节点的连接
+                            if (runBit == 0) {
+                                ln = lastRun;
+                                hn = null;
+                            }
+                            else {
+                                hn = lastRun;
+                                ln = null;
+                            }
+                            //将lastRun前面的节点插入到子链表中
+                            //lastRun后面的节点，已经连接到 ln 或者 hn 上了
+                            for (Node<K,V> p = f; p != lastRun; p = p.next) {
+                                int ph = p.hash; K pk = p.key; V pv = p.val;
+                                if ((ph & n) == 0)
+                                    //前插法
+                                    ln = new Node<K,V>(ph, pk, pv, ln);
+                                else
+                                    hn = new Node<K,V>(ph, pk, pv, hn);
+                            }
+                            //把两条链表整体迁移到nextTab中
+                            // 其中的一个链表放在新数组的位置 i
+                            setTabAt(nextTab, i, ln);
+                            // 另一个链表放在新数组的位置 i+n
+                            setTabAt(nextTab, i + n, hn);
+                            // 将原数组该位置处设置为 fwd，代表该位置已经处理完毕，
+                            // 其他线程一旦看到该位置的 hash 值为 MOVED，就不会进行迁移了
+                            setTabAt(tab, i, fwd);
+                            //迁移完成之后，设置为true，代表该位置已经迁移完毕，允许向下一个节点移动
+                            advance = true;
+                        }
+                        //红黑树的复制算法
+                        else if (f instanceof TreeBin) {
+                            ...
+                    }
+                }
+            }
+        }
+```
+看一下链表的情况，跟 HashMap 的扩容类似，这里也是将原链表拆分成两条子链表然后插入到新的链表去，只是这里的实际操作有点不一样
+首先需要找到一个切分点
+runBit = fh & n，n=2^k 只有一位是1，做与操作，所以 runBit 为0或1，fh 是一个 hash 值，所以 runBit 的值应该是一个随机值0或1
+接下遍历整个链表:
+```java
+    Node<K,V> lastRun = f;
+        //整个for循环是为了找到最后一段连续节点 p.hash & n 都相同的节点
+        for (Node<K,V> p = f.next; p != null; p = p.next) {
+        int b = p.hash & n;
+            //是否与前驱节点相同
+        if (b != runBit) {
+                runBit = b;
+                lastRun = p;
+            }
+        }
+```
+这里整个for循环是为了找到最后一段连续节点 p.hash & n 都相同的节点
+举例来说，runBit = 1，链表上的每个节点依次取 p.hash & n 之后为：0101011110001110101111，最后一段连续的是最后的 1111 
+最终结果是 runBit = 1，lastRun 值向倒数第4个1的位置，也就是说，lastRun后面的所有节点的 p.hash & n 都为1.
+具体为什么要这么做需要看到后面才能理解。
+紧接着：
+```java
+    //lastRun连接着后面其余节点的连接
+        if (runBit == 0) {
+            ln = lastRun;
+            hn = null;
+        }
+        else {
+            hn = lastRun;
+            ln = null;
+        }
+```
+这时最后四个节点被连接到了 hn 链表上去
+```java
+//将lastRun前面的节点插入到子链表中
+        //lastRun后面的节点，已经连接到 ln 或者 hn 上了
+        for (Node<K,V> p = f; p != lastRun; p = p.next) {
+            int ph = p.hash; K pk = p.key; V pv = p.val;
+            if ((ph & n) == 0)
+                //前插法
+                ln = new Node<K,V>(ph, pk, pv, ln);
+            else
+                hn = new Node<K,V>(ph, pk, pv, hn);
+        }
+```
+这里从头遍历 lastRun 前面的节点，如果 (ph & n) == 0，则插入到 ln 链表，否则插入到 hn 链表，这里插入都是使用头插法。
+到这里我们可以知道，原链表 lastRun 前面的节点中 (ph & n) == 0 的节点都被分配到 ln，不等于0的节点都被分配到 hn，而 lastRun 后面的节点已经被提前加到 hn 上面了，并且它们都是  (ph & n) == 1，不需要再进行多余的判断了。所以前面先寻找 lastRun，将 lastRun 后面的节点一次性加入到 hn，能够省去后面很多的判断和链表操作。
+不得不感叹，源码作者的设计真的是非常的细致！
+
+最后，将 ln 和 hn 放到新 table 的 i 位置和 i+n 位置，然后把原 table 的该位置设置为 ForwardingNode，表示该位置已经完成数据迁移。
+```java
+//把两条链表整体迁移到nextTab中
+// 其中的一个链表放在新数组的位置 i
+setTabAt(nextTab, i, ln);
+// 另一个链表放在新数组的位置 i+n
+setTabAt(nextTab, i + n, hn);
+// 将原数组该位置处设置为 fwd，代表该位置已经处理完毕，
+// 其他线程一旦看到该位置的 hash 值为 MOVED，就不会进行迁移了
+setTabAt(tab, i, fwd);
+//迁移完成之后，设置为true，代表该位置已经迁移完毕，允许向下一个节点移动
+advance = true;
+```
+
+
 
 当我们成功的添加完成一个结点，最后是需要判断添加操作后是否会导致哈希表达到它的阈值，并针对不同情况决定是否需要进行扩容，还有 CAS 式更新哈希表实际存储的键值对数量。这些操作都封装在 addCount 这个方法中，当然 putVal 方法的最后必然会调用该方法进行处理。下面我们看看该方法的具体实现，该方法主要做两个事情。一是更新 baseCount，二是判断是否需要扩容。
 
