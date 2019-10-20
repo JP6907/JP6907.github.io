@@ -28,7 +28,7 @@ date: 2019-09-26 09:45:58
 - [《深入理解Java虚拟机 之 OutOfMemoryError 异常实战》](http://zhoujiapeng.top/java/java-oom-test)
 - [《深入理解Java虚拟机 之 垃圾收集算法》](http://zhoujiapeng.top/java/java-jvm-GC-alogrithm)
 - [《深入理解Java虚拟机 之 内存分配与回收策略》](http://zhoujiapeng.top/java/java-jvm-memory-allocate-and-collection-policy)
-- 《深入理解Java虚拟机 之 类文件结构》
+- [《深入理解Java虚拟机 之 类文件结构》](http://zhoujiapeng.top/java/java-jvm-class-file-struct)
 
 
 #### 参考资料
