@@ -38,9 +38,10 @@ date: 2019-09-26 09:45:58
 ## JDK1.8
 #### 笔记
 
-HashMap
+Java 基础
 - [《深入理解 HashMap(一)》](http://zhoujiapeng.top/java/java-HashMap)
 - [《深入理解 HashMap(二)》](http://zhoujiapeng.top/java/java-HashMap2)
+- [《Java Annotation》](http://zhoujiapeng.top/java/java-annotation)
 
 
 并发基础
