@@ -1,7 +1,7 @@
 ---
 title: 深入理解Java虚拟机 之 内存分配与回收策略
-catalog: true
 subtitle: 内存分配与回收策略
+catalog: true
 header-img: /img/article_header/article_header.png
 tags:
   - java
@@ -9,7 +9,9 @@ tags:
   - jvm
 categories:
   - java
+date: 2019-10-20 14:30:03
 ---
+
 
 # 内存分配与回收策略
 &emsp;Java技术体系中所提倡的自动内存管理最终可以归结于为了自动化的解决两个问题：**给对象分配内存**和**回收分配给对象的内存**。
