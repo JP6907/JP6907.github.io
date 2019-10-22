@@ -30,6 +30,7 @@ date: 2019-09-26 09:45:58
 - [《深入理解Java虚拟机 之 内存分配与回收策略》](http://zhoujiapeng.top/java/java-jvm-memory-allocate-and-collection-policy)
 - [《深入理解Java虚拟机 之 类文件结构》](http://zhoujiapeng.top/java/java-jvm-class-file-struct)
 - [《深入理解Java虚拟机 之 字节码指令》](http://zhoujiapeng.top/java/java-jvm-bytecode)
+- [《深入理解Java虚拟机 之 虚拟机类加载机制》](http://zhoujiapeng.top/java/java-jvm-classLoader)
 
 
 #### 参考资料
@@ -89,4 +90,5 @@ Java 基础
 --- 
 
 ## 面试
+- https://github.com/Snailclimb/JavaGuide
 - https://www.cnblogs.com/aspirant/category/548388.html

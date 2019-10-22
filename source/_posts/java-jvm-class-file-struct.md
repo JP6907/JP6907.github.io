@@ -185,9 +185,9 @@ line 3: 0
 
 6. ConstantValue属性
 
-&emsp;ConstantValue属性的作用是**通知虚拟机自动为静态变量赋值**。只有被**static**关键字修饰的变量（类变量）才可以使用这项属性。类似“int x=123”和“static int x=123”这样的变量定义在Java程序中是非常常见的事情，但虚拟机对这两种变量赋值的方式和时刻都有所不同。对于非static类型的变量（也就是实例变量）的赋值是在实例构造器＜init＞方法中进行的；而对于类变量，则有两种方式可以选择：在类构造器＜clinit＞方法中或者使用ConstantValue属性。目前Sun Javac编译器的选择是：如果同时使用final和static来修饰一个变量（按照习惯，这里称“常量”更贴切），并且这个变量的数据类型是基本类型或者java.lang.String的话，就生成ConstantValue属性来进行初始化，如果这个变量没有被**final**修饰，或者并非基本类型及字符串，则将会选择在＜clinit＞方法中进行初始化。
+&emsp;ConstantValue属性的作用是**通知虚拟机自动为静态变量赋值**。只有被**static**关键字修饰的变量（类变量）才可以使用这项属性。类似“int x=123”和“static int x=123”这样的变量定义在Java程序中是非常常见的事情，但虚拟机对这两种变量赋值的方式和时刻都有所不同。对于非static类型的变量（也就是实例变量）的赋值是在实例构造器＜init＞方法中进行的；而对于类变量，则有两种方式可以选择：在类构造器＜clinit＞方法中或者使用ConstantValue属性。目前Sun Javac编译器的选择是：如果同时使用**final和static**来修饰一个变量（按照习惯，这里称“常量”更贴切），并且这个变量的数据类型是基本类型或者java.lang.String的话，就生成ConstantValue属性来进行初始化，如果这个变量没有被**final**修饰，或者并非基本类型及字符串，则将会选择在＜clinit＞方法中进行初始化。
 
-&emsp;虽然有final关键字才更符合“ConstantValue”的语义，但虚拟机规范中并没有强制要求字段必须设置了ACC_FINAL标志，只要求了有ConstantValue属性的字段必须设置ACC_STATIC标志而已，对final关键字的要求是Javac编译器自己加入的限制。而对ConstantValue的属性值只能限于基本类型和String。
+&emsp;虽然有**final**关键字才更符合“ConstantValue”的语义，但虚拟机规范中并没有强制要求字段必须设置了ACC_FINAL标志，只要求了有ConstantValue属性的字段必须设置ACC_STATIC标志而已，对final关键字的要求是Javac编译器自己加入的限制。而对ConstantValue的属性值只能限于基本类型和String。
 ![ConstantValue属性表结构](https://github.com/JP6907/Pic/raw/master/java/class/ConstantValue.png)
 
 
@@ -211,6 +211,7 @@ line 3: 0
 9. StackMapTable属性
 
 &emsp;这个属性会在虚拟机类加载的字节码验证阶段被新类型检查验证器（Type Checker）使用（见7.3.2节），目的在于代替以前比较消耗性能的基于数据流分析的类型推导验证器。
+&emsp;具体来说，在类加载的验证阶段，由于数据流验证的高复杂性，虚拟机设计团队为了避免过多的时间消耗在字节码验证阶段，在JDK1.6之后的 Javac编译器和 Java 虚拟机中进行了一项优化，给方法体的 Code 属性的属性表中增加了一项名为"StackMapTable"的属性，这项属性描述了方法体中所有基本块(Basic Block，按照控制流拆分的代码块)开始时本地变量表和操作数栈应有的状态，在字节码验证期间，就不需要根据程序推导这些状态的合法性，只需要检查 StackMapTable 属性中的记录是否合法即可，这样将字节码验证的类型推导转变为类型检查从而节省一些时间。
 ![StackMapTable属性表结构](https://github.com/JP6907/Pic/raw/master/java/class/StackMapTable.png)
 
 
