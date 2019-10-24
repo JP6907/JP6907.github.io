@@ -27,7 +27,7 @@ threadLocal.remove();
 ```
 
 ## 3. 实现原理
-&emsp;可以看到 ThreadLocal有一个内部类 ThreadLocalMap，这是一个定制化的 Hashmap，可以储存一些键值对
+&emsp;可以看到 ThreadLocal有一个内部类 ThreadLocalMap，这是一个定制化的 Hashmap，可以储存一些键值对。
 ```java
 //ThreadLocal.java
 static class ThreadLocalMap {
@@ -51,7 +51,7 @@ ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
 ```
 &emsp;这两个变量就是本文的重点了，其实每个线程的本地变量不是存放在 ThreadLocal 实例里面的，而是存放在 Thread.threadLocals 里面，也就是说，ThreadLocal 类型的本地变量存放在具体的线程内存空间中，ThreadLocal 只是一个工具壳，封装了操作这些副本变量的方法。
 
-&emsp;下面分析一些 ThreadLocal 的 set、get 以及 remove 方法的实现逻辑
+&emsp;下面分析一些 ThreadLocal 的 set、get 以及 remove 方法的实现逻辑：
 ### 3.1 set 方法
 ```java
 public void set(T value) {
@@ -72,8 +72,8 @@ void createMap(Thread t, T firstValue) {
         t.threadLocals = new ThreadLocalMap(this, firstValue);
     }
 ```
-&emsp;set的逻辑很简单，获取当前线程内部的 threadLocals，ThreadLocal 对象作为key，变量值作为 value，保存到 threadLocals 里面。
-这里使用了延迟加载的策略，Thread 里面的 threadLocals 默认为 null，只有等到第一次使用到的时候才会创建。
+&emsp;set的逻辑很简单，获取当前线程内部的 threadLocals，**ThreadLocal 对象**作为key，变量值作为 value，保存到 threadLocals 里面。
+&emsp;这里使用了延迟加载的策略，Thread 里面的 threadLocals 默认为 null，只有等到第一次使用到的时候才会创建。
 
 ### 3.2 get 方法
 ```java
@@ -127,7 +127,109 @@ public void remove() {
 ### 3.4 总结
 &emsp;每个线程内部都有一个名为 threadLocals 的成员变量，该变量类型为 HashMap，其中 key 为我们定义的 ThreadLocal 对象的 this 引用，value 则为我们使用 set 设置的值。每个线程的本地变量存放在线程自己的内存变量 threadLocals 中，如果当前线程一直不消亡，那么这些本地变量会一直存在，所以可能造成内存溢出，因此使用完毕时候，要调用 remove 方法，将这个本地变量移除，减少内存的占用。
 
-## 4. ThreadLocal 不支持继承性
+## 4. 举个例子
+&emsp;ThreadLocal 会将数据以K-V形式保存在具体的 Thread 中，其中的 Key 是 ThreadLocal 对象，Value 是具体的值，比如：
+```java
+private ThreadLocal<UserInfo> threadLocal = new ThreadLocal<UserInfo>();
+```
+&emsp;则 key 为 threadLocal 对象。
+&emsp;这里以《Spring5高级编程(第5版)》中 AOP 的一段代码为例，通过使用前置通知来保护方法访问，从而实现对用户身份限制的效果，其中的 ThreadLocal 就用来在当前线程共享登录用户的信息。
+&emsp;SecureManager 类封装了 threadLocal，并且 threadLocal 是 static 类型，所以可以在程序的任意地方通过 SecureManager 来访问同一个 threadLocal，从而共享 threadLocal 里面保存的用户信息。
+```java
+public class SecureManager {
+    //注意这里是 static，所有 SecureManager 对象才能共享同一个 threadLocal
+   private static ThreadLocal<UserInfo> threadLocal = new ThreadLocal<UserInfo>();
+
+    public void login(String userName,String password){
+        threadLocal.set(new UserInfo(userName,password));
+    }
+    public void logout(){
+        threadLocal.set(null);
+    }
+    public UserInfo getLoggedUserInfo(){
+        return threadLocal.get();
+    }
+}
+```
+&emsp;SecureBean 里面 writeSecureMessage 方法是我们将会调用的方法，但是希望在调用这个方法之前验证是否已经登录，SecureAdvice 类实现了前置通知的接口。
+```java
+public class SecureBean {
+       public void writeSecureMessage(){
+        System.out.println("This is the secure message!");
+    }
+}
+public class SecureAdvice implements MethodBeforeAdvice {
+    private SecureManager secureManager;
+
+    public SecureAdvice(){
+        this.secureManager = new SecureManager();
+        System.out.println("SecureManager in SecureAdvice:" + secureManager);
+    }
+
+    public void before(Method method, Object[] objects, Object o) throws Throwable {
+        UserInfo userInfo = secureManager.getLoggedUserInfo();
+
+        if(userInfo==null){
+            System.out.println("No user authenticated!");
+            throw new SecurityException("You must login before attempting to invoke the method:"
+                    + method.getName());
+        }else if("John".equals(userInfo.getUserName())){
+            System.out.println("Logged in user John!");
+        }else{
+            System.out.println("User " + userInfo.getUserName() + " is not authenticated!");
+            throw new SecurityException("User " + userInfo.getUserName() + " is not authenticated!");
+        }
+    }
+}
+```
+&emsp;接下来将 SecureBean 和 SecureAdvice 的实例绑定在一起，获取 SecureBean 的代理，当我们调用代理的 writeSecureMessage 时，就会触发先执行 SecureAdvice 的 before 方法。
+```java
+public static SecureBean getSecureBean(){
+        SecureBean bean = new SecureBean();
+        SecureAdvice advice = new SecureAdvice();
+        //创建目标对象的代理
+        ProxyFactory proxyFactory = new ProxyFactory();
+        //添加通知
+        proxyFactory.addAdvice(advice);
+        //指定织入目标
+        proxyFactory.setTarget(bean);
+        //获取代理实例
+        SecureBean proxy = (SecureBean)proxyFactory.getProxy();
+        return proxy;
+    }
+```
+&emsp;最后是main方法：
+```java
+public static void main(String[] args) {
+        SecureManager secureManager = new SecureManager();
+        System.out.println("SecureManager in main:" + secureManager);
+        SecureBean secureBean = getSecureBean();
+
+        secureManager.login("John","123456");
+        secureBean.writeSecureMessage();
+        secureManager.logout();
+
+        try{
+            secureManager.login("Invalid user","123");
+            secureBean.writeSecureMessage();
+        }catch (SecurityException ex){
+            System.out.println("Exception caught:" + ex.getMessage());
+        }finally {
+            secureManager.logout();
+        }
+
+        try{
+            secureBean.writeSecureMessage();
+        }catch (SecurityException ex){
+            System.out.println("Exception caught:" + ex.getMessage());
+        }finally {
+            secureManager.logout();
+        }
+    }
+```
+&emsp;注意我们在main方法中创建一个 SecureManager 实例来执行登录操作，而在 getSecureBean 方法中创建一个 SecureAdvice 实例，在 SecureAdvice 里面也会创建一个 SecureManager 实例来获取已登录的用户信息。由于 SecureManager 里面的 threadLocal 是 static，所以实际上我们操作的是同一个 threadLocal 对象，从而达到了共享用户信息的效果。
+
+## 5. ThreadLocal 不支持继承性
 &emsp;ThreadLocal 存在的一个问题是，父线程的 ThreadLocal 变量无法被子线程获取到，这是很合理的现象，因为 ThreadLocal 变量是绑定在线程上的，而父线程和子线程是两个不同的的线程，子线程自然而然无法获取到父线程的本地变量。
 ```java
 public class ThreadLocalsTest {
@@ -160,7 +262,7 @@ public class ThreadLocalsTest {
 ```
 &emsp;为了解决这个问题，InheritableThreadLocal应运而生。
 
-## 5. InheritableThreadLocal 类
+## 6. InheritableThreadLocal 类
 &emsp;InheritableThreadLocal 继承自 ThreadLocal，提供了一个特性，就是让子线程可以访问在父线程中设置的本地变量。
 ```java
 public class InheritableThreadLocal<T> extends ThreadLocal<T> {
