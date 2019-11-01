@@ -159,7 +159,7 @@ DEBUG [main] - Closing JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7880cdf
 
 &emsp;在一级缓存中，其最大的共享范围就是一个SqlSession内部，如果多个SqlSession之间需要共享缓存，则需要使用到二级缓存。开启二级缓存后，会使用CachingExecutor装饰Executor，进入一级缓存的查询流程前，先在CachingExecutor进行二级缓存的查询，具体的工作流程如下所示。
 
-![mybatis-cache-L2-class](https://github.com/JP6907/Pic/blob/master/java/mybatis/mybatis-cache-L2-class.jpg?raw=true)
+![mybatis-cache-L2-class](https://github.com/JP6907/Pic/blob/master/java/mybatis/mybatis-cache-L2-class.png?raw=true)
 
 &emsp;二级缓存开启后，同一个 namespace下的所有操作语句，都影响着同一个Cache，即二级缓存被多个 SqlSession 共享，是一个全局的变量。
 &emsp;当开启缓存后，数据的查询执行的流程就是 二级缓存 -> 一级缓存 -> 数据库。
