@@ -1,10 +1,15 @@
 ---
-title: mybatis-cache
+title: Mybatis 缓存详解
 catalog: true
-date: 2019-10-30 20:13:13
-subtitle:
-header-img:
+date: 2019-11-1 11:23:13
+subtitle: Mybatis Cache
+header-img: /img/article_header/article_header.png
 tags:
+  - java
+  - 编程语言
+  - mybatis
+categories:
+  - java
 ---
 
 
@@ -35,7 +40,7 @@ mybatis认为，对于两次查询，如果以下条件都完全一样，那么�
 - c. 这次查询所产生的最终要传递给JDBC java.sql.Preparedstatement的Sql语句字符串（boundSql.getSql() ）
 - d. 传递给java.sql.Statement要设置的参数值
 
-MyBatis 会把执行的方法和参数通过算法生成缓存的键值，将键值和查询结果存入一个Map对象中。如果同一个SqlSession 中执行的方法和参数完全一致，那么通过算法会生成相同的键值，当Map 缓存对象中己经存在该键值时，则会返回缓存中的对象。
+&emsp;MyBatis 会把执行的方法和参数通过算法生成缓存的键值，将键值和查询结果存入一个Map对象中。如果同一个SqlSession 中执行的方法和参数完全一致，那么通过算法会生成相同的键值，当Map 缓存对象中己经存在该键值时，则会返回缓存中的对象。
 
 &emsp;我们看一下一个例子：
 ```java
@@ -140,6 +145,7 @@ DEBUG [main] - Resetting autocommit to true on JDBC Connection [com.mysql.cj.jdb
 DEBUG [main] - Closing JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7880cdf3]
 ```
 &emsp;可以看到在第一个 sqlSession 里面执行了两次 select 操作，但是实际日志却只有一次数据库查询操作，说明第二次 select 是从缓存中获取的。另外，两次查询操作返回的是同一个实例，对 user1 的操作能够在 user2 上体现出来，同时也证明了 user1 和 user2 是对同一个实例的引用。
+
 &emsp;在第二个 sqlsession 我们通过 user1 不等于 user2 证明了不同 session 的相同操作返回的是不同的实例。另外，user2 不等于 user3 说明在执行 delete 之后缓存被清除了，user3 得到的是新的实例。
 
 &emsp;在同个 sqlsession 中反复使用相同参数执行同一个方法时， 总是返回同一个对象，因此就会出现上面测试代码中的情况。在使用 MyBatis 的过程中，要避免在使用如上代码中的 user2 时出现的错误。我们可能以为获取的user2 应该是数据库中的数据，却不知道 userl 的一个重新赋值会影响到 user2 。如果不想让 selectByid 方法使用一级缓存，可以设置 flushCache= "true"，这个属性配置为true 后， 会在查询数据前清空当前的一级缓存，因此该方法每次都会重新从数据库中查询数据，此时的 user2 和userl 就会成为两个不同的实例， 可以避免上面的问题。但是由于这个方法清空了一级缓存， 会影响当前SqlSession 中所有缓存的查询，因此在需要反复查询获取只读数据的情况下，会增加数据库的查询次数，所以要避免这么使用。
@@ -274,19 +280,115 @@ DEBUG [main] - Cache Hit Ratio [com.jp.mapper.RoleMapper]: 0.5
 ```
 &emsp;可以看到，只有第一个 sqlSession 的第一次 select 操作会触发实际的数据库查询，第一个 sqlSession 的第二次查询返回的是和第一次 select 的同个实例，此时使用的是一级缓存。当调用close 方法关闭SqlSession 时， SqlSession 才会保存查询数据到二级缓存中。在这之后二级缓存才有了缓存数据。所以可以看到在第一部分的两次查询时，命中率都是0 。
 
-&emsp;在第二部分测试代码中，再次获取role2 时，日志中并没有输出数据库查询，而是输出了命中率，这时的命中率是0.3333333333333333 。这是第3 次查询，并且得到了缓存的值，因此该方法一共被请求了3 次，有l 次命中，所以命中率就是三分之一。后面再获取role3 的时候，就是4 次请求， 2 次命中，命中率为0.5 。并且因为可读写缓存的缘故， role2 和role3 都是反序列化得到的结果，所以它们不是相同的实例。在这一部分，这两个实例是读写安全的，其属性不会互相影响。
+&emsp;在第二部分测试代码中，再次获取 role2 时，日志中并没有输出数据库查询，而是输出了命中率，这时的命中率是 0.3333333333333333 。这是第 3 次查询，并且得到了缓存的值，因此该方法一共被请求了3 次，有l 次命中，所以命中率就是三分之一。后面再获取 role3 的时候，就是4 次请求，2 次命中，命中率为 0.5 。并且因为可读写缓存的缘故， role2 和 role3 都是反序列化得到的结果，所以它们不是相同的实例。在这一部分，这两个实例是读写安全的，其属性不会互相影响。
 
-在这个例子中并没有真正的读写安全，为什么？
-因为这个测试中加入了一段不该有的代码，即 rolel.setRoleName("New Name");,这里修改 role1 的属性位后，按照常理应该更新数据，更新后会清空一、二级缓存，这样在第二部分的代码中就不会出现查询结果的 roleName 都是 "New Name"，的情况了。所以想要安全使用，需要避免毫无意义的修改。这样就可以避免人为产生的脏数据，避免缓存和数据库的数据不一致。
+&emsp;在这个例子中并没有真正的读写安全，为什么？
+&emsp;因为这个测试中加入了一段不该有的代码，即 rolel.setRoleName("New Name");,这里修改 role1 的属性位后，按照常理应该更新数据，更新后会清空一、二级缓存，这样在第二部分的代码中就不会出现查询结果的 roleName 都是 "New Name"，的情况了。所以想要安全使用，需要避免毫无意义的修改。这样就可以避免人为产生的脏数据，避免缓存和数据库的数据不一致。
 
 
 
 ## EhCache缓存/Redis缓存
+&emsp;Mybatis可以集成其它缓存机制，比如 EhCache 和 Redis。
+- EhCache 是一个纯粹的 Java 进程内的缓存框架：https://github.com/mybatis/ehcache-cache
+- Redis 是一个高性能的 key-value 数据库：https://github.com/mybatis/redis-cache
 
 
 ## 脏数据的产生和避免
+&emsp;MyBatis 的二级缓存是和命名空间绑定的，所以通常情况下每一个 Mapper 映射文件都拥有自己的二级缓存，不同 Mapper 的二级缓存互不影响。在常见的数据库操作中，多表联合查询非常常见，由于关系型数据库的设计， 使得很多时候需要关联多个表才能获得想要的数据。在关联多表查询时肯定会将该查询放到某个命名空间下的映射文件中，这样一个多表的查询就会缓存在该命名空间的二级缓存中。涉及这些表的增、删、改操作通常不在一个映射文件中，它们的命名空间不同， 因此当有数据变化时，多表查询的缓存未必会被清空，这种情况下就会产生脏数据。
+&emsp;这段话看起来可能不是很清晰，通过一个例子来解释下：
+在 UserMapper 中创建了selectUserAndRoleByid 方法， 该方法的SQL 语句如下：
+```sql
+select
+    u.id,
+    u.user_name userName,
+    u.user_password userPassword,
+    u.user_email userEmail,
+    u.user_info userinfo,
+    u.head_img headimg,
+    u.create_time createTime,
+    r.id "role.id",
+    r.role_name "role.roleName",
+    r.enabled "role.enabled",
+    r.create_by "role.createBy",
+    r.create_time "role.createTime"
+    from sys_user u
+    inner join sys_user_role ur on u.id = ur.user_id
+    inner join sys_role r on ur.role id = r.id
+    where u.id = #{id}
+```
+&emsp;这里涉及到三个表，sys_user、sys_role 和 sys_user_role，user 和 role 是一对多的关系，sys_user_role 表是 user 和 role 的关联表。
+&emsp;这个 SQL 语句关联了两个表来查询用户对应的角色数据。给 UserMapper.xml 添加二级缓存配置，增加\<cache/>元素。
+下面演示二级缓存产生的脏数据：
+```java
+@Test
+public void testDirtyData() {
+    //获取sqlSession
+    SqlSession sqlSession= getSqlSession();
+    try {
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        //user 和 role 的数据会被缓存在 UserMapper 命名空间对应的二级缓存中
+        SysUser user= userMapper.selectUserAndRoleByid(1001L);
+        Assert.assertEquals("普通用户"， user.getRole().getRoleName());  //数据库里面原来的数据
+        System.out.println("角色名:" ＋ user.getRole().getRoleName());
+    } finally {
+        sqlSession.close();
+        //开始另一个新的session
+        sqlSession= getSqlSession();
+    try {
+        RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
+        //id为2的role被缓存在 RoleMapper 命名空间对应的二级缓存中
+        SysRole role= roleMapper.selectByid (2L);
+        //修改角色信息
+        role.setRoleName("新数据")；
+        roleMapper.updateByid(role);
+        //提交修改
+        sqlSession.commit();
+    } finally {
+        ／／关闭当前的sqlSession
+        sqlSession.close() ;
+        System.out.println("开启新的sqlSession")；
+        //开始另一个新的session
+        sql Session = getSqlSession() ;
+    try {
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class) ;
+        RoleMapper roleMapper = sqlSession.getMapper (RoleMapper.class) ;
+        SysUser user = userMapper.selectUserAndRoleByid(1001L) ;
+        SysRole role = roleMapper.selectByid(2L);
+        Assert.assertEquals("普通用户"，user.getRole().getRoleName()); //UserMapper中缓存的数据
+        Assert.assertEquals("新数据"，role.getRoleName());
+        System.out.println("角色名："+ user.getRole().getRoleName());
+        //还原数据
+        role.setRoleName("普通用户")；
+        roleMapper.updateByid(role) ;
+        //提交修改
+        sqlSession.commit();
+    } finally {
+        //关闭sqlSession
+        sqlSession.close();
+    }
+}
+```
+&emsp;在这个测试中，一共有 3 个不同的SqlSession。第一个 SqlSession 中获取了用户和关联的角色信息，第二个 SqlSession 中查询角色并修改了角色的信息，第三个 SqlSession 中查询用户和关联的角色信息,此时 user 获取到的 roleName 实际是缓存在二级缓存中的数据，而不是第二个在 SqlSession 里面写入的新数据，这就出现了脏数据，因为角色名称己经修改，但是这里读取到的角色名称仍然是修改前的名字，因此出现了 **脏读**。
 
+&emsp;该如何避免脏数据的出现呢？这时就需要用到 **参照缓存**了。当某几个表可以作为一个业务整体时，通常是让几个会关联的 ER 表同时使用同一个二级缓存，这样就能解决脏数据问题。
+在上面这个例子中，将 UserMapper.xml 中的缓存配置修改如下:
+```xml
+<mapper namespace= "com.jp.mybaits.mapper.UserMapper" >
+    <cache-ref namespace= "com.jp.mybaits.mapper.RoleMapper" />
+        <!-- 其他配置 -->
+</mapper>
+```
+&emsp;虽然这样可以解决脏数据的问题，但是并不是所有的关联查询都可以这么解决，如果有几十个表甚至所有表都以不同的关联关系存在于各自的映射文件中时，使用参照缓存显然没有意义。
 
+## 二级缓存适用的场景
+&emsp;二级缓存虽然好处很多，但并不是什么时候都可以使用。在以下场景中，推荐使用二级缓存：
+- 以查询为主的应用中，只有尽可能少的增、删、改操作。
+- 绝大多数以单表操作存在时，由于很少存在互相关联的情况，因此不会出现脏数据。
+- 可以按业务划分对表进行分组时， 如关联的表比较少，可以通过参照缓存进行配置。
+
+&emsp;除了推荐使用的情况，如果脏读对系统没有影响，也可以考虑使用。在无法保证数据不出现脏读的情况下， 建议在业务层使用可控制的缓存代替二级缓存。
+
+&nbsp;
 > 参考：
 《Mybatis从入门到精通》
 https://www.cnblogs.com/happyflyingpig/p/7739749.html
