@@ -96,7 +96,7 @@ storage::Table::Ptr table = openTable(context, SYS_CONSENSUS);
 ```
 
 # 3. 源码分析
-见[《BCOS动态群组源码分析》](http://zhoujiapeng.top/blockchain/bcos-group-architecture/)。
+见[《BCOS动态群组源码分析》](http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/)。
 
 # 4. 总结
 BCOS在网络层P2PService中已经实现了对节点动态性的控制，共识算法中只需要考虑单个群组内部的共识问题，不需要考虑动态性的问题。如果在共识算法中接入节点动态控制，反而会增加算法的复杂性，并且不会带来好处。

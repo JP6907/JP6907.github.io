@@ -13,7 +13,7 @@ date: 2019-11-20 11:17:05
 
 
 # BCOS 动态群组架构源码分析
-本文基于[《BCOS 动态群组架构》](http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/)，从源码角度对动态群组架构的实现做进一步分析。
+本文基于[《BCOS 动态群组架构》](http://zhoujiapeng.top/blockchain/bcos-group-architecture/)，从源码角度对动态群组架构的实现做进一步分析。
 
 ## 3.1 群组信息的初始化
 这得从Ledger的构造说起。。。

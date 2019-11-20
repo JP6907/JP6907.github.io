@@ -15,9 +15,9 @@ top: 100
 --- 
 
 ## Blockchain
-- [BCOS 动态群组架构](http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/)
-- [BCOS 动态群组架构源码分析](http://zhoujiapeng.top/blockchain/bcos-group-architecture/)
-- Algorand 共识算法总结
+- [《BCOS 动态群组架构》](http://zhoujiapeng.top/blockchain/bcos-group-architecture/)
+- [《BCOS 动态群组架构源码分析》](http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/)
+- 《Algorand 共识算法总结》
 
 ## JVM
 - [《Java 自动装箱的陷阱》](http://zhoujiapeng.top/java/java-risk-of-autoboxing/)
