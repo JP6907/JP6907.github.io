@@ -14,6 +14,11 @@ top: 100
 
 --- 
 
+## Blockchain
+- [BCOS 动态群组架构](http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/)
+- [BCOS 动态群组架构源码分析](http://zhoujiapeng.top/blockchain/bcos-group-architecture/)
+- Algorand 共识算法总结
+
 ## JVM
 - [《Java 自动装箱的陷阱》](http://zhoujiapeng.top/java/java-risk-of-autoboxing/)
 - [《Java 内存模型》](http://zhoujiapeng.top/java/java-memoryModel/)
@@ -90,9 +95,10 @@ https://segmentfault.com/a/1190000016058789
 
 --- 
 
-## 面试
+## 面试+博客收藏
 - https://github.com/Snailclimb/JavaGuide
 - https://www.cnblogs.com/aspirant/category/548388.html
+- https://blog.csdn.net/u013256816
 
 
 --- 
@@ -149,6 +155,12 @@ Notes
 
 ## 密码学
 - [《密码学基础 - 群、环、域》](http://zhoujiapeng.top/cryptography/cryptography)
+
+---
+
+## Kafka
+- https://www.orchome.com/kafka/index
+- http://kafka.apachecn.org/uses.html
 
 ---
 
