@@ -29,7 +29,7 @@ date: 2019-10-22 10:26:02
 - 6.使用 Using
 - 7.卸载 Unloading
 
-![类的生命周期](https://github.com/JP6907/Pic/raw/master/java/jvm/class-life.webp)
+![类的生命周期](https://gitee.com/JP6907/Pic/raw/master/java/jvm/class-life.webp)
 
 &emsp;其中，加载、验证、准备、初始化和卸载这5个阶段的顺序是确定的，类的加载过程必须按照这种顺序按部就班地开始，而解析阶段则不一定：在某些情况下可以在初始化阶段之后再开始，这是为了支持Java语言的运行时绑定（动态绑定/晚期绑定）。
 
@@ -202,7 +202,7 @@ false
 4. 自定义类加载器必须继承 ClassLoader。 
 
 &emsp;这些类加载器之间的关系如下图所示：
-![双亲委派模型](https://github.com/JP6907/Pic/raw/master/java/jvm/Parents-Delegation-Model.webp)
+![双亲委派模型](https://gitee.com/JP6907/Pic/raw/master/java/jvm/Parents-Delegation-Model.webp)
 
 &emsp;加载器之间的这种层次关系，就称为类加载器的**双亲委派模型**（Parent Delegation Model）。该模型要求除了顶层的启动类加载器外，其余的类加载器都应当有自己的父类加载器。子类加载器和父类加载器不是以继承（Inheritance）的关系来实现，而是通过**组合**（Composition）关系来复用父加载器的代码。
 

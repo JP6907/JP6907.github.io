@@ -42,8 +42,8 @@ do{
 
 &emsp;大部分的指令都没有支持整数类型byte、char和short，甚至没有任何指令支持boolean类型。编译器会在编译期或运行期将byte和short类型的数据带符号扩展为相应的int类型数据。与之类似，在处理boolean、byte、short和char类型的数组时，也会转换为使用对应的int类型的字节码指令来处理。因此，大多数对于boolean、byte、short和char类型数据的操作，实际上都是使用相应的int类型作为运算类型。
 
-![Java虚拟机所支持的数据类型1](https://github.com/JP6907/Pic/raw/master/java/jvm/bytecode1)
-![Java虚拟机所支持的数据类型2](https://github.com/JP6907/Pic/raw/master/java/jvm/bytecode2)
+![Java虚拟机所支持的数据类型1](https://gitee.com/JP6907/Pic/raw/master/java/jvm/bytecode1)
+![Java虚拟机所支持的数据类型2](https://gitee.com/JP6907/Pic/raw/master/java/jvm/bytecode2)
 
 
 

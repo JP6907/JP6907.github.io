@@ -80,10 +80,10 @@ public final long getAndAddLong(Object var1, long var2, long var4) {
 ## 2. JDK8 新增的原子操作类 LongAdder
 &emsp;既然 AtomicLong 的性能瓶颈是由于过多线程同时去竞争一个变量的更新而产生的,那么如果把一个变量分解为多个变量,让同样多的线程去竞争多个资源,是不是就解决了性能问题？是的,LongAdder 就是这个思路。
 
-![AtomicLong](https://github.com/JP6907/Pic/blob/master/java/AtomicLong.png?raw=true)
+![AtomicLong](https://gitee.com/JP6907/Pic/raw/master/java/AtomicLong.png)
 &emsp;如图，AtomicLong 多个线程同时竞争同一个原子变量。
 
-![LongAdder](https://github.com/JP6907/Pic/blob/master/java/LongAdder.png?raw=true)
+![LongAdder](https://gitee.com/JP6907/Pic/raw/master/java/LongAdder.png)
 &emsp;使用 LongAdder 时,则是在内部维护多个 Cell 变量,每个 Cell 里面有一个初始值为 0 的long型变量,这样,在同等并发量的情况下,争夺单个变量更新操作的线程量会减少,这变相地减少了争夺共享资源的并发量。另外,多个线程在争夺同一个 Cell 原子变量时如果失败了,它并不是在当前 Cell 变量上一直自旋 CAS 重试,而是尝试在其他 Cell 的变量上进行 CAS 尝试 ,这个改变增加了当前线程重试 CAS 成功的可能性。最后,在获取 LongAdder 当前值时, 是把所有 Cell 变量的 value 值累加后再加上 base 返回的。
 
 &emsp;LongAdder 继承了 Striped64，base 和 Cell 是封装在 Striped64 里面的，我们首先看一下 Cell 的结构：

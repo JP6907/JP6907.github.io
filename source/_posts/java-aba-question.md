@@ -186,7 +186,7 @@ public static void main(String[] args) throws InterruptedException {
 
 &emsp;我们来分析一下这个过程。
 
-![ABA-1](https://github.com/JP6907/Pic/blob/master/java/ABA-1.png?raw=true)
+![ABA-1](https://gitee.com/JP6907/Pic/raw/master/java/ABA-1.png)
 
 &emsp;线程A调用
 ```java
@@ -199,11 +199,11 @@ newTop = oldTop.next;
 &emsp;此时 oldTop 对应A，newTop对应B，接下来准备调用 compareAndSet(oldTop, newTop) 将栈顶设置为B，但在这之前 sleep 了3秒，此时A还未真正出栈。
 &emsp;在线程A sleep 的时候，线程B介入，将A、B出栈，再pushD、C、A，此时堆栈结构如下图，而对象B此时处于游离状态，栈顶仍然为NodeA：
 
-![ABA-2](https://github.com/JP6907/Pic/blob/master/java/ABA-2.png?raw=true)
+![ABA-2](https://gitee.com/JP6907/Pic/raw/master/java/ABA-2.png)
 
 &emsp;此时轮到线程A执行CAS操作，检测发现栈顶仍为A，所以CAS成功，栈顶变为B，但实际上B.next为null，所以此时的情况变为：
 
-![ABA-3](https://github.com/JP6907/Pic/blob/master/java/ABA-3.png?raw=true)
+![ABA-3](https://gitee.com/JP6907/Pic/raw/master/java/ABA-3.png)
 
 &emsp;所以这时候栈中只有B一个元素，C和D组成的链表不再存在于堆栈中，平白无故就把C、D丢掉了。以上就是由于ABA问题带来的隐患。
 &emsp;我们再回过头来看一下修改之前的并发栈例子，push的时候传入的是一个item，在push函数内部会根据item构造Node，compareAndSet函数比较的是Node，对于新的Node，compareAndSet会失败，而修改之后的例子里面，push函数传入的是Node，线程B将NodeA出栈，后面又将NodeA重新入栈，重复利用原来的Node，compareAndSet才能执行成功，这也导致了ABA问题的产生。

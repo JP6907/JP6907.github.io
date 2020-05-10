@@ -212,7 +212,7 @@ static final class Node {
 |0 |表示无状态。|
 
 &emsp;对于分析AQS中不涉及ConditionObject部分的代码，可以认为队列中的节点状态只会是CANCELLED, SIGNAL, PROPAGATE, 0这几种情况。
-![status](https://github.com/JP6907/Pic/blob/master/java/AQS-status.png?raw=true)
+![status](https://gitee.com/JP6907/Pic/raw/master/java/AQS-status.png)
 
 &emsp;图为自制的AQS状态的流转图，AQS中0状态和CONDITION状态为始态，CANCELLED状态为终态。0状态同时也可以是节点生命周期的终态。
 注意，上图仅表示状态之间流转的可达性，并不代表一定能够从一个状态沿着线随意跃迁。
@@ -457,7 +457,7 @@ private void unparkSuccessor(Node node) {
 }
 ```
 &emsp;AQS独占锁的获取的流程示意如下：
-![获取独占锁](https://github.com/JP6907/Pic/blob/master/java/AQS-exclusiveLock.png?raw=true)
+![获取独占锁](https://gitee.com/JP6907/Pic/raw/master/java/AQS-exclusiveLock.png)
 
 ### 4.3 释放独占锁的实现
 &emsp;上面已经分析了acquire的实现，下面来看看release的实现：
@@ -712,7 +712,7 @@ public class TestSemaphore {
 ```
 &emsp;很显然，这段程序一定能执行结束的，但是会偶现线程hang住的问题。
 &emsp;当时的AQS中setHeadAndPropagate是这样的:
-![bug 6801020](https://github.com/JP6907/Pic/blob/master/java/javabug6801020.png?raw=true)
+![bug 6801020](https://gitee.com/JP6907/Pic/raw/master/java/javabug6801020.png)
 &emsp;以上是bug 6801020修复点的对比，左边为修复之前的版本，右边为引入PROPAGATE修复之后的版本。
 
 &emsp;从左边可以看到原先的setHeadAndPropagate相比目前版本要简单很多，而releaseShared的实现也与release基本雷同，这也正是本问题的核心：为什么仅仅用调用的tryAcquireShared

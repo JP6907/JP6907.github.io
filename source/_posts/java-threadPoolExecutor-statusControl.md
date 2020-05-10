@@ -69,7 +69,7 @@ date: 2019-09-26 09:28:04
 3. 在SHUTDOWN状态下，当阻塞队列为空且线程数为0时进入TIDYING状态；在STOP状态下，当线程数为0时进入TIDYING状态。
 4. 在TIDYING状态，调用terminated()方法完成后进入TERMINATED状态。
 
-![staus](https://github.com/JP6907/Pic/blob/master/java/threadpoolexecutor-status.png?raw=true)
+![staus](https://gitee.com/JP6907/Pic/raw/master/java/threadpoolexecutor-status.png?raw=true)
 
 &emsp;另外，可以通过线程池的以下属性监控线程池的当前状态：
 

@@ -272,7 +272,7 @@ val longAccumulator = sc.longAccumulator("long-account")
 sc.parallelize(Array(1,2,3,4)).foreach(x => longAccumulator.add(x))
 ```
 &emsp;在 WebUI 中可以看到：
-![accumulators](https://github.com/JP6907/Pic/blob/master/spark/accumulators.png?raw=true)
+![accumulators](https://gitee.com/JP6907/Pic/raw/master/spark/accumulators.png?raw=true)
 &emsp;跟踪 WebUI 中的累加器对于理解运行的 stage　的进度很有用。&nbsp;
 &emsp;下面我们来看一下累加器的实现，以 longAccumulator 为例，当调用 sc.longAccumulator 的时候：
 ```scala

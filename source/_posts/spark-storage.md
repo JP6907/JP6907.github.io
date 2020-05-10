@@ -19,7 +19,7 @@ categories:
 
 ## 1.储存体系架构
 &emsp;简单来说，Spark 储存体系是各个 Driver 和 Executor 实例中的 BlockManager 所组成的，但从一个整体上看，Spark 储存体系包含很多组件，如图所示。
-![storage-architecture](https://github.com/JP6907/Pic/blob/master/spark/storage-architecture.png?raw=true)
+![storage-architecture](https://gitee.com/JP6907/Pic/raw/master/spark/storage-architecture.png)
 
 - BlockManagerMaster：代理 BlockManager 与 Driver 上的 BlockManagerMasterEndpoint 通信。图中记号1表示 Executor 节点上的 BlockManager 通过 BlockManagerMaster 与 BlockManagerMasterEndpoint 进行通信，记号2表示 Driver 节点上的 BlockManager 通过 BlockManagerMaster 与 BlockManagerMasterEndpoint 进行通信。
 
@@ -213,7 +213,7 @@ private def createLocalDirs(conf: SparkConf): Array[File] = {
   }
 ```
 &emsp;图片表示 DiskBlockManager 管理的文件目录结构，可以看到，每个一级目录，即 localDirs 下面都会有多个 subDirs，每个 subDir 则储存一个或多个 Block 文件。
-![DiskBlockManager-dir](https://github.com/JP6907/Pic/blob/master/spark/DiskBlockManager-dir.png?raw=true)
+![DiskBlockManager-dir](https://gitee.com/JP6907/Pic/raw/master/spark/DiskBlockManager-dir.png)
 &emsp;实际 Block 是如何映射到磁盘的具体文件的？我们可以看一下下面函数：
 ```scala
 //DiskBlockManager

@@ -73,7 +73,7 @@ public class ThreadLocalRandomTest {
 }
 ```
 &emsp;Random 的缺点是多个线程会使用同一个原子性种子变量, 从而导致对原子变量更新的竞争。ThreadLocalRandom 的原理是让**每个线程都维护一个种子变量**,则每个线程生成随机数时都根据自己老的种子计算新的种子,并使用新种子更新老的种子,再根据新种子计算随机数,就不会存在竞争问题了,这会大大提高并发性能。
-![ThreadLocalRandom](https://github.com/JP6907/Pic/blob/master/java/ThreadLocalRandom.png?raw=true)
+![ThreadLocalRandom](https://gitee.com/JP6907/Pic/raw/master/java/ThreadLocalRandom.png?raw=true)
 
 &emsp;下面从源码具体分析一下。
 ```java

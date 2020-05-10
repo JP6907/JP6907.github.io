@@ -20,7 +20,7 @@ date: 2019-11-20 11:21:02
 
 ## 1.1 架构设计全景
 
-![架构设计全景](https://github.com/JP6907/Pic/blob/master/bcos/group-architecture.png)
+![架构设计全景](https://gitee.com/JP6907/Pic/raw/master/bcos/group-architecture.png)
 
 如上图所示，群组架构自底向下主要划分为网络层、群组层，网络层主要负责区块链节点间通信，群组层主要负责处理群组内交易，每个群组均运行着一个独立的账本。
 
@@ -30,7 +30,7 @@ date: 2019-11-20 11:21:02
 
 为了做到群组间通信数据隔离，群组架构引入了账本白名单机制，下图展示了群组架构下群组间收发消息的流程：
 
-![网络层](https://github.com/JP6907/Pic/blob/master/bcos/arcitecture-network.png)
+![网络层](https://gitee.com/JP6907/Pic/raw/master/bcos/arcitecture-network.png)
 
 **账本白名单**
 每个群组均持有一个账本白名单，用于维护该群组的节点列表。为了保证账本白名单群组内一致性，仅可通过发交易共识的方式修改账本白名单。
@@ -57,7 +57,7 @@ node1接收到node0 group1的数据包{groupID(1) + packetA}后：
 # 2. 动态群组架构的实现
 动态群组架构涉及的各个模块之间的关系如图：
 
-![模块关系图](https://github.com/JP6907/Pic/blob/master/bcos/model.png)
+![模块关系图](https://gitee.com/JP6907/Pic/raw/master/bcos/model.png)
 
 ## 2.1 节点列表的读取
 获取节点列表信息有两种方式

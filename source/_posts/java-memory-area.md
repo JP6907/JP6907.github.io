@@ -19,7 +19,7 @@ date: 2019-10-16 11:24:38
 
 ## 1. 运行时数据区域
 &emsp;Java虚拟机在执行Java程序的时候，会把它所管理的的内存分成若干个不同的数据区。包括如下几部分:
-![memory-area](https://github.com/JP6907/Pic/blob/master/java/jvm/memory-area.jpg?raw=true)
+![memory-area](https://gitee.com/JP6907/Pic/raw/master/java/jvm/memory-area.jpg?raw=true)
 
 ### 1.1 程序计数器
 &emsp;程序计数器是一块较小的内存空间，它可以看作是当前线程所执行的字节码的**行号指示器**。字节码解释器通过改变计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都依赖与其完成。
@@ -138,11 +138,11 @@ HotSpot 虚拟机对象头 Mark Word 表如下：
 
 1. 使用句柄
 &emsp;Java 堆中将会划分出一块内存来作为句柄池，reference 中存储的就是对象的句柄地址，而句柄中包含了对象实例数据与类型数据各自的具体地址信息，如下图所示：
-![handle](https://github.com/JP6907/Pic/blob/master/java/jvm/handle-access-object.jpg?raw=true)
+![handle](https://gitee.com/JP6907/Pic/raw/master/java/jvm/handle-access-object.jpg?raw=true)
 
 2. 直接指针
 &emsp;Java 堆对象的布局中必须考虑如何放置访问类型数据的相关信息，而 reference 中存储的直接就是对象地址，如下图所示：
-![pointer](https://github.com/JP6907/Pic/blob/master/java/jvm/pointer-access-object.jpg?raw=true)
+![pointer](https://gitee.com/JP6907/Pic/raw/master/java/jvm/pointer-access-object.jpg?raw=true)
 
 
 &emsp;使用句柄访问的最大好处就是 reference 中存储的是 稳定的句柄地址，在对象被移动（垃圾收集时移动对象是非常普遍的行为）时只会改变句柄中的实例数据指针，而 reference 本身不需要修改。

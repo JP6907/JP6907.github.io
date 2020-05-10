@@ -19,7 +19,7 @@ categories:
 
 ## 1. Spark运行架构
 &emsp;Spark集群中的Spark Application的运行架构由两部分组成：包含SparkContext的Driver Program（驱动程序）和在Executor中执行计算的程序。Spark Application一般都是在集群上以独立的进程集合运行。
-![spark运行架构图](https://github.com/JP6907/Pic/blob/master/spark/cluster-overview.png?raw=true)
+![spark运行架构图](https://gitee.com/JP6907/Pic/raw/master/spark/cluster-overview.png?raw=true)
 &emsp;Spark有多种**运行模式**，比如standalone(spark自身单独的集群资源管理器), Mesos 和 YARN，这些资源管理器负责计算资源的管理和分配。
 
 
@@ -51,7 +51,7 @@ http://<driver-node>:4040
 &emsp;Spark作业和任务调度是Spark的核心，Spark有多种运行模式，下面以Spark自身的Standalone模式，并且Driver运行在客户端的Client模式来介绍。
 
 &emsp;下图是Spark的作业和任务调度系统整体概况：
-![spark-schedule](https://github.com/JP6907/Pic/raw/master/spark/spark-schedule)
+![spark-schedule](https://gitee.com/JP6907/Pic/raw/master/spark/spark-schedule)
 根据该图，具体的调度过程为：
 1. Spark应用程序经过RDD的各种transform操作计算，最后通过RDD的action操作触发job，图中的join、groupby、和filter操作都是transform操作。
 2. 提交之后首先根据RDD之间的依赖关系**构建DAG**(Directed Acyclic Graph)有向无环图，然后将DAG图提交给DAGScheduler进行解析，就进入了DAGScheduler阶段。

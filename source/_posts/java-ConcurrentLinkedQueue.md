@@ -25,7 +25,7 @@ date: 2019-10-14 20:47:03
 &emsp;ConcurrentLinkedQueue是一个基于链接节点的无界线程安全队列，它采用先进先出的规则对节点进行排序，当我们添加一个元素的时候，它会添加到队列的尾部，当我们获取一个元素时，它会返回队列头部的元素。它采用了“wait－free”算法来实现，该算法在Michael & Scott算法上进行了一些修改。
 
 &emsp;ConcurrentLinkedQueue的类图如下：
-![ConcurrentLinkedQueue](https://github.com/JP6907/Pic/blob/master/java/ConcurrentLinkedQueue/ConcurrentLinkedQueue.png?raw=true)
+![ConcurrentLinkedQueue](https://gitee.com/JP6907/Pic/raw/master/java/ConcurrentLinkedQueue/ConcurrentLinkedQueue.png)
 
 &emsp;ConcurrentLinkedQueue由head节点和tail节点组成，每个节点（Node）由节点元素（item）和指向下一个节点的引用(next)组成，节点与节点之间就是通过这个next关联起来，从而组成一张链表结构的队列。
 
@@ -108,7 +108,7 @@ public ConcurrentLinkedQueue(Collection<? extends E> c) {
 
 ### 2.2 入队
 &emsp;入队列就是将入队节点添加到队列的尾部。为了方便理解入队时队列的变化，以及head节点和tail节点的变化，添加节点的过程可以看下面的队列快照图：
-![EnQueue](https://github.com/JP6907/Pic/blob/master/java/ConcurrentLinkedQueue/EnQueue.png?raw=true)
+![EnQueue](https://gitee.com/JP6907/Pic/raw/master/java/ConcurrentLinkedQueue/EnQueue.png)
 
 &emsp;上图所示的元素添加过程如下：
 - 添加元素1：队列更新head节点的next节点为元素1节点。又因为tail节点默认情况下等于head节点，所以它们的next节点都指向元素1节点。
@@ -200,12 +200,12 @@ public boolean offer(E e) {
 &emsp;在JDK 1.8的实现中，tail的更新时机是通过p和t是否相等来判断的，其实现结果和JDK 1.7相同，即当tail节点和尾节点的距离大于等于1时，更新tail。
 
 &emsp;ConcurrentLinkedQueue的入队操作整体逻辑如下图所示：
-![EnQueue](https://github.com/JP6907/Pic/blob/master/java/ConcurrentLinkedQueue/EnQueueDetail.png?raw=true)
+![EnQueue](https://gitee.com/JP6907/Pic/raw/master/java/ConcurrentLinkedQueue/EnQueueDetail.png)
 
 
 ### 2.4 出队
 &emsp;出队列的就是从队列里返回一个节点元素，并清空该节点对元素的引用。让我们通过每个节点出队的快照来观察下head节点的变化：
-![DeQueue](https://github.com/JP6907/Pic/blob/master/java/ConcurrentLinkedQueue/DeQueue.png?raw=true)
+![DeQueue](https://gitee.com/JP6907/Pic/raw/master/java/ConcurrentLinkedQueue/DeQueue.png)
 
 &emsp;从上图可知，并不是每次出队时都更新head节点，当head节点里有元素时，直接弹出head节点里的元素，而不会更新head节点。只有当head节点里没有元素时，出队操作才会更新head节点。采用这种方式也是**为了减少使用CAS更新head节点的消耗，从而提高出队效率**。让我们再通过源码来深入分析下出队过程。
 ```java
@@ -245,7 +245,7 @@ public E poll() {
 &emsp;该方法的主要逻辑就是首先获取头节点的元素，然后判断头节点元素是否为空，如果为空，表示另外一个线程已经进行了一次出队操作将该节点的元素取走，如果不为空，则使用CAS的方式将头节点的引用设置成null，如果CAS成功，则直接返回头节点的元素，如果不成功，表示另外一个线程已经进行了一次出队操作更新了head节点，导致元素发生了变化，需要重新获取头节点。
 
 &emsp;在入队和出队操作中，都有p == q的情况，那这种情况是怎么出现的呢？我们来看这样一种操作：
-![p==q](https://github.com/JP6907/Pic/blob/master/java/ConcurrentLinkedQueue/p==q.png?raw=true)
+![p==q](https://gitee.com/JP6907/Pic/raw/master/java/ConcurrentLinkedQueue/p==q.png)
 
 &emsp;在弹出一个节点之后，tail节点有一条指向自己的虚线，这是什么意思呢？我们来看poll()方法，在该方法中，移除元素之后，会调用updateHead方法：
 ```java

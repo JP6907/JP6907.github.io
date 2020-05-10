@@ -39,7 +39,7 @@ Java中，可作为GC Roots的对象包括以下几种：
 - 方法区中常量引用的对象。
 - 本地方法栈中Native方法引用的对象。
 
-![ReachabilityAnalysis](https://github.com/JP6907/Pic/blob/master/java/jvm/ReachabilityAnalysis.png?raw=true)
+![ReachabilityAnalysis](https://gitee.com/JP6907/Pic/raw/master/java/jvm/ReachabilityAnalysis.png)
 
 ### 2.3 再谈引用
 &emsp;Java将引用分为强引用(Strong Reference)、软引用(Soft Reference)、弱引用(weak Reference)、虚引用(Phantom Reference)。
@@ -126,14 +126,14 @@ no,i am dead!
 - 一是效率问题，标记和清除两个阶段的效率都不高；
 - 另一个是空间问题，标记清楚后会产生大量不连续的内存碎片，空间碎片太多可能导致以后在程序运行过程中需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集。
 
-![MarkSweep](https://github.com/JP6907/Pic/blob/master/java/jvm/MarkSweep.png?raw=true)
+![MarkSweep](https://gitee.com/JP6907/Pic/raw/master/java/jvm/MarkSweep.png)
 
 
 
 ### 3.2 复制算法 Copying
 &emsp;算法将可用内存按容量划分为大小相等的两块,每次只使用其中的一块。当这块内存用完了,就将还存活着的对象复制到另外一块上面,然后把已使用过的内存空间一次清理掉。这样使得每次都是对整个半区进行内存回收，也不会出现内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单、高效。但代价是将内存缩小为了原来的一半，代价比较大。
 
-![Copying](https://github.com/JP6907/Pic/blob/master/java/jvm/Copying.png?raw=true)
+![Copying](https://gitee.com/JP6907/Pic/raw/master/java/jvm/Copying.png)
 
 &emsp;商业虚拟机都采用这种收集算法来回收**新生代**。IBM研究表明，新生代中98%的对象都是“朝生夕死”，所以不需要1:1的比例来划分内存，而是将内存分为一块较大的Eden空间和两块较小的Survivor空间，每次使用Eden和其中一块Survivor。当回收时，将Eden和Survivor中和存活的对象一次性复制到另外一块Survivor上，最后清理Eden和用过的Survivor空间。HotSpot默认Eden和Survivor大小比例为8:1。也就是新生代中可用空间为整个新生代的90%，只有10%会被“浪费”。如果另一块Survivor空间不够用时，需要依赖其他内存（老年代）进行**分配担保**。
 
@@ -144,7 +144,7 @@ no,i am dead!
 
 ​&emsp;根据**老年代**的特点，有人提出了另外一种“标记-整理”（Mark-Compact）算法，标记过程与“标记-清除”一样，但后续步骤不是进行清理，而是让所有存活的对象都向一端移动，然后清理掉端边界以外的内存。
 
-![MarkCompact](https://github.com/JP6907/Pic/blob/master/java/jvm/MarkCompact.png?raw=true)
+![MarkCompact](https://gitee.com/JP6907/Pic/raw/master/java/jvm/MarkCompact.png)
 
 
 ### 3.4 分代收集算法 Generational Collection

@@ -98,7 +98,7 @@ class HashPartitioner(partitions: Int) extends Partitioner {
 ### 5.2 RangePartitioner
 &emsp;RangePartitioner 主要用于 RDD 的数据排序相关API中，比如 sortByKey 底层使用的数据分区器就是 RangePartitioner 分区器。
 
-![rangePartitioner](https://github.com/JP6907/Pic/blob/master/spark/rangePartitioner.png?raw=true)
+![rangePartitioner](https://gitee.com/JP6907/Pic/raw/master/spark/rangePartitioner.png?raw=true)
 
 &emsp;RangePartitioner 分区器的实现方式主要是通过两个步骤来实现的，第一步：先从整个 RDD 中抽取出样本数据，将样本数据排序，计算出每个分区的最大key值，形成一个 Array[KEY] 类型的数组变量 rangeBounds；第二步：判断 key 在 rangeBounds 中所处的范围，给出该 key 值在下一个 RDD 中的分区id号；该分区器要求 RDD 中的 KEY 类型必须是可以排序的。
 &emsp;RangePartitioner 的 rangeBounds 按照 key 排序 划分出长度大致相等的几个范围，最终返回 （partitions - 1）个有序的边界值。

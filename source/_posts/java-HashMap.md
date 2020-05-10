@@ -40,7 +40,7 @@ date: 2019-10-17 14:30:05
 
 &emsp;为了解决这一问题, 在java8中,当链表长度超过 8 之后,将会自动将链表转换成红黑树,以实现 o(log n) 的时间复杂度, 从而提升查找性能。
 
-![HashMap](https://github.com/JP6907/Pic/blob/master/java/HashMap.jpg?raw=true)
+![HashMap](https://gitee.com/JP6907/Pic/raw/master/java/HashMap.jpg)
 (图片来源网络)
 
 ### 2.2 扩容问题
@@ -399,7 +399,7 @@ if (hiTail != null) {
 (e.hash & oldCap) == 0
 
 &emsp;整个过程用一个图表示：
-![HashMap-resize-LinkedList](https://github.com/JP6907/Pic/blob/master/java/HashMap-resize-LinkedList.png?raw=true)
+![HashMap-resize-LinkedList](https://gitee.com/JP6907/Pic/raw/master/java/HashMap-resize-LinkedList.png)
 (图片来源网络)
 
 

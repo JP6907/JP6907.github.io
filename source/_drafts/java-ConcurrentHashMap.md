@@ -21,12 +21,12 @@ categories:
 
 &emsp;jdk 1.7 采用分段锁技术，整个 Hash 表被分成多个段，每个段中会对应一个 Segment 段锁，段与段之间可以并发访问，但是多线程想要操作同一个段是需要获取锁的。所有的 put，get，remove 等方法都是根据键的 hash 值对应到相应的段中，然后尝试获取锁进行访问。
 
-![HashMap](https://github.com/JP6907/Pic/blob/master/java/ConcurrentHashMapJDK7.png?raw=true)
+![HashMap](https://gitee.com/JP6907/Pic/raw/master/java/ConcurrentHashMapJDK7.png)
 (图片来源网络)
 
 &emsp;jdk 1.8 取消了基于 Segment 的分段锁思想，改用 CAS + synchronized 控制并发操作，在某些方面提升了性能。并且追随 1.8 版本的 HashMap 底层实现，使用数组+链表+红黑树进行数据存储。本篇主要介绍 1.8 版本的 ConcurrentHashMap 的具体实现。
 
-![HashMap](https://github.com/JP6907/Pic/blob/master/java/ConcurrentHashMap.png?raw=true)
+![HashMap](https://gitee.com/JP6907/Pic/raw/master/java/ConcurrentHashMap.png)
 (图片来源网络)
 
 &emsp;毕竟 ConcurrentHaspMap 只在 HashMap 的基础上实现的，两者在思想会有很多重叠的地方，建议先阅读文章[《深入理解 HashMap》](http://zhoujiapeng.top/java/java-HashMap)之后再来阅读本文，可能会理解得比较透彻。

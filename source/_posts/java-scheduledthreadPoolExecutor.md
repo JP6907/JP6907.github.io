@@ -19,7 +19,7 @@ date: 2019-09-26 09:25:37
 ## 1. 简介
 &emsp;ScheduledThreadPoolExecutor 与其他线程池的概念有些区别，它是一个支持任务周期性调度的线程池。ScheduledThreadPoolExecutor 继承 ThreadPoolExecutor，同时通过实现 ScheduledExecutorSerivce 来扩展基础线程池的功能，使其拥有了调度能力。其整个调度的核心在于内部类 DelayedWorkQueue ，一个有序的延时队列。
 
-![ScheduledThreadPoolExecutor类图](https://github.com/JP6907/Pic/blob/master/java/ScheduledThreadPoolExecutor.png?raw=true)
+![ScheduledThreadPoolExecutor类图](https://gitee.com/JP6907/Pic/raw/master/java/ScheduledThreadPoolExecutor.png?raw=true)
 
 &emsp;ScheduledThreadPoolExecutor 的出现，很好的弥补了传统 Timer 的不足，具体对比看下表：
 

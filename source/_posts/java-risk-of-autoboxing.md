@@ -27,7 +27,7 @@ public class Main {
 }
 ```
 &emsp;下面看一下需要装箱拆箱的类型有哪些：
-![java-auto-boxing-type](https://github.com/JP6907/Pic/raw/master/java/java-auto-boxing-type)
+![java-auto-boxing-type](https://gitee.com/JP6907/Pic/raw/master/java/java-auto-boxing-type)
 
 ## 2. 自动装箱的过程
 &emsp;下面我们看一下自动装箱、拆箱的具体过程。执行下面语句，查看 main 函数的字节码

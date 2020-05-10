@@ -28,7 +28,7 @@ updateDate: 2019-09-11 21:22:58
 - [Kubernetes](http://spark.apache.org/docs/2.4.0/running-on-kubernetes.html) - 外部集群资源管理器
 
 &emsp;下图表示 Spark 的基本工作流程架构图：
-![cluster-overview](https://github.com/JP6907/Pic/blob/master/spark/cluster-overview.png?raw=true)
+![cluster-overview](https://gitee.com/JP6907/Pic/raw/master/spark/cluster-overview.png?raw=true)
 &emsp;其中的 Cluster Manager 集群管理器是可插拔的，也就是本文的介绍重点。
 
 

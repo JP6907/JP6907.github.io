@@ -236,14 +236,14 @@ override def runTask(context: TaskContext): U = {
 ## 5. Shuffle
 &emsp;我们前面多次提到，ShuffleMapTask 会将计算结果写入 bucket 作为上游数据，供下游的 ResultTask 需要时拉取。接下来我们大致看一下这个过程：
 &emsp;Shuffle 的写操作（Shuffle writer）是将 MapTask 操作后的数据写入磁盘中，ShuffleMapTask 会为每个 ReduceTask 创建对应的 Bucket，ShuffleMapTask 产生的结果会根据设置的 partitioner（分区）得到对应的 BucketId，然后填充到相应的 Bucket 中。每个 ShuffleMapTask 的输出结果可能包含所有的 ReduceTask 需要的数据，所以每个 ShuffleMapTask 创建的 Bucket 数目是和 ReduceTask 的数目相等的。ShuffleMapTask 创建的 Bucket 对应于磁盘上的一个文件，用来储存结果，此文件也被称为 BlockFile。如下图所示：
-![spark-shuffle](https://github.com/JP6907/Pic/blob/master/spark/spark-shuffle1.jpg?raw=true)
+![spark-shuffle](https://gitee.com/JP6907/Pic/raw/master/spark/spark-shuffle1.jpg)
 &emsp;每个 Map Task 为每个 Reduce Task 生成一个文件，通常会产生大量的文件（即对应为 M*R 个中间文件，其中 M 表示 Map Task 个数，R 表示 Reduce Task 个数），伴随大量的随机磁盘 I/O 操作与大量的内存开销。总结下这里的两个严重问题：
 1. 生成大量文件，占用文件描述符，同时引入 DiskObjectWriter 带来的 Writer Handler 的缓存也非常消耗内存；
 2. 如果在 Reduce Task 时需要合并操作的话，会把数据放在一个 HashMap 中进行合并，如果数据量较大，很容易引发 OOM。
 
 &emsp;因此，Spark 做了改进，引入了 File Consolidation 机制。
 &emsp;一个 Executor 上所有的 Map Task 生成的分区文件只有一份，即将所有的 Map Task 相同的分区文件合并，这样每个 Executor 上最多只生成 N 个分区文件。
-![spark-shuffle-aggregate](https://github.com/JP6907/Pic/blob/master/spark/spark-shuffle2.jpg?raw=true)
+![spark-shuffle-aggregate](https://gitee.com/JP6907/Pic/raw/master/spark/spark-shuffle2.jpg)
 
 &emsp;我们再来看一下，shuffle 过程是怎么利用 MapOutputTrancker 记录的 MapStatue：
 1. 在 ShuffleRDD 的 compute 方法中，会获取 BlockStoreShuffleReader，然后在 BlockStoreShuffleReader 中，BlockStoreShuffleReader 的 read 方法会调用 mapOutputTracker.getMapSizesByExecutorId 方法获取一组二元组序列Seq[(BlockManagerId, Seq[(BlockId, Long)])]，第一项代表了 BlockManagerId，第二项描述了存储于该 BlockManager上的一组 shuffle blocks。

@@ -18,7 +18,7 @@ date: 2019-09-25 19:31:40
 ## 1. 构造
 
 &emsp;ThreadPoolExecutor提供了四个构造方法：
-![ThreadPoolExecutor构造方法](https://github.com/JP6907/Pic/blob/master/java/ThreadpoolExecutorConstructor.png?raw=true)
+![ThreadPoolExecutor构造方法](https://gitee.com/JP6907/Pic/raw/master/java/ThreadpoolExecutorConstructor.png?raw=true)
 
 &emsp;我们以最后一个构造方法（参数最多的那个），对其参数进行解释：
 ```java

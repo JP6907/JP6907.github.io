@@ -19,11 +19,11 @@ categories:
 ## 一级缓存
 &emsp;Mybatis对缓存提供支持，但是在没有配置的默认情况下，它只开启一级缓存，一级缓存只是相对于同一个SqlSession而言。
 
-![L1](https://github.com/JP6907/Pic/blob/master/java/mybatis/mybatis-cache-L1.png?raw=true)
+![L1](https://gitee.com/JP6907/Pic/raw/master/java/mybatis/mybatis-cache-L1.png?raw=true)
 
 &emsp;每个SqlSession中持有了Executor，每个Executor中有一个LocalCache。当用户发起查询时，MyBatis根据当前执行的语句生成MappedStatement，在Local Cache进行查询，如果缓存命中的话，直接返回结果给用户，如果缓存没有命中的话，查询数据库，结果写入Local Cache，最后返回结果给用户。使用SelSession第一次查询后，MyBatis会将其放在缓存中，以后再查询的时候，如果没有声明需要刷新，并且缓存没有超时的情况下，SqlSession都会取出当前缓存的数据，而不会再次发送SQL到数据库。
 
-![Sqlsession-cache-class](https://github.com/JP6907/Pic/blob/master/java/mybatis/Sqlsession-cache-class.jpg?raw=true)
+![Sqlsession-cache-class](https://gitee.com/JP6907/Pic/raw/master/java/mybatis/Sqlsession-cache-class.jpg?raw=true)
 
 
 &emsp;有几个问题需要注意一下：
@@ -154,12 +154,12 @@ DEBUG [main] - Closing JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7880cdf
 ## 二级缓存
 &emsp;MyBatis的二级缓存是Application级别的缓存，它可以提高对数据库查询的效率，以提高应用的性能。
 
-![L2](https://github.com/JP6907/Pic/blob/master/java/mybatis/mybatis-cache-L2.png?raw=true)
+![L2](https://gitee.com/JP6907/Pic/raw/master/java/mybatis/mybatis-cache-L2.png?raw=true)
 
 
 &emsp;在一级缓存中，其最大的共享范围就是一个SqlSession内部，如果多个SqlSession之间需要共享缓存，则需要使用到二级缓存。开启二级缓存后，会使用CachingExecutor装饰Executor，进入一级缓存的查询流程前，先在CachingExecutor进行二级缓存的查询，具体的工作流程如下所示。
 
-![mybatis-cache-L2-class](https://github.com/JP6907/Pic/blob/master/java/mybatis/mybatis-cache-L2-class.png?raw=true)
+![mybatis-cache-L2-class](https://gitee.com/JP6907/Pic/raw/master/java/mybatis/mybatis-cache-L2-class.png?raw=true)
 
 &emsp;二级缓存开启后，同一个 namespace下的所有操作语句，都影响着同一个Cache，即二级缓存被多个 SqlSession 共享，是一个全局的变量。
 &emsp;当开启缓存后，数据的查询执行的流程就是 二级缓存 -> 一级缓存 -> 数据库。

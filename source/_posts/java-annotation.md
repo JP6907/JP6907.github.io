@@ -38,7 +38,7 @@ date: 2019-10-20 11:24:58
 
 
 ## 2. Annotation 架构
-![Annotation架构](https://github.com/JP6907/Pic/blob/master/java/annotation.jpg?raw=true)
+![Annotation架构](https://gitee.com/JP6907/Pic/raw/master/java/annotation.jpg)
 
 &emsp;从中，我们可以看出：
 - 1 个 Annotation 和 1 个 RetentionPolicy 关联。
@@ -174,7 +174,7 @@ public @interface Deprecated {
 }
 ```
 &emsp;若某个方法被 @Deprecated 标注，则该方法不再被建议使用。如果有开发人员试图使用或重写被 @Deprecated 标示的方法，编译器会给相应的提示信息。示例如下:
-![](https://github.com/JP6907/Pic/blob/master/java/annotation-Deprecated.jpg?raw=true)
+![](https://gitee.com/JP6907/Pic/raw/master/java/annotation-Deprecated.jpg)
 
 
 2. @Inherited
@@ -245,8 +245,8 @@ public @interface SuppressWarnings {
 ```
 &emsp;SuppressWarnings 的作用是，让编译器对"它所标注的内容"的某些警告保持静默。例如，"@SuppressWarnings(value={"deprecation", "unchecked"})" 表示对"它所标注的内容"中的 "SuppressWarnings 不再建议使用警告"和"未检查的转换时的警告"保持沉默。示例如下：
 
-![](https://github.com/JP6907/Pic/blob/master/javaannotation-SuppressWarnings1.jpg?raw=true)
-![](https://github.com/JP6907/Pic/blob/master/java/annotation-SuppressWarnings2.jpg?raw=true)
+![](https://gitee.com/JP6907/Pic/raw/master/javaannotation-SuppressWarnings1.jpg)
+![](https://gitee.com/JP6907/Pic/raw/master/java/annotation-SuppressWarnings2.jpg)
 
 &emsp;如果没有使用 @SuppressWarnings(value={"deprecation"}) , 而 Date 属于 java 不再建议使用的类。因此，调用 Date 的 API 时，会产生警告。如果使用了 @SuppressWarnings(value={"deprecation"})。编译器对"调用 Date 的 API 产生的警告"保持沉默。
 

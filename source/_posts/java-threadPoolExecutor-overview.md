@@ -19,7 +19,7 @@ date: 2019-09-25 19:31:24
 
 ## 1. 创建线程池
 &emsp;查看源码，我们可以知道 ThreadPoolExecutor 的继承关系如图。
-![ThreadPoolExecutor](https://github.com/JP6907/Pic/blob/master/java/ThreadPoolExecutor.png?raw=true)
+![ThreadPoolExecutor](https://gitee.com/JP6907/Pic/raw/master/java/ThreadPoolExecutor.png?raw=true)
 
 &emsp;ExecutorService（ThreadPoolExecutor的顶层接口）使用线程池中的线程执行每个提交的任务，通常我们使用Executors的工厂方法来创建ExecutorService。
 &emsp;线程池解决了两个不同的问题：
@@ -64,7 +64,7 @@ public ThreadPoolExecutor(int corePoolSize,
 &emsp;当使用 execute(Runnable) 方法中提交新任务并且少于 corePoolSize 线程正在运行时，即使其他工作线程处于空闲状态，也会创建一个新线程来处理该请求。 如果有多于corePoolSize 但小于 maximumPoolSize 线程正在运行，则仅当队列已满时才会创建新线程。 通过设置 corePoolSize 和 maximumPoolSize 相同，可以创建一个固定大小的线程池。 通过将 maximumPoolSize 设置为基本上无界的值，例如 Integer.MAX_VALUE，可以允许池容纳任意数量的并发任务。 通常，核心和最大池大小仅在构建时设置，但也可以使用 setCorePoolSize 和 setMaximumPoolSize 进行动态更改。
 
 &emsp;这段话详细了描述了线程池对任务的处理流程，这里用个图总结一下:
-![线程任务处理流程](https://github.com/JP6907/Pic/blob/master/java/thread-process-task.png?raw=true)
+![线程任务处理流程](https://gitee.com/JP6907/Pic/raw/master/java/thread-process-task.png?raw=true)
 
 ### 2.2 prestartCoreThread 核心线程预启动
 &emsp;在默认情况下，只有当新任务到达时，才开始创建和启动核心线程，但是我们可以使用 prestartCoreThread() 和 prestartAllCoreThreads() 方法动态调整。

@@ -44,7 +44,7 @@ public void execute(Runnable command) {
     }
 ```
 &emsp;execute 的判断逻辑可用下图表示:
-![线程任务处理流程](https://github.com/JP6907/Pic/blob/master/java/thread-process-task.png?raw=true)
+![线程任务处理流程](https://gitee.com/JP6907/Pic/raw/master/java/thread-process-task.png?raw=true)
 1. 如果当前线程池任务线程数量小于核心线程池数量，会向 wokers 里面新增一个核心线程执行该任务。
 2. 如果当前线程池任务线程数量大于核心线程池数量，如果处于 RUNNING 状态，则尝试将任务添加到任务队列，这里需要重新判断线程池状态是因为这里 exexute 不是原子操作，此时可能已经处于非 RUNNING 状态，如果处于非 RUNNING 状态则需要抛弃该新任务，将任务从队列中移出。
 3. 如果当前线程池任务线程数量大于核心线程池数量，且任务队列已满，将会创建一个新的任务线程，直到超出 maximumPoolSize，如果超出 maximumPoolSize，则任务将会被拒绝，通过设定的拒绝策略来处理。
@@ -163,7 +163,7 @@ if (rs >= SHUTDOWN &&
 
 
 &emsp;理清 addWorker 之后，我们来看一下 Worker 类：
-![Worker类图](https://github.com/JP6907/Pic/blob/master/java/Worker.png?raw=true)
+![Worker类图](https://gitee.com/JP6907/Pic/raw/master/java/Worker.png?raw=true)
 
 &emsp;Worker是ThreadPoolExecutor的内部类，实现了 AbstractQueuedSynchronizer 并继承了 Runnable。
 ```java
