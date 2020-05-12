@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Spark源码阅读 之 Spark Application 的提交 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/Spark/spark-application/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                            
+                              <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                            
+                              <a class="tag" href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                            
+                        </div>
+                        <h1>Spark源码阅读 之 Spark Application 的提交</h1>
+                        <h2 class="subheading">Spark Application 的提交</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-08-31
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.6k</span> and
+                                Reading Time <span class="post-count">18</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="Spark-Application-提交"><a href="#Spark-Application-提交" class="headerlink" title="Spark Application 提交"></a>Spark Application 提交</h1><blockquote>
+<p>Spark版本：2.4.0</p>
+</blockquote>
+<p>&emsp;下面分析过程为Spark Standalone运行模式，Spark Standalone是一种典型的Master-Slave架构，在这种模式下，主要包括三个组件：Master、Worker、Driver，这里的Driver我们以运行在客户端的Client模式。</p>
+<h2 id="1-启动脚本"><a href="#1-启动脚本" class="headerlink" title="1.启动脚本"></a>1.启动脚本</h2><p>&emsp;首先我们会使用spark的sbin目录下”start-all”脚本来启动集群：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">if [ -z "$&#123;SPARK_HOME&#125;" ]; then</span><br><span class="line">  export SPARK_HOME="$(cd "`dirname "$0"`"/..; pwd)"</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Load the Spark configuration</span></span><br><span class="line">. "$&#123;SPARK_HOME&#125;/sbin/spark-config.sh"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Start Master</span></span><br><span class="line">"$&#123;SPARK_HOME&#125;/sbin"/start-master.sh</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Start Workers</span></span><br><span class="line">"$&#123;SPARK_HOME&#125;/sbin"/start-slaves.sh</span><br></pre></td></tr></table></figure><br>可以看到分别调用了start-master.sh脚本和start-slaves.sh脚本，查看start-master.sh脚本：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Starts the master on the machine this script is executed on.</span></span><br><span class="line"></span><br><span class="line">if [ -z "$&#123;SPARK_HOME&#125;" ]; then</span><br><span class="line">  export SPARK_HOME="$(cd "`dirname "$0"`"/..; pwd)"</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> NOTE: This exact class name is matched downstream by SparkSubmit.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Any changes need to be reflected there.</span></span><br><span class="line">CLASS="org.apache.spark.deploy.master.Master"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> ......</span></span><br><span class="line"></span><br><span class="line">if [ "$SPARK_MASTER_WEBUI_PORT" = "" ]; then</span><br><span class="line">  SPARK_MASTER_WEBUI_PORT=8080</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">"$&#123;SPARK_HOME&#125;/sbin"/spark-daemon.sh start $CLASS 1 \</span><br><span class="line">  --host $SPARK_MASTER_HOST --port $SPARK_MASTER_PORT --webui-port $SPARK_MASTER_WEBUI_PORT \</span><br><span class="line"><span class="meta">  $</span><span class="bash">ORIGINAL_ARGS</span></span><br></pre></td></tr></table></figure><br>该脚本启动了<strong>org.apache.spark.deploy.master.Master</strong>类，同样，查看start-slaves.sh脚本，可以看到调用了start-slave.sh脚本，而start-slave.sh脚本启动了<strong>org.apache.spark.deploy.worker.Worker</strong>类。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">if [ -z "$&#123;SPARK_HOME&#125;" ]; then</span><br><span class="line">  export SPARK_HOME="$(cd "`dirname "$0"`"/..; pwd)"</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> NOTE: This exact class name is matched downstream by SparkSubmit.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Any changes need to be reflected there.</span></span><br><span class="line">CLASS="org.apache.spark.deploy.worker.Worker"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> ...</span></span><br><span class="line"></span><br><span class="line">  "$&#123;SPARK_HOME&#125;/sbin"/spark-daemon.sh start $CLASS $WORKER_NUM \</span><br><span class="line">     --webui-port "$WEBUI_PORT" $PORT_FLAG $PORT_NUM $MASTER "$@"</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> ...</span></span><br></pre></td></tr></table></figure><br>这时，Spark集群的Master节点和Worker已经全部启动，Worker会向Master完成注册，并定时向Master发送心跳，使得Master节点可以知道该Worker节点属于活跃状态。</p>
+<h2 id="2-SparkSubmit"><a href="#2-SparkSubmit" class="headerlink" title="2.SparkSubmit"></a>2.SparkSubmit</h2><p>&emsp;打开 spark-submit 脚本，可以看到这个脚本最终启动了 org.apache.spark.deploy.SparkSubmit 这个类。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if [ -z "$&#123;SPARK_HOME&#125;" ]; then</span><br><span class="line">  source "$(dirname "$0")"/find-spark-home</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">disable</span> randomized <span class="built_in">hash</span> <span class="keyword">for</span> string <span class="keyword">in</span> Python 3.3+</span></span><br><span class="line">export PYTHONHASHSEED=0</span><br><span class="line"></span><br><span class="line">exec "$&#123;SPARK_HOME&#125;"/bin/spark-class org.apache.spark.deploy.SparkSubmit "$@"</span><br></pre></td></tr></table></figure><br>&emsp; Object SparkSubmit类继承自 CommandLineUtils ，名字浅显易懂，就是命令行解析工具类，它负责解析输入的命令和参数，并启动一个子类执行具体的业务逻辑。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> submit = <span class="keyword">new</span> <span class="type">SparkSubmit</span>() &#123;</span><br><span class="line">      self =&gt;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">parseArguments</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">SparkSubmitArguments</span> = &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="type">SparkSubmitArguments</span>(args) &#123;</span><br><span class="line">          <span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">logInfo</span></span>(msg: =&gt; <span class="type">String</span>): <span class="type">Unit</span> = self.logInfo(msg)</span><br><span class="line"></span><br><span class="line">          <span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">logWarning</span></span>(msg: =&gt; <span class="type">String</span>): <span class="type">Unit</span> = self.logWarning(msg)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">logInfo</span></span>(msg: =&gt; <span class="type">String</span>): <span class="type">Unit</span> = printMessage(msg)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">logWarning</span></span>(msg: =&gt; <span class="type">String</span>): <span class="type">Unit</span> = printMessage(<span class="string">s"Warning: <span class="subst">$msg</span>"</span>)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">doSubmit</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">super</span>.doSubmit(args)</span><br><span class="line">        &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> e: <span class="type">SparkUserAppException</span> =&gt;</span><br><span class="line">            exitFn(e.exitCode)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    submit.doSubmit(args)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>SparkSubmit 的面函数里面重写了解析参数，打印日志等函数，最后执行 submit.doSubmit(args)，所以 doSubmit 函数是主要的入口：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">doSubmit</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="comment">// Initialize logging if it hasn't been done yet. Keep track of whether logging needs to</span></span><br><span class="line">    <span class="comment">// be reset before the application starts.</span></span><br><span class="line">    <span class="keyword">val</span> uninitLog = initializeLogIfNecessary(<span class="literal">true</span>, silent = <span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> appArgs = parseArguments(args)</span><br><span class="line">    <span class="keyword">if</span> (appArgs.verbose) &#123;</span><br><span class="line">      logInfo(appArgs.toString)</span><br><span class="line">    &#125;</span><br><span class="line">    appArgs.action <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">SparkSubmitAction</span>.<span class="type">SUBMIT</span> =&gt; submit(appArgs, uninitLog)</span><br><span class="line">      <span class="keyword">case</span> <span class="type">SparkSubmitAction</span>.<span class="type">KILL</span> =&gt; kill(appArgs)</span><br><span class="line">      <span class="keyword">case</span> <span class="type">SparkSubmitAction</span>.<span class="type">REQUEST_STATUS</span> =&gt; requestStatus(appArgs)</span><br><span class="line">      <span class="keyword">case</span> <span class="type">SparkSubmitAction</span>.<span class="type">PRINT_VERSION</span> =&gt; printVersion()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>doSubmit 首先调用 parseArguments 解析输入的参数，然后根据具体的参数再调用相应的处理函数，我们具体看一下submit的逻辑。</p>
+<p>submit 函数负责根据输入参数提交 Application，执行分为两步：      </p>
+<ol>
+<li>准备环境，设置classpath、系统参数、程序参数等：<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.spark.deploy.SparkSubmit.submit()</span></span><br><span class="line"><span class="keyword">val</span> (childArgs, childClasspath, sparkConf, childMainClass) = prepareSubmitEnvironment(args)</span><br></pre></td></tr></table></figure></li>
+<li>运行，通过反射机制启动 Spark Application 程序 mainClass 中的 main 方法：<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">runMain(childArgs, childClasspath, sparkConf, childMainClass, args.verbose)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">runMain</span></span>(</span><br><span class="line">      childArgs: <span class="type">Seq</span>[<span class="type">String</span>],</span><br><span class="line">      childClasspath: <span class="type">Seq</span>[<span class="type">String</span>],</span><br><span class="line">      sparkConf: <span class="type">SparkConf</span>,</span><br><span class="line">      childMainClass: <span class="type">String</span>,</span><br><span class="line">      verbose: <span class="type">Boolean</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> mainClass: <span class="type">Class</span>[_] = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      mainClass = <span class="type">Utils</span>.classForName(childMainClass)</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">      <span class="comment">/// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> app: <span class="type">SparkApplication</span> = <span class="keyword">if</span> (classOf[<span class="type">SparkApplication</span>].isAssignableFrom(mainClass)) &#123;</span><br><span class="line">      mainClass.newInstance().asInstanceOf[<span class="type">SparkApplication</span>]</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// SPARK-4170</span></span><br><span class="line">      <span class="keyword">if</span> (classOf[scala.<span class="type">App</span>].isAssignableFrom(mainClass)) &#123;</span><br><span class="line">        logWarning(<span class="string">"Subclasses of scala.App may not work correctly. Use a main() method instead."</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">new</span> <span class="type">JavaMainApplication</span>(mainClass)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// ...</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>上面启动的 Spark Application 程序（用户程序）会创建 SparkContext，每个 Application 都会对应着唯一一个 SparkContext ，main方法里面会完成 SparkContext的初始化。SparkContext 是 Spark 应用创建时的上下文对象，是一个重要的入口类，在内部会进行一系列重要的操作，其中最重要的是创建 TaskScheduler 和 DAGScheduler实例。</p>
+<h2 id="3-SparkContext"><a href="#3-SparkContext" class="headerlink" title="3.SparkContext"></a>3.SparkContext</h2><p>&emsp;SparkoContext 是 Spark 应用创建时的上下文对象，是一个重要的入口类，在内部会进行一系列重要的操作，其中最重要的是创建 TaskScheduler 和 DAGScheduler实例。</p>
+<h3 id="3-1-SparkConf"><a href="#3-1-SparkConf" class="headerlink" title="3.1 SparkConf"></a>3.1 SparkConf</h3><p>&emsp;SparkConf负责管理Spark应用中的属性设置，它通过一个HashMap容器来管理key/alue类型的属性。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SparkConf</span>(<span class="params">loadDefaults: <span class="type">Boolean</span></span>) <span class="keyword">extends</span> <span class="title">Cloneable</span> <span class="keyword">with</span> <span class="title">Logging</span> <span class="keyword">with</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">import</span> <span class="type">SparkConf</span>._</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** Create a SparkConf that loads defaults from system properties and the classpath */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">this</span></span>() = <span class="keyword">this</span>(<span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> settings = <span class="keyword">new</span> <span class="type">ConcurrentHashMap</span>[<span class="type">String</span>, <span class="type">String</span>]()</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>&emsp;注意，在SparkContext中会对传入的SparkConf克隆并验证，即一旦SparkConf传给SparkContext，就不能在修改了，Spark不支持运行时修改配置。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.spark.SparkContext</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    _conf = config.clone()</span><br><span class="line">    _conf.validateSettings()</span><br><span class="line"></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-2-LiveListenerBus"><a href="#3-2-LiveListenerBus" class="headerlink" title="3.2 LiveListenerBus"></a>3.2 LiveListenerBus</h3><p>&emsp;这里使用典型的<strong>观察者模式</strong>，SparkListener 向LiveListenerBus类注册不同类型的 SparkListenerEvent事件，LiveListenerBus会遍历它的所有监听者SparkListener， 然后使用对应事件接口进行相应。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.spark.SparkContext</span></span><br><span class="line">_listenerBus = <span class="keyword">new</span> <span class="type">LiveListenerBus</span>(_conf)</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">setupAndStartListenerBus()</span><br><span class="line">postEnvironmentUpdate()</span><br><span class="line">postApplicationStart()</span><br></pre></td></tr></table></figure><br>当task scheduler准备好了之后，就会通过postEnvironmentUpdate通知listenerBus<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Post the environment update event once the task scheduler is ready */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">postEnvironmentUpdate</span></span>() &#123;</span><br><span class="line">    <span class="keyword">if</span> (taskScheduler != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">val</span> schedulingMode = getSchedulingMode.toString</span><br><span class="line">      <span class="keyword">val</span> addedJarPaths = addedJars.keys.toSeq</span><br><span class="line">      <span class="keyword">val</span> addedFilePaths = addedFiles.keys.toSeq</span><br><span class="line">      <span class="keyword">val</span> environmentDetails = <span class="type">SparkEnv</span>.environmentDetails(conf, schedulingMode, addedJarPaths,</span><br><span class="line">        addedFilePaths)</span><br><span class="line">      <span class="keyword">val</span> environmentUpdate = <span class="type">SparkListenerEnvironmentUpdate</span>(environmentDetails)</span><br><span class="line">      listenerBus.post(environmentUpdate) <span class="comment">//观察者模式</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-3-SparkEnv"><a href="#3-3-SparkEnv" class="headerlink" title="3.3 SparkEnv"></a>3.3 SparkEnv</h3><p>&emsp;SparkEnv是运行环境，封装了所有Spark运行时的环境对象，如Serializer、ShuffleManager、BroadcastManager、BlockManager、MemoryManager等。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create the Spark execution environment (cache, map output tracker, etc)</span></span><br><span class="line">    _env = createSparkEnv(_conf, isLocal, listenerBus)</span><br><span class="line">    <span class="type">SparkEnv</span>.set(_env)</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-4-SparkUI"><a href="#3-4-SparkUI" class="headerlink" title="3.4 SparkUI"></a>3.4 SparkUI</h3><p>&emsp;通过SparkUI可以观察Spark集群的运行情况和Spark Application的运行情况。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">_ui =</span><br><span class="line">      <span class="keyword">if</span> (conf.getBoolean(<span class="string">"spark.ui.enabled"</span>, <span class="literal">true</span>)) &#123;</span><br><span class="line">        <span class="type">Some</span>(<span class="type">SparkUI</span>.create(<span class="type">Some</span>(<span class="keyword">this</span>), _statusStore, _conf, _env.securityManager, appName, <span class="string">""</span>,</span><br><span class="line">          startTime))</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// For tests, do not enable the UI</span></span><br><span class="line">        <span class="type">None</span></span><br><span class="line">      &#125;</span><br><span class="line">    <span class="comment">// Bind the UI before starting the task scheduler to communicate</span></span><br><span class="line">    <span class="comment">// the bound port to the cluster manager properly</span></span><br><span class="line">    _ui.foreach(_.bind())</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-5-EventLoggingListener"><a href="#3-5-EventLoggingListener" class="headerlink" title="3.5 EventLoggingListener"></a>3.5 EventLoggingListener</h3><p>&emsp;EventLoggingListener默认是关闭的，可以通过spark.eventLog.enabled配置开启，它的主要功能是以json格式记录发生的事件。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">_eventLogger =</span><br><span class="line">      <span class="keyword">if</span> (isEventLogEnabled) &#123;</span><br><span class="line">        <span class="keyword">val</span> logger =</span><br><span class="line">          <span class="keyword">new</span> <span class="type">EventLoggingListener</span>(_applicationId, _applicationAttemptId, _eventLogDir.get,</span><br><span class="line">            _conf, _hadoopConfiguration)</span><br><span class="line">        logger.start()</span><br><span class="line">        listenerBus.addToEventLogQueue(logger)</span><br><span class="line">        <span class="type">Some</span>(logger)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="type">None</span></span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-6-TaskScheduler"><a href="#3-6-TaskScheduler" class="headerlink" title="3.6 TaskScheduler"></a>3.6 TaskScheduler</h3><p>&emsp;SparkContext会创建 TaskScheduler 和 DAGScheduler 调度器：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create and start the scheduler</span></span><br><span class="line">    <span class="keyword">val</span> (sched, ts) = <span class="type">SparkContext</span>.createTaskScheduler(<span class="keyword">this</span>, master, deployMode)</span><br><span class="line">    _schedulerBackend = sched</span><br><span class="line">    _taskScheduler = ts</span><br><span class="line">    _dagScheduler = <span class="keyword">new</span> <span class="type">DAGScheduler</span>(<span class="keyword">this</span>)</span><br></pre></td></tr></table></figure><br>TaskScheduler 通过不同的 SchedulerBackend 来调度和管理任务，它实现了FIFO调度和FAIR调度。SparkContext.createTaskScheduler 会根据不同的部署模式选择不同的 SchedulerBackend<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Create a task scheduler based on a given master URL.</span></span><br><span class="line"><span class="comment">   * Return a 2-tuple of the scheduler backend and the task scheduler.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">createTaskScheduler</span></span>(</span><br><span class="line">      sc: <span class="type">SparkContext</span>,</span><br><span class="line">      master: <span class="type">String</span>,</span><br><span class="line">      deployMode: <span class="type">String</span>): (<span class="type">SchedulerBackend</span>, <span class="type">TaskScheduler</span>) = &#123;</span><br><span class="line">    <span class="keyword">import</span> <span class="type">SparkMasterRegex</span>._</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When running locally, don't try to re-execute tasks on failure.</span></span><br><span class="line">    <span class="keyword">val</span> <span class="type">MAX_LOCAL_TASK_FAILURES</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    master <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"local"</span> =&gt;</span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc, <span class="type">MAX_LOCAL_TASK_FAILURES</span>, isLocal = <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, <span class="number">1</span>)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        (backend, scheduler)</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="type">SPARK_REGEX</span>(sparkUrl) =&gt;</span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc)</span><br><span class="line">        <span class="keyword">val</span> masterUrls = sparkUrl.split(<span class="string">","</span>).map(<span class="string">"spark://"</span> + _)</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">StandaloneSchedulerBackend</span>(scheduler, sc, masterUrls)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        (backend, scheduler)</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-7-StandaloneAppClient"><a href="#3-7-StandaloneAppClient" class="headerlink" title="3.7 StandaloneAppClient"></a>3.7 StandaloneAppClient</h3><p>&emsp; standalone 模式对应的是 SPARK_REGEX，这里的 SchedulerBackend 实现的是 StandaloneSchedulerBackend，它是CoarseGrainedSchedulerBackend 的子类，CoarseGrainedSchedulerBackend 实现了 SchedulerBackend 特质。StandaloneSchedulerBackend 会创建并启动 StandaloneAppClient，client 启动之后会向 Master注册 Application。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.spark.scheduler.cluster.StandaloneSchedulerBackend</span></span><br><span class="line">client = <span class="keyword">new</span> <span class="type">StandaloneAppClient</span>(sc.env.rpcEnv, masters, appDesc, <span class="keyword">this</span>, conf)</span><br><span class="line">client.start()</span><br><span class="line"></span><br><span class="line"><span class="comment">//StandaloneAppClient.scala</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">onStart</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        registerWithMaster(<span class="number">1</span>)</span><br><span class="line">      &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt;</span><br><span class="line">          logWarning(<span class="string">"Failed to connect to master"</span>, e)</span><br><span class="line">          markDisconnected()</span><br><span class="line">          stop()</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><br>&emsp;client 会尝试向所有的Master（可能有多个）注册，直到成功连接上其中一个 Master。发送注册消息的过程中，如果超过20s没有接收到注册成功的消息，那么会重新注册，如果重试超过3次仍未成功，那么本次提交就以失败结束。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//StandaloneAppClient.scala</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">registerWithMaster</span></span>(nthRetry: <span class="type">Int</span>) &#123;</span><br><span class="line">      registerMasterFutures.set(tryRegisterAllMasters())</span><br><span class="line">      registrationRetryTimer.set(registrationRetryThread.schedule(<span class="keyword">new</span> <span class="type">Runnable</span> &#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">          <span class="keyword">if</span> (registered.get) &#123;</span><br><span class="line">            registerMasterFutures.get.foreach(_.cancel(<span class="literal">true</span>))</span><br><span class="line">            registerMasterThreadPool.shutdownNow()</span><br><span class="line">          &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nthRetry &gt;= <span class="type">REGISTRATION_RETRIES</span>) &#123;</span><br><span class="line">            markDead(<span class="string">"All masters are unresponsive! Giving up."</span>)</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            registerMasterFutures.get.foreach(_.cancel(<span class="literal">true</span>))</span><br><span class="line">            registerWithMaster(nthRetry + <span class="number">1</span>)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;, <span class="type">REGISTRATION_TIMEOUT_SECONDS</span>, <span class="type">TimeUnit</span>.<span class="type">SECONDS</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">tryRegisterAllMasters</span></span>(): <span class="type">Array</span>[<span class="type">JFuture</span>[_]] = &#123;</span><br><span class="line">      <span class="keyword">for</span> (masterAddress &lt;- masterRpcAddresses) <span class="keyword">yield</span> &#123;</span><br><span class="line">        registerMasterThreadPool.submit(<span class="keyword">new</span> <span class="type">Runnable</span> &#123;</span><br><span class="line">          <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>(): <span class="type">Unit</span> = <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (registered.get) &#123;</span><br><span class="line">              <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">            logInfo(<span class="string">"Connecting to master "</span> + masterAddress.toSparkURL + <span class="string">"..."</span>)</span><br><span class="line">            <span class="keyword">val</span> masterRef = rpcEnv.setupEndpointRef(masterAddress, <span class="type">Master</span>.<span class="type">ENDPOINT_NAME</span>)</span><br><span class="line">            masterRef.send(<span class="type">RegisterApplication</span>(appDescription, self))</span><br><span class="line">          &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">            <span class="keyword">case</span> ie: <span class="type">InterruptedException</span> =&gt; <span class="comment">// Cancelled</span></span><br><span class="line">            <span class="keyword">case</span> <span class="type">NonFatal</span>(e) =&gt; logWarning(<span class="string">s"Failed to connect to master <span class="subst">$masterAddress</span>"</span>, e)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><br>tryRegisterAllMasters 函数通过 rpcEnv 向 Master 发送一个 RegisterApplication 注册的消息，StandaloneAppClient 的 receive 方法会接收 Master 的返回消息：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>: <span class="type">PartialFunction</span>[<span class="type">Any</span>, <span class="type">Unit</span>] = &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">RegisteredApplication</span>(appId_, masterRef) =&gt;</span><br><span class="line">        <span class="comment">// FIXME How to handle the following cases?</span></span><br><span class="line">        <span class="comment">// 1. A master receives multiple registrations and sends back multiple</span></span><br><span class="line">        <span class="comment">// RegisteredApplications due to an unstable network.</span></span><br><span class="line">        <span class="comment">// 2. Receive multiple RegisteredApplication from different masters because the master is</span></span><br><span class="line">        <span class="comment">// changing.</span></span><br><span class="line">        appId.set(appId_)</span><br><span class="line">        registered.set(<span class="literal">true</span>)</span><br><span class="line">        master = <span class="type">Some</span>(masterRef)</span><br><span class="line">        listener.connected(appId.get)</span><br><span class="line"></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-8-Master-和-Worker"><a href="#3-8-Master-和-Worker" class="headerlink" title="3.8 Master 和 Worker"></a>3.8 Master 和 Worker</h3><p>Master 接收到 AppClient 的 RegisterApplication 消息后，会创建并注册对应的 Applicaton。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.spark.deploy.master</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>: <span class="type">PartialFunction</span>[<span class="type">Any</span>, <span class="type">Unit</span>] = &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">ElectedLeader</span> =&gt;</span><br><span class="line">      <span class="keyword">val</span> (storedApps, storedDrivers, storedWorkers) = persistenceEngine.readPersistedData(rpcEnv)</span><br><span class="line">      </span><br><span class="line">      ...</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">RegisterApplication</span>(description, driver) =&gt;</span><br><span class="line">      <span class="comment">// TODO Prevent repeated registrations from some driver</span></span><br><span class="line">      <span class="keyword">if</span> (state == <span class="type">RecoveryState</span>.<span class="type">STANDBY</span>) &#123;</span><br><span class="line">        <span class="comment">// ignore, don't send response</span></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        logInfo(<span class="string">"Registering app "</span> + description.name)</span><br><span class="line">        <span class="keyword">val</span> app = createApplication(description, driver)</span><br><span class="line">        registerApplication(app)</span><br><span class="line">        logInfo(<span class="string">"Registered app "</span> + description.name + <span class="string">" with ID "</span> + app.id)</span><br><span class="line">        persistenceEngine.addApplication(app)</span><br><span class="line">        driver.send(<span class="type">RegisteredApplication</span>(app.id, self))</span><br><span class="line">        schedule()</span><br><span class="line">      &#125;</span><br><span class="line">     </span><br><span class="line">     ...</span><br></pre></td></tr></table></figure>
+<p>在registerApplication函数里面，会通过applicationMetricsSystem度量系统<strong>为该Application注册资源</strong>。Spark基于Metric构建了自己的度量系统，提供完整的系统监控功能，如可测性、性能优化、运维评估、数据统计等。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">applicationMetricsSystem.registerSource(app.appSource)</span><br></pre></td></tr></table></figure><br>在注册完成之后，会调用schedule函数，为 <strong>worker</strong> 进行资源的调度分配：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">schedule</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (state != <span class="type">RecoveryState</span>.<span class="type">ALIVE</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Drivers take strict precedence over executors</span></span><br><span class="line">    <span class="keyword">val</span> shuffledAliveWorkers = <span class="type">Random</span>.shuffle(workers.toSeq.filter(_.state == <span class="type">WorkerState</span>.<span class="type">ALIVE</span>))</span><br><span class="line">    <span class="keyword">val</span> numWorkersAlive = shuffledAliveWorkers.size</span><br><span class="line">    <span class="keyword">var</span> curPos = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> (driver &lt;- waitingDrivers.toList) &#123; <span class="comment">// iterate over a copy of waitingDrivers</span></span><br><span class="line">      <span class="comment">// We assign workers to each waiting driver in a round-robin fashion. For each driver, we</span></span><br><span class="line">      <span class="comment">// start from the last worker that was assigned a driver, and continue onwards until we have</span></span><br><span class="line">      <span class="comment">// explored all alive workers.</span></span><br><span class="line">      <span class="keyword">var</span> launched = <span class="literal">false</span></span><br><span class="line">      <span class="keyword">var</span> numWorkersVisited = <span class="number">0</span></span><br><span class="line">      <span class="keyword">while</span> (numWorkersVisited &lt; numWorkersAlive &amp;&amp; !launched) &#123;</span><br><span class="line">        <span class="keyword">val</span> worker = shuffledAliveWorkers(curPos)</span><br><span class="line">        numWorkersVisited += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> (worker.memoryFree &gt;= driver.desc.mem &amp;&amp; worker.coresFree &gt;= driver.desc.cores) &#123;</span><br><span class="line">          launchDriver(worker, driver)</span><br><span class="line">          waitingDrivers -= driver</span><br><span class="line">          launched = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">        curPos = (curPos + <span class="number">1</span>) % numWorkersAlive</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    startExecutorsOnWorkers()</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>scheduler 会首先打散所有 worker，然后再选出符合条件的 worker 节点，使得一个 Application 尽可能多得分配到不同的节点，最后通过startExecutorsOnWorkers 在相应的worder分配资源并启动 Executor 进程：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">startExecutorsOnWorkers</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="comment">// Right now this is a very simple FIFO scheduler. We keep trying to fit in the first app</span></span><br><span class="line">    <span class="comment">// in the queue, then the second app, etc.</span></span><br><span class="line">    <span class="keyword">for</span> (app &lt;- waitingApps) &#123;</span><br><span class="line">      <span class="keyword">val</span> coresPerExecutor = app.desc.coresPerExecutor.getOrElse(<span class="number">1</span>)</span><br><span class="line">      <span class="comment">// If the cores left is less than the coresPerExecutor,the cores left will not be allocated</span></span><br><span class="line">      <span class="keyword">if</span> (app.coresLeft &gt;= coresPerExecutor) &#123;</span><br><span class="line">        <span class="comment">// Filter out workers that don't have enough resources to launch an executor</span></span><br><span class="line">        <span class="keyword">val</span> usableWorkers = workers.toArray.filter(_.state == <span class="type">WorkerState</span>.<span class="type">ALIVE</span>)</span><br><span class="line">          .filter(worker =&gt; worker.memoryFree &gt;= app.desc.memoryPerExecutorMB &amp;&amp;</span><br><span class="line">            worker.coresFree &gt;= coresPerExecutor)</span><br><span class="line">          .sortBy(_.coresFree).reverse</span><br><span class="line">        <span class="keyword">val</span> assignedCores = scheduleExecutorsOnWorkers(app, usableWorkers, spreadOutApps)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Now that we've decided how many cores to allocate on each worker, let's allocate them</span></span><br><span class="line">        <span class="keyword">for</span> (pos &lt;- <span class="number">0</span> until usableWorkers.length <span class="keyword">if</span> assignedCores(pos) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">          allocateWorkerResourceToExecutors(</span><br><span class="line">            app, assignedCores(pos), app.desc.coresPerExecutor, usableWorkers(pos))</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>allocateWorkerResourceToExecutors 函数会发送一个 LaunchExecutor消息给对应 Worker，Worker 根据 Master 的资源分配结果类创建 Executor 进程。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.spark.deploy.worker</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>: <span class="type">PartialFunction</span>[<span class="type">Any</span>, <span class="type">Unit</span>] = synchronized &#123;</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  <span class="keyword">case</span> <span class="type">LaunchExecutor</span>(masterUrl, appId, execId, appDesc, cores_, memory_) =&gt;</span><br><span class="line">      <span class="keyword">if</span> (masterUrl != activeMasterUrl) &#123;</span><br><span class="line">        logWarning(<span class="string">"Invalid Master ("</span> + masterUrl + <span class="string">") attempted to launch executor."</span>)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          logInfo(<span class="string">"Asked to launch executor %s/%d for %s"</span>.format(appId, execId, appDesc.name))</span><br><span class="line"></span><br><span class="line">          <span class="comment">// Create the executor's working directory</span></span><br><span class="line">          <span class="keyword">val</span> executorDir = <span class="keyword">new</span> <span class="type">File</span>(workDir, appId + <span class="string">"/"</span> + execId)</span><br><span class="line">          <span class="keyword">if</span> (!executorDir.mkdirs()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">IOException</span>(<span class="string">"Failed to create directory "</span> + executorDir)</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="comment">// Create local dirs for the executor. These are passed to the executor via the</span></span><br><span class="line">          <span class="comment">// SPARK_EXECUTOR_DIRS environment variable, and deleted by the Worker when the</span></span><br><span class="line">          <span class="comment">// application finishes.</span></span><br><span class="line">          <span class="keyword">val</span> appLocalDirs = appDirectories.getOrElse(appId, &#123;</span><br><span class="line">            <span class="keyword">val</span> localRootDirs = <span class="type">Utils</span>.getOrCreateLocalRootDirs(conf)</span><br><span class="line">            <span class="keyword">val</span> dirs = localRootDirs.flatMap &#123; dir =&gt;</span><br><span class="line">              <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">val</span> appDir = <span class="type">Utils</span>.createDirectory(dir, namePrefix = <span class="string">"executor"</span>)</span><br><span class="line">                <span class="type">Utils</span>.chmod700(appDir)</span><br><span class="line">                <span class="type">Some</span>(appDir.getAbsolutePath())</span><br><span class="line">              &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">                <span class="keyword">case</span> e: <span class="type">IOException</span> =&gt;</span><br><span class="line">                  logWarning(<span class="string">s"<span class="subst">$&#123;e.getMessage&#125;</span>. Ignoring this directory."</span>)</span><br><span class="line">                  <span class="type">None</span></span><br><span class="line">              &#125;</span><br><span class="line">            &#125;.toSeq</span><br><span class="line">            <span class="keyword">if</span> (dirs.isEmpty) &#123;</span><br><span class="line">              <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">IOException</span>(<span class="string">"No subfolder can be created in "</span> +</span><br><span class="line">                <span class="string">s"<span class="subst">$&#123;localRootDirs.mkString(",")&#125;</span>."</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            dirs</span><br><span class="line">          &#125;)</span><br><span class="line">          appDirectories(appId) = appLocalDirs</span><br><span class="line">          <span class="keyword">val</span> manager = <span class="keyword">new</span> <span class="type">ExecutorRunner</span>(</span><br><span class="line">            appId,</span><br><span class="line">            execId,</span><br><span class="line">            appDesc.copy(command = <span class="type">Worker</span>.maybeUpdateSSLSettings(appDesc.command, conf)),</span><br><span class="line">            cores_,</span><br><span class="line">            memory_,</span><br><span class="line">            self,</span><br><span class="line">            workerId,</span><br><span class="line">            host,</span><br><span class="line">            webUi.boundPort,</span><br><span class="line">            publicAddress,</span><br><span class="line">            sparkHome,</span><br><span class="line">            executorDir,</span><br><span class="line">            workerUri,</span><br><span class="line">            conf,</span><br><span class="line">            appLocalDirs, <span class="type">ExecutorState</span>.<span class="type">RUNNING</span>)</span><br><span class="line">          executors(appId + <span class="string">"/"</span> + execId) = manager</span><br><span class="line">          manager.start()</span><br><span class="line">          coresUsed += cores_</span><br><span class="line">          memoryUsed += memory_</span><br><span class="line">          sendToMaster(<span class="type">ExecutorStateChanged</span>(appId, execId, manager.state, <span class="type">None</span>, <span class="type">None</span>))</span><br><span class="line">        &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt;</span><br><span class="line">            logError(<span class="string">s"Failed to launch executor <span class="subst">$appId</span>/<span class="subst">$execId</span> for <span class="subst">$&#123;appDesc.name&#125;</span>."</span>, e)</span><br><span class="line">            <span class="keyword">if</span> (executors.contains(appId + <span class="string">"/"</span> + execId)) &#123;</span><br><span class="line">              executors(appId + <span class="string">"/"</span> + execId).kill()</span><br><span class="line">              executors -= appId + <span class="string">"/"</span> + execId</span><br><span class="line">            &#125;</span><br><span class="line">            sendToMaster(<span class="type">ExecutorStateChanged</span>(appId, execId, <span class="type">ExecutorState</span>.<span class="type">FAILED</span>,</span><br><span class="line">              <span class="type">Some</span>(e.toString), <span class="type">None</span>))</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Worker 接收到 LaunchExecutor 消息后会创建相应的工作目录，并启动 ExecutorRunner。Worker 会记录本身资源的使用情况，包括CPU、内存等，但这个统计只是为了 WebUI 的展现。Master 本身会记录 Worker 的资源使用情况，无需 Worker 汇报。<strong>Worker 和 Master 之间传送的心跳的目的仅仅是汇报存活状态，不会携带其它信息</strong>。</p>
+<p>ExecutorRunner 会启动一个线程来执行任务:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>[worker] <span class="function"><span class="keyword">def</span> <span class="title">start</span></span>() &#123;</span><br><span class="line">    workerThread = <span class="keyword">new</span> <span class="type">Thread</span>(<span class="string">"ExecutorRunner for "</span> + fullId) &#123;</span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>() &#123; fetchAndRunExecutor() &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    workerThread.start()</span><br><span class="line">    <span class="comment">// Shutdown hook that kills actors on shutdown.</span></span><br><span class="line">    shutdownHook = <span class="type">ShutdownHookManager</span>.addShutdownHook &#123; () =&gt;</span><br><span class="line">      <span class="comment">// It's possible that we arrive here before calling `fetchAndRunExecutor`, then `state` will</span></span><br><span class="line">      <span class="comment">// be `ExecutorState.RUNNING`. In this case, we should set `state` to `FAILED`.</span></span><br><span class="line">      <span class="keyword">if</span> (state == <span class="type">ExecutorState</span>.<span class="type">RUNNING</span>) &#123;</span><br><span class="line">        state = <span class="type">ExecutorState</span>.<span class="type">FAILED</span></span><br><span class="line">      &#125;</span><br><span class="line">      killProcess(<span class="type">Some</span>(<span class="string">"Worker shutting down"</span>)) &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>主要的线程逻辑在 fetchAndRunExecutor 函数中，里面首先根据ApplicationDescription设置一些环境参数、创建工作目录，最后再执行相应的程序。</p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h2><p>&emsp;现总结 <strong>Standalone+Client</strong> 模式下，Spark Application 提交后整个系统的运行流程：</p>
+<ol>
+<li>(client/driver端) 使用 spark-submit 脚本提交 Application；</li>
+<li>(client/driver端) spark-submit 脚本执行 org.apache.spark.deploy.SparkSubmit 类的主函数入口，如果脚本执行submit命令，则 SparkSubmit 首先解析传入参数，然后使用 Java 的反射机制运行参数中指定的 mainClass 主类的main函数，即用户程序中的 main 函数；</li>
+<li>(client/driver端) main函数中会创建 SparkContext，它程序的重要入口，包含系统运行的上下文信息，SparkContext 会根据传入的 SparkConf创建一系列组建，包括 LiveListenerBus、SparkEnv、RpcEndpointRef、TaskScheduler、DAGScheduler等；</li>
+<li>(client/driver端) SparkContext.createTaskScheduler 会根据部署模式创建对应的 SchedulerBackend，Standalone 模式下是 StandaloneSchedulerBackend，StandaloneSchedulerBackend 会创建 StandaloneAppClient，并启动 client；</li>
+<li>(client/driver端) StandaloneAppClient 启动过程中会向 Master 注册 Application,通过 rpcEnv 发送一个 RegisterApplication 信息；</li>
+<li>(Master节点) Master 接收到 RegisterApplication 信息后，会在 MetricsSystem 度量系统中注册 Applicaiton 需要的资源，然后调用 schedule 函数执行调度过程，schedule函数会为 worker 进行计算资源的调度分配，最后发送 LaunchExecutor 给各个 Worker 通知其启动相应的 Executor 进程；</li>
+<li>(Worker节点) Worker 接收到 LaunchExecutor 消息后会创建相应的工作目录，并启动 ExecutorRunner，ExecutorRunner 会启动一个线程来执行具体的任务；</li>
+</ol>
+<p>&nbsp;<br>&nbsp;</p>
+<blockquote>
+<p>本文作者：ZJP<br>版权声明：本文为博主原创文章，遵循 <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC 4.0 BY-SA</a> 版权协议，转载请附上原文出处链接和本声明。<br>本文链接：<a href="http://zhoujiapeng.top/Spark/spark-application/">http://zhoujiapeng.top/Spark/spark-application/</a></p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/Hexo/hexo-theme-zjp/" data-toggle="tooltip" data-placement="top" title="[Hexo] Theme zjp">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/Spark/spark-overview/" data-toggle="tooltip" data-placement="top" title="Spark Overview">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark-Application-提交"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Spark Application 提交</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-启动脚本"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.启动脚本</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-SparkSubmit"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2.SparkSubmit</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-SparkContext"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">3.SparkContext</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-SparkConf"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">3.1 SparkConf</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-LiveListenerBus"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">3.2 LiveListenerBus</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-SparkEnv"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">3.3 SparkEnv</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-4-SparkUI"><span class="toc-nav-number">1.3.4.</span> <span class="toc-nav-text">3.4 SparkUI</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-5-EventLoggingListener"><span class="toc-nav-number">1.3.5.</span> <span class="toc-nav-text">3.5 EventLoggingListener</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-6-TaskScheduler"><span class="toc-nav-number">1.3.6.</span> <span class="toc-nav-text">3.6 TaskScheduler</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-7-StandaloneAppClient"><span class="toc-nav-number">1.3.7.</span> <span class="toc-nav-text">3.7 StandaloneAppClient</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-8-Master-和-Worker"><span class="toc-nav-number">1.3.8.</span> <span class="toc-nav-text">3.8 Master 和 Worker</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-总结"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">4.总结</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                        
+                          <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                        
+                          <a class="tag" href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          scala 尾递归优化 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/scala/scala-tailrec/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                            
+                              <a class="tag" href="/tags/#scala" title="scala">scala</a>
+                            
+                        </div>
+                        <h1>scala 尾递归优化</h1>
+                        <h2 class="subheading">scala.annotation.tailrec</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-09-18
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.9k</span> and
+                                Reading Time <span class="post-count">7</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="scala-尾递归优化"><a href="#scala-尾递归优化" class="headerlink" title="scala 尾递归优化"></a>scala 尾递归优化</h1><h2 id="1-递归"><a href="#1-递归" class="headerlink" title="1. 递归"></a>1. 递归</h2><h3 id="1-1-递归的定义"><a href="#1-1-递归的定义" class="headerlink" title="1.1 递归的定义"></a>1.1 递归的定义</h3><p>&emsp;一个函数直接或间接的调用它自己本身，就是递归。它通常把一个大型复杂的问题层层转化为一个与原问题相似的规模较小的问题来求解，递归策略只需少量的代码就可以执行多次重复的计算。</p>
+<h3 id="1-2-递归的条件"><a href="#1-2-递归的条件" class="headerlink" title="1.2 递归的条件"></a>1.2 递归的条件</h3><p>&emsp;一般来说，递归需要有边界条件、递归前进段和递归返回段。当边界条件不满足时，递归前进；当边界条件满足时，递归返回。<br>&emsp;以递归方式实现阶乘函数的实现：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">factorial</span></span>(n:<span class="type">Int</span>): <span class="type">Long</span> =&#123;</span><br><span class="line">    <span class="keyword">if</span>(n &lt;= <span class="number">0</span>) <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span> n * factorial(n<span class="number">-1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>if(n &lt;= 0) 1是递归返回段，else后面部分是递归前进段。它的调用过程大致如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">factorial(5)</span><br><span class="line">5 * factorial(4)</span><br><span class="line">5 * (4 * factorial(3))</span><br><span class="line">5 * (4 * (3 * factorial(2)))</span><br><span class="line">5 * (4 * (3 * (2 * factorial(1))))</span><br><span class="line">5 * (4 * (3 * (2 * 1)))</span><br></pre></td></tr></table></figure></p>
+<h3 id="1-3-递归的缺点"><a href="#1-3-递归的缺点" class="headerlink" title="1.3 递归的缺点"></a>1.3 递归的缺点</h3><ul>
+<li>需要保持调用堆栈,如代码1-1,每一次递归都要保存n*factorial(n-1)栈帧信息。如果调用次数太多，可能会导致栈溢出。</li>
+<li>效率会比较低，递归就是不断的调用自己本身，如果方法本身比较复杂，每次调用自己效率会较低。</li>
+</ul>
+<h2 id="2-尾递归"><a href="#2-尾递归" class="headerlink" title="2. 尾递归"></a>2. 尾递归</h2><h3 id="2-1-定义"><a href="#2-1-定义" class="headerlink" title="2.1 定义"></a>2.1 定义</h3><p>&emsp;尾递归是指递归调用是函数的最后一个语句，而且其结果被直接返回，这是一类特殊的递归调用。由于递归结果总是直接返回，尾递归比较方便转换为循环，因此编译器容易对它进行优化。现在很多编译器都对尾递归有优化，程序员们不必再手动将它们改写为循环。<br>&emsp;我们可以这样理解尾递归</p>
+<ul>
+<li>所有递归形式的调用都出现在函数的末尾。</li>
+<li>递归调用是整个函数体中最后执行的语句且它的返回值不属于表达式的一部分。</li>
+</ul>
+<p>&emsp;1.2中代码最后递归调用 factorial(n-1) ,但它是整个函数返回值表达式{n * factorial(n-1)} 的一部分，因此它不是尾递归。<br>&emsp;我们可以使用尾递归来实现上面的阶乘：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">factorial</span></span>(n:<span class="type">Int</span>):<span class="type">Long</span> = &#123;</span><br><span class="line">    <span class="meta">@tailrec</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">factorial</span></span>(n:<span class="type">Int</span>,aggr:<span class="type">Int</span>): <span class="type">Long</span> =&#123;</span><br><span class="line">        <span class="keyword">if</span>(n &lt;= <span class="number">0</span>) aggr</span><br><span class="line">        <span class="keyword">else</span> factorial(n<span class="number">-1</span>,n*aggr)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">   factorial(n,<span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>&emsp;调用过程大致如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">factorialTailrec(5, 1)</span><br><span class="line">factorialTailrec(4, 5)  &#x2F;&#x2F; 1 * 5 &#x3D; 5</span><br><span class="line">factorialTailrec(3, 20) &#x2F;&#x2F; 5 * 4 &#x3D; 20</span><br><span class="line">factorialTailrec(3, 60) &#x2F;&#x2F; 20 * 3 &#x3D; 60</span><br><span class="line">factorialTailrec(2, 120) &#x2F;&#x2F; 60 * 2 &#x3D; 120</span><br><span class="line">factorialTailrec(1, 120) &#x2F;&#x2F; 120 * 1 &#x3D; 120120</span><br></pre></td></tr></table></figure><br>&emsp;以上的调用，由于调用结果都是直接返回，所以之前的递归调用留在堆栈中的数据可以丢弃，只需要保留最后一次的数据，这就是尾递归容易优化的原因所在。<br>&emsp;尾递归的核心思想是通过参数来传递每一次的调用结果，达到不压栈。它维护着一个迭代器和一个累加器。</p>
+<h3 id="2-2-循环"><a href="#2-2-循环" class="headerlink" title="2.2 循环"></a>2.2 循环</h3><p>&emsp;事实上，scala都是将尾递归直接编译成循环模式的。所以我们可以大胆的说，所有的循环模式都能改写为尾递归的写法模式。我们可以看一下阶乘算法的递归版本<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fibfor</span></span>(n:<span class="type">Int</span>): <span class="type">Int</span> =&#123;</span><br><span class="line">    <span class="keyword">var</span> m = <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> (i &lt;- <span class="number">1</span> to n) &#123;</span><br><span class="line">        m = m * i</span><br><span class="line">    &#125;</span><br><span class="line">    m</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-2-普通递归转化为尾递归"><a href="#2-2-普通递归转化为尾递归" class="headerlink" title="2.2 普通递归转化为尾递归"></a>2.2 普通递归转化为尾递归</h3><p>&emsp;尾递归会维护一个或多个累计值(aggregate)参数和一个迭代参数。</p>
+<ul>
+<li>累计值参数aggregate将每次循环产生的结果进行累计，然后传到下一次的调用中。</li>
+<li>迭代器，和普通递归或循环一样，每次递归或循环后，改变一次。(如for(i=0;i&lt;1-;i++)里面的i)。<br>&emsp;将普通的递归改写为尾递归，关键在于找到合适的累加器。下面我们以斐波那契数列为例，看看如何找到累加器。斐波那契数列，前两项为1，从第三项起，每一项都是它之前的两项和。这个定义就是天然的递归算法，如下:<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fibonacci</span></span>(n: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">2</span>) <span class="number">1</span></span><br><span class="line">  <span class="keyword">else</span> fibonacci(n - <span class="number">1</span>) + fibonacci(n - <span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+&emsp;调用过程为：<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fibonacci(<span class="number">5</span>)</span><br><span class="line">fibonacci(<span class="number">4</span>) + fibonacci(<span class="number">3</span>)</span><br><span class="line">(fibonacci(<span class="number">3</span>) + fibonacci(<span class="number">2</span>)) + (fibonacci(<span class="number">2</span>) + fibonacci(<span class="number">1</span>))</span><br><span class="line">((fibonacci(<span class="number">2</span>) + fibonacci(<span class="number">1</span>)) + <span class="number">1</span>) + (<span class="number">1</span> + <span class="number">1</span>)</span><br><span class="line">((<span class="number">1</span> + <span class="number">1</span>) + <span class="number">1</span>) + <span class="number">2</span></span><br></pre></td></tr></table></figure>
+&emsp;上面显然不是尾递归，如何找到累加器将它改造为尾递归？因为需要前两项的和，所以这里需要两个累加器，假设较小的一个为acc1，较大的一个为acc2，需要计算下一项时，将acc2的值赋给acc1，而（acc1+acc2)赋值给acc2，这样，调用堆栈中旧有的数据即可丢弃。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fibonacciTailrec</span></span>(n: <span class="type">Int</span>, acc1: <span class="type">Int</span>, acc2: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt; <span class="number">2</span>) acc2</span><br><span class="line">  <span class="keyword">else</span> fibonacciTailrec(n - <span class="number">1</span>, acc2, acc1 + acc2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+&emsp;调用过程为：<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fibonacciTailrec(<span class="number">5</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">fibonacciTailrec(<span class="number">4</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">fibonacciTailrec(<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">fibonacciTailrec(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">fibonacciTailrec(<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="3-Scala对尾递归的支持"><a href="#3-Scala对尾递归的支持" class="headerlink" title="3. Scala对尾递归的支持"></a>3. Scala对尾递归的支持</h2><h3 id="3-1-使用方法"><a href="#3-1-使用方法" class="headerlink" title="3.1 使用方法"></a>3.1 使用方法</h3><p>&emsp;Scala对形式上严格的尾递归进行了优化，对于严格的尾递归，可以放心使用，不必担心性能问题。对于是否是严格尾递归，若不能自行判断， 可使用Scala提供的尾递归标注@scala.annotation.tailrec，这个符号除了可以标识尾递归外，更重要的是编译器会检查该函数是否真的尾递归，若不是，会导致如下编译错误:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">could not optimize @tailrec annotated method fibonacci: it contains a recursive call not in tail position</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-2-编译器对尾递归的优化"><a href="#3-2-编译器对尾递归的优化" class="headerlink" title="3.2 编译器对尾递归的优化"></a>3.2 编译器对尾递归的优化</h3><p>&emsp;当编译器检测到一个函数调用是尾递归的时候，它就覆盖当前的活动记录而不是在栈中去创建一个新的。scala编译器会察觉到尾递归，并对其进行优化，将它编译成循环的模式。</p>
+<h3 id="3-3-Scala尾递归的限制"><a href="#3-3-Scala尾递归的限制" class="headerlink" title="3.3 Scala尾递归的限制"></a>3.3 Scala尾递归的限制</h3><ul>
+<li>尾递归有严格的要求，就是最后一个语句是递归调用，因此写法比较严格。</li>
+<li>尾递归最后调用的必须是它本身，间接的赋值它本身的函数也无法进行优化。</li>
+</ul>
+<h2 id="4-性能测试"><a href="#4-性能测试" class="headerlink" title="4. 性能测试"></a>4. 性能测试</h2><p>&emsp;下面进行fibonacci算法的普通递归和尾递归时间测试对比：<br>&emsp;测试代码：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> n = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">    println(<span class="string">s"n = <span class="subst">$n</span>"</span>)</span><br><span class="line">    <span class="keyword">var</span> startTime = <span class="type">System</span>.nanoTime              <span class="comment">//系统纳米时间</span></span><br><span class="line">    println(fibonacci(n))</span><br><span class="line">    <span class="keyword">var</span> endTime =  <span class="type">System</span>.nanoTime</span><br><span class="line">    println(<span class="string">s"fibonacci time:<span class="subst">$&#123;(endTime - startTime)/1000000d&#125;</span>ms"</span>)</span><br><span class="line"></span><br><span class="line">    startTime = <span class="type">System</span>.nanoTime</span><br><span class="line">    println(fibonacciTailrec(n,<span class="number">0</span>,<span class="number">1</span>))</span><br><span class="line">    endTime =  <span class="type">System</span>.nanoTime</span><br><span class="line">    println(<span class="string">s"fibonacciTailrec time:<span class="subst">$&#123;(endTime - startTime)/1000000d&#125;</span>ms"</span>)</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">fibonacci</span></span>(n: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">2</span>) <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span> fibonacci(n - <span class="number">1</span>) + fibonacci(n - <span class="number">2</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="meta">@tailrec</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">fibonacciTailrec</span></span>(n: <span class="type">Int</span>, acc1: <span class="type">Int</span>, acc2: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">2</span>) acc2</span><br><span class="line">    <span class="keyword">else</span> fibonacciTailrec(n - <span class="number">1</span>, acc2, acc1 + acc2)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;测试结果：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">=========</span><br><span class="line">n = <span class="number">20</span></span><br><span class="line"><span class="number">6765</span></span><br><span class="line">fibonacci time:<span class="number">0.611397</span>ms</span><br><span class="line"><span class="number">6765</span></span><br><span class="line">fibonacciTailrec time:<span class="number">0.025869</span>ms</span><br><span class="line">=========</span><br><span class="line">n = <span class="number">30</span></span><br><span class="line"><span class="number">832040</span></span><br><span class="line">fibonacci time:<span class="number">5.091809</span>ms</span><br><span class="line"><span class="number">832040</span></span><br><span class="line">fibonacciTailrec time:<span class="number">0.023307</span>ms</span><br><span class="line">=========</span><br><span class="line">n = <span class="number">40</span></span><br><span class="line"><span class="number">102334155</span></span><br><span class="line">fibonacci time:<span class="number">300.614119</span>ms</span><br><span class="line"><span class="number">102334155</span></span><br><span class="line">fibonacciTailrec time:<span class="number">0.027578</span>ms</span><br><span class="line">=========</span><br></pre></td></tr></table></figure><br>&emsp;可以看到，随着n的增大，尾递归带来的性能优化是非常明显的。</p>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h2><p>&emsp;循环调用都是一个累计器和一个迭代器的作用。同理，尾递归也是如此，它也是通过累加和迭代将结果赋值给新一轮的调用，使用好尾递归能够给我们的程序带来很大性能上的优化。</p>
+<p>&nbsp;<br>&nbsp;</p>
+<blockquote>
+<p>本文作者：ZJP<br>版权声明：本文为博主原创文章，遵循 <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC 4.0 BY-SA</a> 版权协议，转载请附上原文出处链接和本声明。<br>本文链接：<a href="http://zhoujiapeng.top/scala/scala-tailrec/">http://zhoujiapeng.top/scala/scala-tailrec/</a></p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/java/java-risk-of-autoboxing/" data-toggle="tooltip" data-placement="top" title="Java 自动装箱的陷阱">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/Spark/spark-deploy-mode/" data-toggle="tooltip" data-placement="top" title="Spark 源码阅读 之 部署模式">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#scala-尾递归优化"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">scala 尾递归优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-递归"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1. 递归</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-1-递归的定义"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">1.1 递归的定义</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-2-递归的条件"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">1.2 递归的条件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-3-递归的缺点"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">1.3 递归的缺点</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-尾递归"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2. 尾递归</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-1-定义"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">2.1 定义</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-2-循环"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">2.2 循环</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-2-普通递归转化为尾递归"><span class="toc-nav-number">1.2.3.</span> <span class="toc-nav-text">2.2 普通递归转化为尾递归</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-Scala对尾递归的支持"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">3. Scala对尾递归的支持</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-使用方法"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">3.1 使用方法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-编译器对尾递归的优化"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">3.2 编译器对尾递归的优化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-Scala尾递归的限制"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">3.3 Scala尾递归的限制</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-性能测试"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">4. 性能测试</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#5-总结"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">5. 总结</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                        
+                          <a class="tag" href="/tags/#scala" title="scala">scala</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

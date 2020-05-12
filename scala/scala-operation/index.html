@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Scala 强大的集合操作 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/scala/scala-operation/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                            
+                              <a class="tag" href="/tags/#scala" title="scala">scala</a>
+                            
+                        </div>
+                        <h1>Scala 强大的集合操作</h1>
+                        <h2 class="subheading">Operations</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-09-28
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.4k</span> and
+                                Reading Time <span class="post-count">12</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="Scala-强大的集合操作"><a href="#Scala-强大的集合操作" class="headerlink" title="Scala 强大的集合操作"></a>Scala 强大的集合操作</h1><h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><ul>
+<li>map<a href="f: (A">B</a> ⇒ B): List[B]<br>定义一个变换,把该变换应用到列表的每个元素中,原列表不变，返回一个新的列表数据<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> text = <span class="type">List</span>(<span class="string">"Homeway,23,Male"</span>,<span class="string">"Jpne,23,Female"</span>)</span><br><span class="line"><span class="comment">//map</span></span><br><span class="line"><span class="keyword">val</span> userList = text.map(line =&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> fields = line.split(<span class="string">","</span>)</span><br><span class="line">    (fields(<span class="number">0</span>),fields(<span class="number">1</span>),fields(<span class="number">2</span>))</span><br><span class="line">&#125;)</span><br><span class="line">println(userList)</span><br><span class="line"></span><br><span class="line">=&gt; <span class="type">List</span>((<span class="type">Homeway</span>,<span class="number">23</span>,<span class="type">Male</span>), (<span class="type">Jpne</span>,<span class="number">23</span>,<span class="type">Female</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="flatten"><a href="#flatten" class="headerlink" title="flatten"></a>flatten</h3><ul>
+<li>flatten[B]: List[B]<br>对列表的列表进行平坦化操作 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> textFlatten = <span class="type">List</span>(<span class="string">"Homeway,23,Male"</span>,<span class="string">"Jpne,23,Female"</span>).map(_.split(<span class="string">","</span>).toList).flatten</span><br><span class="line">println(textFlatten)</span><br><span class="line"></span><br><span class="line">=&gt; <span class="type">List</span>(<span class="type">Homeway</span>, <span class="number">23</span>, <span class="type">Male</span>, <span class="type">Jpne</span>, <span class="number">23</span>, <span class="type">Female</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h3><ul>
+<li>flatMap : flatMap<a href="f: (A">B</a> ⇒ GenTraversableOnce[B]): List[B]<br>map之后对结果进行flatten，定义一个变换f, 把f应用列表的每个元素中，每个f返回一个列表，最终把所有列表连结起来。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> userFlatMap = <span class="type">List</span>(<span class="string">"Homeway,23,Male"</span>,<span class="string">"Jpne,23,Female"</span>).flatMap(_.split(<span class="string">","</span>))</span><br><span class="line">println(userFlatMap)</span><br><span class="line"></span><br><span class="line">=&gt; <span class="type">List</span>(<span class="type">Homeway</span>, <span class="number">23</span>, <span class="type">Male</span>, <span class="type">Jpne</span>, <span class="number">23</span>, <span class="type">Female</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="reduce，reduceLeft，reduceRight"><a href="#reduce，reduceLeft，reduceRight" class="headerlink" title="reduce，reduceLeft，reduceRight"></a>reduce，reduceLeft，reduceRight</h3><ul>
+<li>reduce<a href="op: (A1, A1">A1 &gt;: A</a> ⇒ A1): A1<br>定义一个变换f, f把两个列表的元素合成一个，遍历列表，最终把列表合并成单一元素<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> sums = <span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).reduce((a,b) =&gt; a+b)</span><br><span class="line">println(sums)</span><br><span class="line"></span><br><span class="line">=&gt; <span class="number">10</span></span><br></pre></td></tr></table></figure></li>
+<li>reduceLeft: reduceLeft<a href="f: (B, A">B &gt;: A</a> ⇒ B): B<br>从列表的左边往右边应用reduce函数<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//reduceLeft</span></span><br><span class="line"><span class="keyword">val</span> sums1 = <span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).reduceLeft((a,b) =&gt; &#123;</span><br><span class="line">    println((a,b))</span><br><span class="line">    a+b</span><br><span class="line">&#125;)</span><br><span class="line">println(sums1)</span><br><span class="line"></span><br><span class="line">(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">(<span class="number">3</span>,<span class="number">3</span>)</span><br><span class="line">(<span class="number">6</span>,<span class="number">4</span>)</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure></li>
+<li>reduceRight: reduceRight<a href="op: (A, B">B &gt;: A</a> ⇒ B): B<br>从列表的右边往左边应用reduce函数<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//reduceRight</span></span><br><span class="line"><span class="keyword">val</span> sums2 = <span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).reduceRight((a,b) =&gt; &#123;</span><br><span class="line">    println((a,b))</span><br><span class="line">    a+b</span><br><span class="line">&#125;)</span><br><span class="line">println(sums2)</span><br><span class="line"></span><br><span class="line">(<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line">(<span class="number">2</span>,<span class="number">7</span>)</span><br><span class="line">(<span class="number">1</span>,<span class="number">9</span>)</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="fold，foldleft，foldRight"><a href="#fold，foldleft，foldRight" class="headerlink" title="fold，foldleft，foldRight"></a>fold，foldleft，foldRight</h3><ul>
+<li>fold: fold<a href="z: A1">A1 &gt;: A</a>(op: (A1, A1) ⇒ A1) A1<br>带有初始值的reduce,从一个初始值开始，从左向右将两个元素合并成一个，最终把列表合并成单一元素。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">Array</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).fold(<span class="number">-1</span>)((a,b) =&gt; &#123;</span><br><span class="line">      println(a,b)</span><br><span class="line">      a+b</span><br><span class="line">    &#125;))</span><br><span class="line"></span><br><span class="line">(<span class="number">-1</span>,<span class="number">1</span>)</span><br><span class="line">(<span class="number">0</span>,<span class="number">2</span>)</span><br><span class="line">(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">(<span class="number">5</span>,<span class="number">4</span>)</span><br><span class="line">(<span class="number">9</span>,<span class="number">5</span>)</span><br><span class="line"><span class="number">14</span></span><br></pre></td></tr></table></figure></li>
+<li>foldLeft: foldLeft<a href="z: B">B</a>(f: (B, A) ⇒ B)<br>B 带有初始值的reduceLeft<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">Array</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).foldLeft(<span class="number">-1</span>)((a,b) =&gt; &#123;</span><br><span class="line">      println(a,b)</span><br><span class="line">      a+b</span><br><span class="line">    &#125;))</span><br><span class="line"></span><br><span class="line">(<span class="number">-1</span>,<span class="number">1</span>)</span><br><span class="line">(<span class="number">0</span>,<span class="number">2</span>)</span><br><span class="line">(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">(<span class="number">5</span>,<span class="number">4</span>)</span><br><span class="line">(<span class="number">9</span>,<span class="number">5</span>)</span><br><span class="line"><span class="number">14</span></span><br></pre></td></tr></table></figure></li>
+<li>foldRight: foldRight<a href="z: B">B</a>(op: (A, B) ⇒ B)<br>B 带有初始值的reduceRight<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">Array</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).foldRight(<span class="number">-1</span>)((a,b) =&gt; &#123;</span><br><span class="line">      println(a,b)</span><br><span class="line">      a+b</span><br><span class="line">    &#125;))</span><br><span class="line"></span><br><span class="line">(<span class="number">5</span>,<span class="number">-1</span>)</span><br><span class="line">(<span class="number">4</span>,<span class="number">4</span>)</span><br><span class="line">(<span class="number">3</span>,<span class="number">8</span>)</span><br><span class="line">(<span class="number">2</span>,<span class="number">11</span>)</span><br><span class="line">(<span class="number">1</span>,<span class="number">13</span>)</span><br><span class="line"><span class="number">14</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="sortBy-sortWith-sorted"><a href="#sortBy-sortWith-sorted" class="headerlink" title="sortBy,sortWith,sorted"></a>sortBy,sortWith,sorted</h3><ul>
+<li>sortBy: sortBy<a href="f: (A">B</a> ⇒ B)(implicit ord: math.Ordering[B]): List[A]<br>按照应用函数f之后产生的元素进行排序<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> users = <span class="type">List</span>((<span class="string">"aa"</span>,<span class="number">22</span>),(<span class="string">"bb"</span>,<span class="number">66</span>),(<span class="string">"cc"</span>,<span class="number">44</span>),(<span class="string">"dd"</span>,<span class="number">34</span>),(<span class="string">"ee"</span>,<span class="number">11</span>))</span><br><span class="line">println(users.sortBy(&#123;<span class="keyword">case</span>(name,age) =&gt; age&#125;))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>((ee,<span class="number">11</span>), (aa,<span class="number">22</span>), (dd,<span class="number">34</span>), (cc,<span class="number">44</span>), (bb,<span class="number">66</span>))</span><br></pre></td></tr></table></figure></li>
+<li>sorted： sorted<a href="implicit ord: math.Ordering[B]">B &gt;: A</a>: List[A]<br>按照元素自身进行排序<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">2</span>,<span class="number">4</span>,<span class="number">1</span>,<span class="number">6</span>,<span class="number">-1</span>).sorted)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">-1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>)</span><br></pre></td></tr></table></figure></li>
+<li>sortWith： sortWith(lt: (A, A) ⇒ Boolean): List[A]<br>使用自定义的比较函数进行排序<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(users.sortWith(&#123;<span class="keyword">case</span>(user1,user2) =&gt; user1._2 &gt; user2._2&#125;))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>((bb,<span class="number">66</span>), (cc,<span class="number">44</span>), (dd,<span class="number">34</span>), (aa,<span class="number">22</span>), (ee,<span class="number">11</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="filter-filterNot"><a href="#filter-filterNot" class="headerlink" title="filter,filterNot"></a>filter,filterNot</h3><ul>
+<li>filter: filter(p: (A) ⇒ Boolean): List[A]<br>保留列表中符合条件p的列表元素<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>).filter(_%<span class="number">2</span>==<span class="number">0</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>)</span><br></pre></td></tr></table></figure></li>
+<li>filterNot: filterNot(p: (A) ⇒ Boolean): List[A]<br>保留列表中不符合条件p的列表元素<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>).filterNot(_%<span class="number">2</span>==<span class="number">0</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="count"><a href="#count" class="headerlink" title="count"></a>count</h3><ul>
+<li>count(p: (A) ⇒ Boolean): Int<br>计算列表中所有满足条件p的元素的个数，等价于 filter(p).length<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>).count(_&gt;<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="diff-union-intersect"><a href="#diff-union-intersect" class="headerlink" title="diff, union, intersect"></a>diff, union, intersect</h3><ul>
+<li>diff:diff(that: collection.Seq[A]): List[A]<br>保存列表中那些不在另外一个列表中的元素，即从集合中减去与另外一个集合的交集<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>).diff(<span class="type">List</span>(<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>)</span><br></pre></td></tr></table></figure></li>
+<li>union : union(that: collection.Seq[A]): List[A]<br>与另外一个列表进行连结<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>).union(<span class="type">List</span>(<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)))</span><br><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>).++(<span class="type">List</span>(<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure></li>
+<li>intersect: intersect(that: collection.Seq[A]): List[A]<br>与另外一个集合的交集<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>).intersect(<span class="type">List</span>(<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="distinct"><a href="#distinct" class="headerlink" title="distinct"></a>distinct</h3><ul>
+<li>distinct: List[A]<br>保留列表中非重复的元素，相同的元素只会被保留一次<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">6</span>).distinct)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="groupBy-grouped"><a href="#groupBy-grouped" class="headerlink" title="groupBy,grouped"></a>groupBy,grouped</h3><ul>
+<li>groupBy : groupBy<a href="f: (A">K</a> ⇒ K): Map[K, List[A]]<br>将列表进行分组，分组的依据是应用f在元素上后产生的新元素<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>((<span class="string">"John"</span>,<span class="string">"Man"</span>),(<span class="string">"Li"</span>,<span class="string">"Feman"</span>),(<span class="string">"Fed"</span>,<span class="string">"Man"</span>),(<span class="string">"Ka"</span>,<span class="string">"Feman"</span>)).groupBy(_._2))</span><br><span class="line"></span><br><span class="line"><span class="type">Map</span>(<span class="type">Man</span> -&gt; <span class="type">List</span>((<span class="type">John</span>,<span class="type">Man</span>), (<span class="type">Fed</span>,<span class="type">Man</span>)), <span class="type">Feman</span> -&gt; <span class="type">List</span>((<span class="type">Li</span>,<span class="type">Feman</span>), (<span class="type">Ka</span>,<span class="type">Feman</span>)))</span><br></pre></td></tr></table></figure></li>
+<li>grouped: grouped(size: Int): Iterator[List[A]]<br>按列表按照固定的大小进行分组<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>((<span class="string">"John"</span>,<span class="string">"Man"</span>),(<span class="string">"Li"</span>,<span class="string">"Feman"</span>),(<span class="string">"Fed"</span>,<span class="string">"Man"</span>),(<span class="string">"Ka"</span>,<span class="string">"Feman"</span>)).grouped(<span class="number">1</span>).foreach(println)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>((<span class="type">John</span>,<span class="type">Man</span>), (<span class="type">Li</span>,<span class="type">Feman</span>))</span><br><span class="line"><span class="type">List</span>((<span class="type">Fed</span>,<span class="type">Man</span>), (<span class="type">Ka</span>,<span class="type">Feman</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="scan，scanLeft-scanRight"><a href="#scan，scanLeft-scanRight" class="headerlink" title="scan，scanLeft,scanRight"></a>scan，scanLeft,scanRight</h3><ul>
+<li>scan<a href="z: B">B &gt;: A, That</a>(op: (B, B) ⇒ B)(implicit cbf: CanBuildFrom[List[A], B, That]): That<br>由一个初始值开始，从左向右，进行积累的op操作，和fold函数类似，区别在于，fold的结果只有最终的累加值，而scan的结果包含每一次累加的值<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).scan(<span class="number">10</span>)((x,y)=&gt;&#123;</span><br><span class="line">      println((x,y))</span><br><span class="line">      x+y</span><br><span class="line">    &#125;))</span><br><span class="line"></span><br><span class="line">(<span class="number">10</span>,<span class="number">1</span>)</span><br><span class="line">(<span class="number">11</span>,<span class="number">2</span>)</span><br><span class="line">(<span class="number">13</span>,<span class="number">3</span>)</span><br><span class="line">(<span class="number">16</span>,<span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">10</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">16</span>, <span class="number">20</span>)</span><br></pre></td></tr></table></figure></li>
+<li>scanLeft: scanLeft<a href="z: B">B, That</a>(op: (B, A) ⇒ B)(implicit bf: CanBuildFrom[List[A], B, That]): That<br>从左向右进行scan函数的操作<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).scanLeft(<span class="number">10</span>)((x,y)=&gt;&#123;</span><br><span class="line">      println((x,y))</span><br><span class="line">      x+y</span><br><span class="line">    &#125;))</span><br><span class="line"></span><br><span class="line">(<span class="number">10</span>,<span class="number">1</span>)</span><br><span class="line">(<span class="number">11</span>,<span class="number">2</span>)</span><br><span class="line">(<span class="number">13</span>,<span class="number">3</span>)</span><br><span class="line">(<span class="number">16</span>,<span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">10</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">16</span>, <span class="number">20</span>)</span><br></pre></td></tr></table></figure></li>
+<li>scanRight: scanRight<a href="z: B">B, That</a>(op: (A, B) ⇒ B)(implicit bf: CanBuildFrom[List[A], B, That]): That<br>从右向左进行scan函数的操作<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).scanRight(<span class="number">10</span>)((x,y)=&gt;&#123;</span><br><span class="line">      println((x,y))</span><br><span class="line">      x+y</span><br><span class="line">    &#125;))</span><br><span class="line"></span><br><span class="line">(<span class="number">4</span>,<span class="number">10</span>)</span><br><span class="line">(<span class="number">3</span>,<span class="number">14</span>)</span><br><span class="line">(<span class="number">2</span>,<span class="number">17</span>)</span><br><span class="line">(<span class="number">1</span>,<span class="number">19</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">20</span>, <span class="number">19</span>, <span class="number">17</span>, <span class="number">14</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="take-takeRight-takeWhile"><a href="#take-takeRight-takeWhile" class="headerlink" title="take,takeRight,takeWhile"></a>take,takeRight,takeWhile</h3><ul>
+<li>take : take(n: Int): List[A]<br>提取列表的前n个元素 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).take(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure></li>
+<li>takeRight: takeRight(n: Int): List[A]<br>提取列表的最后n个元素<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).takeRight(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure></li>
+<li>takeWhile: takeWhile(p: (A) ⇒ Boolean): List[A]<br>从左向右提取列表的元素，直到条件p不成立(遍历过程只要遇到一个不成立就停止)<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).takeWhile(_ &lt; <span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="drop-dropRight-dropWhile"><a href="#drop-dropRight-dropWhile" class="headerlink" title="drop,dropRight,dropWhile"></a>drop,dropRight,dropWhile</h3><ul>
+<li>drop: drop(n: Int): List[A]<br>丢弃前n个元素，返回剩下的元素<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).drop(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">4</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure></li>
+<li>dropRight: dropRight(n: Int): List[A]<br>丢弃最后n个元素，返回剩下的元素<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).dropRight(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure></li>
+<li>dropWhile: dropWhile(p: (A) ⇒ Boolean): List[A]<br>从左向右丢弃元素，直到条件p不成立<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">1</span>).dropWhile(_&lt;<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="span-splitAt-partition"><a href="#span-splitAt-partition" class="headerlink" title="span,splitAt,partition"></a>span,splitAt,partition</h3><ul>
+<li>span : span(p: (A) ⇒ Boolean): (List[A], List[A])<br>从左向右应用条件p进行判断，直到条件p不成立(只要遇到一个不成立就停止)，此时将列表分为两个列表<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">1</span>).span(_==<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">(<span class="type">List</span>(<span class="number">1</span>, <span class="number">1</span>),<span class="type">List</span>(<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>))</span><br></pre></td></tr></table></figure></li>
+<li>splitAt: splitAt(n: Int): (List[A], List[A])<br>将列表分为前n个，与，剩下的部分<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>).splitAt(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>),<span class="type">List</span>(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>))</span><br></pre></td></tr></table></figure></li>
+<li>partition: partition(p: (A) ⇒ Boolean): (List[A], List[A])<br>将列表分为两部分，第一部分为满足条件p的元素，第二部分为不满足条件p的元素，注意和span的区别，partition会对每个元素应用判断条件<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">2</span>).partition(_==<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">(<span class="type">List</span>(<span class="number">2</span>, <span class="number">2</span>),<span class="type">List</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="padTo"><a href="#padTo" class="headerlink" title="padTo"></a>padTo</h3><ul>
+<li>padTo(len: Int, elem: A): List[A]<br>将列表扩展到指定长度，长度不够的时候，使用elem进行填充，否则不做任何操作。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).padTo(<span class="number">7</span>,<span class="number">10</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="combinations-permutations"><a href="#combinations-permutations" class="headerlink" title="combinations,permutations"></a>combinations,permutations</h3><ul>
+<li>combinations: combinations(n: Int): Iterator[List[A]]<br>取列表中的n个元素进行组合，返回<strong>不重复</strong>的组合列表，结果一个迭代器<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">4</span>).combinations(<span class="number">2</span>).foreach(println)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">4</span>).combinations(<span class="number">3</span>).foreach(println)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure></li>
+<li>permutations: permutations: Iterator[List[A]]<br>对列表中的元素进行排列，返回<strong>不重复</strong>的排列列表，结果是一个迭代器<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">4</span>).permutations.foreach(println)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">1</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">4</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">4</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line"><span class="type">List</span>(<span class="number">4</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="zip-zipAll-zipWithIndex-unzip-unzip3"><a href="#zip-zipAll-zipWithIndex-unzip-unzip3" class="headerlink" title="zip, zipAll, zipWithIndex, unzip,unzip3"></a>zip, zipAll, zipWithIndex, unzip,unzip3</h3><ul>
+<li>zip: zip<a href="that: GenIterable[B]">B</a>: List[(A, B)]<br>与另外一个列表进行拉链操作，将对应位置的元素组成一个pair，返回的列表长度为两个列表中短的那个<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).zip(<span class="type">List</span>(<span class="string">"a"</span>,<span class="string">"b"</span>,<span class="string">"c"</span>,<span class="string">"d"</span>,<span class="string">"e"</span>)))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>((<span class="number">1</span>,a), (<span class="number">2</span>,b), (<span class="number">3</span>,c), (<span class="number">4</span>,d))</span><br></pre></td></tr></table></figure></li>
+<li>zipAll: zipAll<a href="that: collection.Iterable[B], thisElem: A, thatElem: B">B</a>: List[(A, B)]<br>与另外一个列表进行拉链操作，将对应位置的元素组成一个pair，若列表长度不一致，自身列表比较短的话使用thisElem进行填充，对方列表较短的话使用thatElem进行填充<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).zipAll(<span class="type">List</span>(<span class="string">"a"</span>,<span class="string">"b"</span>,<span class="string">"c"</span>,<span class="string">"d"</span>,<span class="string">"e"</span>),<span class="number">0</span>,<span class="string">"y"</span>))</span><br><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>).zipAll(<span class="type">List</span>(<span class="string">"a"</span>,<span class="string">"b"</span>,<span class="string">"c"</span>),<span class="number">0</span>,<span class="string">"y"</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>((<span class="number">1</span>,a), (<span class="number">2</span>,b), (<span class="number">3</span>,c), (<span class="number">4</span>,d), (<span class="number">0</span>,e))</span><br><span class="line"><span class="type">List</span>((<span class="number">1</span>,a), (<span class="number">2</span>,b), (<span class="number">3</span>,c), (<span class="number">4</span>,y))</span><br></pre></td></tr></table></figure></li>
+<li>zipWithIndex：zipWithIndex: List[(A, Int)]<br>将列表元素与其索引进行拉链操作，组成一个pair<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="string">"a"</span>,<span class="string">"b"</span>,<span class="string">"c"</span>).zipWithIndex)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>((a,<span class="number">0</span>), (b,<span class="number">1</span>), (c,<span class="number">2</span>))</span><br></pre></td></tr></table></figure></li>
+<li>unzip: unzip<a href="implicit asPair: (A">A1, A2</a> ⇒ (A1, A2)): (List[A1], List[A2])<br>解开拉链操作<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>((<span class="number">1</span>,<span class="string">"a"</span>),(<span class="number">2</span>,<span class="string">"b"</span>),(<span class="number">3</span>,<span class="string">"c"</span>)).unzip)</span><br><span class="line"></span><br><span class="line">(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>),<span class="type">List</span>(a, b, c))</span><br></pre></td></tr></table></figure></li>
+<li>unzip3: unzip3<a href="implicit asTriple: (A">A1, A2, A3</a> ⇒ (A1, A2, A3)): (List[A1], List[A2], List[A3])<br>3个元素的解拉链操作<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>((<span class="number">1</span>,<span class="string">"a"</span>,<span class="string">"x"</span>),(<span class="number">2</span>,<span class="string">"b"</span>,<span class="string">"y"</span>),(<span class="number">3</span>,<span class="string">"c"</span>,<span class="string">"z"</span>)).unzip3)</span><br><span class="line"></span><br><span class="line">(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>),<span class="type">List</span>(a, b, c),<span class="type">List</span>(x, y, z))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="slice"><a href="#slice" class="headerlink" title="slice"></a>slice</h3><ul>
+<li>slice(from: Int, until: Int): List[A]<br>提取列表中从位置from到位置until(不含该位置)的元素列表<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>).slice(<span class="number">1</span>,<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="sliding"><a href="#sliding" class="headerlink" title="sliding"></a>sliding</h3><ul>
+<li>sliding(size: Int, step: Int): Iterator[List[A]]<br>将列表按照固定大小size进行分组，步进为step，step默认为1,返回结果为迭代器<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>).sliding(<span class="number">2</span>,<span class="number">3</span>).toList)</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>), <span class="type">List</span>(<span class="number">4</span>, <span class="number">5</span>), <span class="type">List</span>(<span class="number">7</span>, <span class="number">8</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="updated"><a href="#updated" class="headerlink" title="updated"></a>updated</h3><ul>
+<li>updated(index: Int, elem: A): List[A]<br>对列表中的某个元素进行更新操作<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>).updated(<span class="number">2</span>,<span class="number">10</span>))</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;<br>&nbsp;</p>
+<blockquote>
+<p>参考：<br>《Scala 编程实战》</p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/java/java-threadLocalRandom/" data-toggle="tooltip" data-placement="top" title="Java 并发编程 之 ThreadLocalRandom">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/java/java-unsafe/" data-toggle="tooltip" data-placement="top" title="Java 并发编程 之 Unsafe 类解析">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Scala-强大的集合操作"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Scala 强大的集合操作</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Map"><span class="toc-nav-number">1.0.1.</span> <span class="toc-nav-text">Map</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#flatten"><span class="toc-nav-number">1.0.2.</span> <span class="toc-nav-text">flatten</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#flatMap"><span class="toc-nav-number">1.0.3.</span> <span class="toc-nav-text">flatMap</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#reduce，reduceLeft，reduceRight"><span class="toc-nav-number">1.0.4.</span> <span class="toc-nav-text">reduce，reduceLeft，reduceRight</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#fold，foldleft，foldRight"><span class="toc-nav-number">1.0.5.</span> <span class="toc-nav-text">fold，foldleft，foldRight</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#sortBy-sortWith-sorted"><span class="toc-nav-number">1.0.6.</span> <span class="toc-nav-text">sortBy,sortWith,sorted</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#filter-filterNot"><span class="toc-nav-number">1.0.7.</span> <span class="toc-nav-text">filter,filterNot</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#count"><span class="toc-nav-number">1.0.8.</span> <span class="toc-nav-text">count</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#diff-union-intersect"><span class="toc-nav-number">1.0.9.</span> <span class="toc-nav-text">diff, union, intersect</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#distinct"><span class="toc-nav-number">1.0.10.</span> <span class="toc-nav-text">distinct</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#groupBy-grouped"><span class="toc-nav-number">1.0.11.</span> <span class="toc-nav-text">groupBy,grouped</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#scan，scanLeft-scanRight"><span class="toc-nav-number">1.0.12.</span> <span class="toc-nav-text">scan，scanLeft,scanRight</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#take-takeRight-takeWhile"><span class="toc-nav-number">1.0.13.</span> <span class="toc-nav-text">take,takeRight,takeWhile</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#drop-dropRight-dropWhile"><span class="toc-nav-number">1.0.14.</span> <span class="toc-nav-text">drop,dropRight,dropWhile</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#span-splitAt-partition"><span class="toc-nav-number">1.0.15.</span> <span class="toc-nav-text">span,splitAt,partition</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#padTo"><span class="toc-nav-number">1.0.16.</span> <span class="toc-nav-text">padTo</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#combinations-permutations"><span class="toc-nav-number">1.0.17.</span> <span class="toc-nav-text">combinations,permutations</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#zip-zipAll-zipWithIndex-unzip-unzip3"><span class="toc-nav-number">1.0.18.</span> <span class="toc-nav-text">zip, zipAll, zipWithIndex, unzip,unzip3</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#slice"><span class="toc-nav-number">1.0.19.</span> <span class="toc-nav-text">slice</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#sliding"><span class="toc-nav-number">1.0.20.</span> <span class="toc-nav-text">sliding</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#updated"><span class="toc-nav-number">1.0.21.</span> <span class="toc-nav-text">updated</span></a></li></ol></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                        
+                          <a class="tag" href="/tags/#scala" title="scala">scala</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

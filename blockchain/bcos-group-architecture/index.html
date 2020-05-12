@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          BCOS 动态群组架构 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/blockchain/bcos-group-architecture/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#blockchain" title="blockchain">blockchain</a>
+                            
+                              <a class="tag" href="/tags/#bcos" title="bcos">bcos</a>
+                            
+                        </div>
+                        <h1>BCOS 动态群组架构</h1>
+                        <h2 class="subheading">概述</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-11-20
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.3k</span> and
+                                Reading Time <span class="post-count">4</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="BCOS-动态群组架构"><a href="#BCOS-动态群组架构" class="headerlink" title="BCOS 动态群组架构"></a>BCOS 动态群组架构</h1><p>分析 BCOS 动态群组架构的目的在于研究动态群组架构和共识机制中节点动态性的关系，最终基于 BCOS 的共识模块接口实现新的共识算法。</p>
+<h1 id="1-群组架构的设计"><a href="#1-群组架构的设计" class="headerlink" title="1. 群组架构的设计"></a>1. 群组架构的设计</h1><blockquote>
+<p>来源：<a href="https://mp.weixin.qq.com/s?__biz=MzU5NTg0MjA4MA==&amp;mid=2247483919&amp;idx=1&amp;sn=035d336c6888fa87eec1e579d7b503d1&amp;scene=19#wechat_redirect" target="_blank" rel="noopener">FISCO BCOS开源社区：群组架构的设计</a></p>
+</blockquote>
+<h2 id="1-1-架构设计全景"><a href="#1-1-架构设计全景" class="headerlink" title="1.1 架构设计全景"></a>1.1 架构设计全景</h2><p><img src="https://gitee.com/JP6907/Pic/raw/master/bcos/group-architecture.png" alt="架构设计全景"></p>
+<p>如上图所示，群组架构自底向下主要划分为网络层、群组层，网络层主要负责区块链节点间通信，群组层主要负责处理群组内交易，每个群组均运行着一个独立的账本。</p>
+<h2 id="1-2-网络层"><a href="#1-2-网络层" class="headerlink" title="1.2 网络层"></a>1.2 网络层</h2><p>群组架构中，所有群组共享P2P网络，群组层传递给网络层的数据包中含有群组ID信息，接收节点根据数据包中的群组ID，将收到的数据包传递给目标节点的相应群组</p>
+<p>为了做到群组间通信数据隔离，群组架构引入了账本白名单机制，下图展示了群组架构下群组间收发消息的流程：</p>
+<p><img src="https://gitee.com/JP6907/Pic/raw/master/bcos/arcitecture-network.png" alt="网络层"></p>
+<p><strong>账本白名单</strong><br>每个群组均持有一个账本白名单，用于维护该群组的节点列表。为了保证账本白名单群组内一致性，仅可通过发交易共识的方式修改账本白名单。</p>
+<p><strong>发包流程</strong></p>
+<p>以node0的第一组向node1的第一组发送消息packetA为例：<br>(1) group1将消息packetA传递到网络层；<br>(2) 网络层模块对packetA进行编码，在packetA包头加上本群组ID，记为{groupID(1) + packetA}；<br>(3) 网络层访问账本白名单，判断node0是否是group1的节点，若非group1节点，则拒绝数据包；若是group1节点，则将编码后的包发送给目标节点node1。</p>
+<p><strong>收包流程</strong><br>node1接收到node0 group1的数据包{groupID(1) + packetA}后：<br>(1) 网络层访问账本白名单，判断源节点node0是否是group1节点，若非group1节点，则拒绝数据包，否则将数据包传递给解码模块；<br>(2) 解码模块从数据包中解码出group ID=1和数据包packetA，将数据包packetA发送到group1。</p>
+<p>通过账本白名单，可以有效地防止群组节点获取其他群组通信消息，保障了群组网络通信的隐私性。</p>
+<h2 id="1-3-群组层"><a href="#1-3-群组层" class="headerlink" title="1.3 群组层"></a>1.3 群组层</h2><p>群组层是群组架构的核心。为了实现群组间账本数据的隔离，每个群组持有单独的账本模块。<br>群组层自下向上一次分为核心层、接口层和调度层：核心层提供底层存储和交易执行接口；接口层是访问核心层的接口；调度层包括同步和共识模块，负责处理交易、同步交易和区块。</p>
+<h1 id="2-动态群组架构的实现"><a href="#2-动态群组架构的实现" class="headerlink" title="2. 动态群组架构的实现"></a>2. 动态群组架构的实现</h1><p>动态群组架构涉及的各个模块之间的关系如图：</p>
+<p><img src="https://gitee.com/JP6907/Pic/raw/master/bcos/model.png" alt="模块关系图"></p>
+<h2 id="2-1-节点列表的读取"><a href="#2-1-节点列表的读取" class="headerlink" title="2.1 节点列表的读取"></a>2.1 节点列表的读取</h2><p>获取节点列表信息有两种方式<br>ConsensusEngineBase::sealerList()  直接返回 m_sealerList，这种方式是sealer需要获取当前节点所在组的节点列表时使用<br>BlockChainImp::sealerList()   从账本白名单中查询节点列表，保存在 P2PService 的 m_groupID2NodeList 中，并更新 BlockChainImp.m_sealerList，这种方式会在需要发送消息时调用 P2PService 时使用；</p>
+<p>m_groupID2NodeList 由 P2PService 维护，保存了所有的群组节点列表信息。<br>m_sealerList 由 sealer 保存，会被 P2PService 更新，保存了当前节点所在 group 的节点列表信息。</p>
+<h2 id="2-2-群组信息的初始化"><a href="#2-2-群组信息的初始化" class="headerlink" title="2.2 群组信息的初始化"></a>2.2 群组信息的初始化</h2><p>在账本初始化的时候，LedgerInitializer 会为每个group创建一个独立的账本，并从配置文件中读取群组信息，保存到 P2PService  的 m_groupID2NodeList 和 ConsensusEngineBase 的 m_sealerList 中。</p>
+<h2 id="2-3-群组信息保持更新"><a href="#2-3-群组信息保持更新" class="headerlink" title="2.3 群组信息保持更新"></a>2.3 群组信息保持更新</h2><p>节点需要广播信息时会通过P2PServer模块获取群组信息，P2PServer会从账本节点白名单中读取最新的节点列表，并更新到 m_sealerList 和 m_groupID2NodeList 。</p>
+<h2 id="2-4-动态群组实现"><a href="#2-4-动态群组实现" class="headerlink" title="2.4 动态群组实现"></a>2.4 动态群组实现</h2><p>账本白名单维护了群组信息，为了保证账本白名单群组内一致性，只能通过交易共识来修改账本白名单。系统已经内置了修改白名单的预编译合约(ConsensusPrecompiled)，console 已经实现了调用这些合约的命令，如将某节点添加到某group中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 2. 将node2加入到共识节点</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> addSealer后面的参数是上步获取的node ID</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> [group:2]&gt; addSealer 6dc585319e4cf7d73ede73819c6966ea4bed74aadbbcba1bbb777132f63d355965c3502bed7a04425d99cdcfb7694a1c133079e6d9b0ab080e3b874882b95ff4</span></span><br><span class="line">&#123;</span><br><span class="line">    "code":0,</span><br><span class="line">    "msg":"success"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>addSealer实际上是通过 web3sdk 调用了 ConsensusPrecompiled 预编译合约的 addSealer 接口，来实现对账本白名单的修改。</p>
+<h2 id="2-5-账本白名单"><a href="#2-5-账本白名单" class="headerlink" title="2.5 账本白名单"></a>2.5 账本白名单</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">storage::Table::Ptr table = openTable(context, SYS_CONSENSUS);</span><br></pre></td></tr></table></figure>
+<h1 id="3-源码分析"><a href="#3-源码分析" class="headerlink" title="3. 源码分析"></a>3. 源码分析</h1><p>见<a href="http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/">《BCOS动态群组源码分析》</a>。</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h1><p>BCOS在网络层P2PService中已经实现了对节点动态性的控制，共识算法中只需要考虑单个群组内部的共识问题，不需要考虑动态性的问题。如果在共识算法中接入节点动态控制，反而会增加算法的复杂性，并且不会带来好处。</p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/blockchain/bcos-group-architecture-code/" data-toggle="tooltip" data-placement="top" title="BCOS 动态群组架构源码分析">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#BCOS-动态群组架构"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">BCOS 动态群组架构</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-群组架构的设计"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. 群组架构的设计</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-1-架构设计全景"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">1.1 架构设计全景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-2-网络层"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">1.2 网络层</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-3-群组层"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">1.3 群组层</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-动态群组架构的实现"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. 动态群组架构的实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-1-节点列表的读取"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">2.1 节点列表的读取</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-2-群组信息的初始化"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">2.2 群组信息的初始化</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-3-群组信息保持更新"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">2.3 群组信息保持更新</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-4-动态群组实现"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">2.4 动态群组实现</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-5-账本白名单"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">2.5 账本白名单</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-源码分析"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. 源码分析</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-总结"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">4. 总结</span></a></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#blockchain" title="blockchain">blockchain</a>
+                        
+                          <a class="tag" href="/tags/#bcos" title="bcos">bcos</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          深入理解Java虚拟机 之 字节码指令 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/java/java-jvm-bytecode/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#java" title="java">java</a>
+                            
+                              <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                            
+                              <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                            
+                        </div>
+                        <h1>深入理解Java虚拟机 之 字节码指令</h1>
+                        <h2 class="subheading">字节码指令</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-10-21
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">4.4k</span> and
+                                Reading Time <span class="post-count">16</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="字节码指令简介"><a href="#字节码指令简介" class="headerlink" title="字节码指令简介"></a>字节码指令简介</h1><p>&emsp;Java虚拟机指令由一个字节长度、代表某种特定操作含义的数字(操作码Opcode)，以及跟随在其后的零至多个代表此操作所需的参数(操作数Operands)构成的。由于<strong>Java虚拟机是面向操作数栈而不是寄存器的架构</strong>，所以大多数指令都只有操作码，而没有操作数。</p>
+<p>&emsp;字节码指令集是一种具有鲜明特点、优劣势都很突出的指令集架构：</p>
+<ol>
+<li>由于限定了Java虚拟机操作码的长度为1个字节，指令集的操作码不能超过256条。</li>
+<li>Class文件格式放弃了编译后代码中操作数长度对齐，这就意味者虚拟机处理那些超过一个字节数据的时候，不得不在运行的时候从字节码中重建出具体数据的结构。</li>
+</ol>
+<p>&emsp;这种操作在一定程度上会降低一些性能，但这样做的优势也非常的明显：</p>
+<ol>
+<li>放弃了操作数长度对齐，就意味着可以省略很多填充和间隔符号。</li>
+<li>用一个字节来表示操作码，也是为了获取短小精悍的代码。</li>
+</ol>
+<p>&emsp;这种追求尽可能小数据量，高传输效率的设计是由Java语言之初面向网络、智能家电技术背景决定的。<br>&emsp;Java虚拟机解释器执行简单模型如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line">	计算PC寄存器的值+<span class="number">1</span>;</span><br><span class="line">	根据PC寄存器只是位置，从字节码流中取出操作码;</span><br><span class="line">	<span class="keyword">if</span>(存在操作数) 从字节码中取出操作数;</span><br><span class="line">	执行操作码定义的操作;</span><br><span class="line">&#125;<span class="keyword">while</span>(字节码长度&gt;<span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<h2 id="1-字节码与数据类型"><a href="#1-字节码与数据类型" class="headerlink" title="1. 字节码与数据类型"></a>1. 字节码与数据类型</h2><p>&emsp;在Java虚拟机的指令集中，大多数的指令都包含了其操作所对应的数据类型信息。例如：iload指令用于从局部变量表中加载int型的数据到操作数栈中，而fload指令加载的则是float类型的数据。这两条指令的操作在虚拟机内部可能会是由同一段代码来实现的，但在Class文件中它们必须拥有各自独立的操作码。</p>
+<p>&emsp;对于大部分与数据类型相关的字节码指令，它们的操作码助记符中都有特殊的字符来表明专门为哪种数据类型服务：i代表对int类型的数据操作，ｌ代表long，s代表short，b代表byte，c代表char，f代表float，d代表double，a代表reference。注意并不是所有的字节码指令都有数据类型相关，比goto无条件跳转指令就与数据类型无关。这里需要注意的是，并非每种数据类型和每一种操作都有对应的指令。这是因为Java虚拟机的操作码长度只有一个字节，如果每一种与数据类型相关的指令都支持Java虚拟机所有运行时数据类型的话，那指令的数量就会超出一个字节所能表示的数量范围，所以Java虚拟机的指令集对于特定的操作只提供了有限的类型相关指令去支持它。</p>
+<p>&emsp;大部分的指令都没有支持整数类型byte、char和short，甚至没有任何指令支持boolean类型。编译器会在编译期或运行期将byte和short类型的数据带符号扩展为相应的int类型数据。与之类似，在处理boolean、byte、short和char类型的数组时，也会转换为使用对应的int类型的字节码指令来处理。因此，大多数对于boolean、byte、short和char类型数据的操作，实际上都是使用相应的int类型作为运算类型。</p>
+<p><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/bytecode1" alt="Java虚拟机所支持的数据类型1"><br><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/bytecode2" alt="Java虚拟机所支持的数据类型2"></p>
+<h2 id="2-加载和储存指令"><a href="#2-加载和储存指令" class="headerlink" title="2. 加载和储存指令"></a>2. 加载和储存指令</h2><p>&emsp;加载和存储指令用于将数据在栈帧中的局部变量表和操作数栈(见第2章关于内存区域的介绍)之间来回传输,这类指令包括如下内容:</p>
+<ul>
+<li>将一个局部变量加载到操作栈:iload、iload<em>\<n>、lload、lload</em>\<n>、fload、fload<em>\<n>、dload、dload</em>\<n>、aload、aload_\<n> 。</li>
+<li>将一个数值从操作数栈存储到局部变量表 :istore、istore<em>\<n>、lstore、lstore</em>\<n>、fstore、fstore<em>\<n> 、dstore、dstore</em>\<n> 、astore、astore_\<n> 。</li>
+<li>将一个常量加载到操作数栈:bipush、sipush、ldc、 ldc<em>w、ldc2_w、 aconst_null、iconst_ml、iconst</em>、lconst<em>\<l>、fconst</em>\<f>、dconst_\<d>。</li>
+<li>扩充局部变量表的访问索引的指令 : wide。</li>
+</ul>
+<p>&emsp;存储数据的操作数栈和局部变量表主要就是由加载和存储指令进行操作,除此之外,还有少量指令,如访问对象的字段或数组元素的指令也会向操作数栈传输数据。</p>
+<h2 id="3-运算指令"><a href="#3-运算指令" class="headerlink" title="3. 运算指令"></a>3. 运算指令</h2><p>&emsp;运算或算术指令用于对两个操作数栈上的值进行某种特定运算,并把结果重新存入到操作栈顶。大体上算术指令可以分为两种:对整型数据进行运算的指令与对浮点型数据进行运算的指令,无论是哪种算术指令,都使用Java虚拟机的数据类型,由于没有直接支持byte、 short、char和boolean类型的算术指令,对于这类数据的运算,应使用操作int类型的指令代替。整数与浮点数的算术指令在溢出和被零除的时候也有各自不同的行为表现,所有的算术指令如下:</p>
+<ul>
+<li>加法指令:iadd、ladd、fadd、dadd。</li>
+<li>减法指令:isub、lsub、fsub、dsub。</li>
+<li>乘法指令:imul、lmul、fmul、dmul。</li>
+<li>除法指令:idiv、ldiv、fdiv、ddiv。</li>
+<li>求余指令:irem、lrem、frem、drem。</li>
+<li>取反指令 : ineg、lneg、fneg、dneg。</li>
+<li>位移指令:ishl、ishr、iushr、lshl、lshr、lushr。</li>
+<li>按位或指令:ior、lor。</li>
+<li>按位与指令:iand、land。</li>
+<li>按位异或指令:ixor、lxor。</li>
+<li>局部变量自增指令:iinc。</li>
+<li>比较指令:dcmpg、dcmpl、fcmpg、fcmpl、lcmp。</li>
+</ul>
+<p>&emsp;Java虚拟机规范没有明确定义过整型数据溢出的具体运算结果，仅规定了在处理整型数据时，只有除法指令（idv和ldv）以及求余指令（irem和lrem）中当出现除数为0时会导致虚拟机抛出 ArithmeticExcption 异常，其余任何整型数运算场景都不应该抛出运行时异常。</p>
+<p>&emsp;Java虚拟机规范要求虚拟机实现在处理浮点数时,必须严格遵循<strong>IEEE 754</strong>规范中所规定的行为和限制。也就是说,Java虚拟机必须完全支持IEEE 754中定义的非正规浮点数值 ( Denormalized Floating-Point Numbers ) 和逐级下溢( Gradual Underflow ) 的运算规则。这些特征将会使某些数值算法处理起来变得相对容易一些。</p>
+<p>&emsp;Java虚拟机要求在进行浮点数运算时,所有的运算结果都必须舍入到适当的精度,非精确的结果必须被舍入为可被表示的最接近的精确值,如果有两种可表示的形式与该值一样接近,将优先选择最低有效位为零的。这种舍入模式也是IEEE 754规范中的默认舍入模式,称为向<strong>最接近数舍入模式</strong>。</p>
+<p>&emsp;在把浮点数转换为整数时,Java虚拟机使用正EE 754标准中的<strong>向零舍入模式</strong>,这种模式的舍入结果会导致数字被截断,所有小数部分的有效字节都会被丢弃掉。向零舍入模式将在目标数值类型中选择一个最接近但是不大于原值的数字来作为最精确的舍入结果。</p>
+<p>&emsp;另外 ,Java虚拟机在处理浮点数运算时,不会拋出任何运行时异常(这里所讲的是Java 语言中的异常,请读者勿与正EE 754规范中的浮点异常互相混淆, IEEE 754的浮点异常是一种运算信号),当一个操作产生溢出时,将会使用有符号的无穷大来表示,如果某个操作结果没有明确的数学定义的话,将会使用NaN值来表示。所有使用NaN值作为操作数的算术操作 ,结果都会返回NaN。</p>
+<p>&emsp;在对long类型数值进行比较时,虚拟机采用带符号的比较方式,而对浮点数值进行比较时 (dcmpg、dcmpl、fcmpg、 fcmpl ) ,虚拟机会采用IEEE 754规范所定义的无信号比较( Nonsignaling Comparisons ) 方式。</p>
+<h2 id="4-类型转换指令"><a href="#4-类型转换指令" class="headerlink" title="4. 类型转换指令"></a>4. 类型转换指令</h2><p>&emsp;类型转换指令可以将两种不同的数值类型进行相互转换,这些转换操作一般用于实现用户代码中的显式类型转换操作,或者用来处理本节开篇所提到的字节码指令集中数据类型相关指令无法与数据类型一一对应的问题。<br>Java 虚拟机直接支持(即转换时无需显式的转换指令)以下数值类型的<strong>宽化类型转换</strong> ( WideningNumeric Conversions , 即小范围类型向大范围类型的安全转换):</p>
+<ul>
+<li>int类型到long、float或者double类型。</li>
+<li>long类型到float、double类型。</li>
+<li>float类型到double类型。</li>
+</ul>
+<p>&emsp;相对的,处理<strong>窄化类型转换</strong>( Narrowing Numeric Conversions ) 时 ,必须显式地使用转换指令来完成,这些转换指令包括:i2b、i2c、i2s、l2i、f2i、f2l、d2i、d2l和d2f。窄化类型转换可能会导致转换结果产生不同的正负号、不同的数量级的情况,转换过程很可能会导致数值的精度丢失。</p>
+<p>&emsp;在将int或long类型窄化转换为整数类型T的时候,转换过程仅仅是简单地丢弃除最低位N个字节以外的内容(v丢弃高位),N是类型T的数据类型长度,这将可能导致转换结果与输入值有不同的正负号。</p>
+<p>&emsp;在将一个浮点值窄化转换为整数类型T ( T限于int或long类型之一 ) 的时候,将遵循以下转换规则:</p>
+<ul>
+<li>如果浮点值是NaN ,那转换结果就是int或long类型的0。</li>
+<li>如果浮点值不是无穷大的话,浮点值使用IEEE 754的向零舍入模式取整,获得整数值v , 如果v在目标类型T ( int或long ) 的表示范围之内,那转换结果就是v。</li>
+<li>否则,将根据v的符号,转换为T所能表示的最大或者最小正数。</li>
+</ul>
+<h2 id="5-对象创建与访问指令"><a href="#5-对象创建与访问指令" class="headerlink" title="5. 对象创建与访问指令"></a>5. 对象创建与访问指令</h2><ul>
+<li>创建类实例的指令:new。</li>
+<li>创建数组的指令 : newarray、anewarray、multianewarray。</li>
+<li>访问类字段(static字段 ,或者称为类变量)和实例字段(非static字段 ,或者称为实例变量 )的指令:getfield、putfield、getstatic、putstatic。</li>
+<li>把一个数组元素加载到操作数栈的指令:baload、caload、saload、iaload、laload、faloads daload、aaload。</li>
+<li>将一个操作数栈的值存储到数组元素中的指令:bastore、castore、sastore、iastore、fastore、dastore、aastore。</li>
+<li>检查类实例类型的指令:instanceof、checkcast。</li>
+</ul>
+<h2 id="6-操作数栈管理指令"><a href="#6-操作数栈管理指令" class="headerlink" title="6. 操作数栈管理指令"></a>6. 操作数栈管理指令</h2><ul>
+<li>将操作数栈的栈顶一个或两个元素出栈:pop、pop2。</li>
+<li>复制栈顶一个或两个数值并将复制值或双份的复制值重新压入栈顶:dup、dup2、 dup_x1、dup2_x1、dup_x2、dup2_x2。</li>
+<li>将栈最顶端的两个数值互换 : swap。</li>
+</ul>
+<h2 id="7-控制转移指令"><a href="#7-控制转移指令" class="headerlink" title="7. 控制转移指令"></a>7. 控制转移指令</h2><ul>
+<li>条件分支:ifeq、iflt、ifle、ifne、ifgt、ifge、ifnull、ifnonnull、if_icmpeq、if_icmpne、if_icmplt、 if_icmpgt、if_icmple、if_icmpge、if_acmpeq和if_acmpne。</li>
+<li>复合条件分支:tableswitch、 lookupswitch。</li>
+<li>无条件分支:goto、goto_w、jsr、jsr_w、ret。</li>
+</ul>
+<p>&emsp;在Java虚拟机中有专门的指令集用来处理int和reference类型的条件分支比较操作,为了可以无须明显标识一个实体值是否null,也有专门的指令用来检测null值。</p>
+<p>&emsp;与前面算术运算时的规则一致,对于boolean类型、byte类型、char类型和short类型的条件分支比较操作,都是使用int类型的比较指令来完成,而对于long类型、float类型和double类型的条件分支比较操作,则会先执行相应类型的比较运算指令(dcmpg、dcmpl、fcmpg、 fcmpl、lcmp,见6.4.3节),运算指令会返回一个整型值到操作数栈中,随后再执行int类型的条件分支比较操作来完成整个分支跳转。由于<strong>各种类型的比较最终都会转化为int类型的比较操作</strong> ,int类型比较是否方便完善就显得尤为重要,所以Java虚拟机提供的int类型的条件分支指令是最为丰富和强大的。</p>
+<h2 id="8-方法调用和返回指令"><a href="#8-方法调用和返回指令" class="headerlink" title="8. 方法调用和返回指令"></a>8. 方法调用和返回指令</h2><ul>
+<li>invokevirtual 指令用于调用对象的实例方法,根据对象的实际类型进行分派(虚方法分派),这也是Java语言中最常见的方法分派方式。</li>
+<li>invokeinterface 指令用于调用接口方法,它会在运行时搜索一个实现了这个接口方法的对象 ,找出适合的方法进行调用。</li>
+<li>invokespecial 指令用于调用一些需要特殊处理的实例方法,包括实例初始化方法、私有方法和父类方法。</li>
+<li>invokestatic 指令用于调用类方法(static方法)。</li>
+<li>invokedynamic 指令用于在运行时动态解析出调用点限定符所引用的方法,并执行该方法 ,前面4条调用指令的分派逻辑都固化在Java虚拟机内部,而invokedynamic指令的分派逻辑是由用户所设定的引导方法决定的。</li>
+</ul>
+<h2 id="9-异常处理指令"><a href="#9-异常处理指令" class="headerlink" title="9. 异常处理指令"></a>9. 异常处理指令</h2><p>&emsp;在Java程序中显式拋出异常的操作(<strong>throw</strong>语句)都由<strong>athrow</strong>指令来实现,除了用throw语句显式拋出异常情况之外,Java虛拟机规范还规定了许多运行时异常会在其他Java虚拟机指令检测到异常状况时自动拋出。例如 ,在前面介绍的整数运算中,当除数为零时,虚拟机会在idiv或ldiv指令中拋出ArithmeticException异常。</p>
+<p>&emsp;而在Java虚拟机中,处理异常(catch语句)不是由字节码指令来实现的(很久之前曾经使用jsr和ret指令来实现,现在已经不用了),而是使用<strong>异常表</strong>来完成的。</p>
+<h2 id="10-同步指令"><a href="#10-同步指令" class="headerlink" title="10. 同步指令"></a>10. 同步指令</h2><p>&emsp;Java虚拟机可以支持方法级的同步和方法内部一段指令序列的同步,这两种同步结构都是使用<strong>管程(Monitor)</strong>来支持的。</p>
+<p>&emsp;方法级的同步是隐式的,即无须通过字节码指令来控制,它实现在方法调用和返回操作之中。虛拟机可以从方法常量池的方法表结构中的<strong>ACC_SYNCHRONIZED</strong>访问标志得知一个方法是否声明为同步方法。当方法调用时,调用指令将会检查方法的ACC_SYNCHRONIZED 访问标志是否被设置,如果设置了,执行线程就要求先成功持有管程,然后才能执行方法, 最后当方法完成(无论是正常完成还是非正常完成)时释放管程。在方法执行期间,执行线程持有了管程,其他任何线程都无法再获取到同一个管程。如果一个同步方法执行期间拋出了异常,并且在方法内部无法处理此异常,那么这个同步方法所持有的管程将在异常拋到同步方法之外时<strong>自动释放</strong>。</p>
+<p>&emsp;同步一段指令集序列通常是由Java语言中的synchronized语句块来表示的,Java虚拟机的指令集中有<strong>monitorenter</strong>和<strong>monitorexit</strong>两条指令来支持synchronized关键字的语义,正确实现synchronized关键字需要Javac编译器与Java虚拟机两者共同协作支持。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onlyMe</span><span class="params">(Foo f)</span></span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (f)&#123;</span><br><span class="line">        doSomething();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>&emsp;编译之后生成的字节码序列：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public void onlyMe(com.jp.jvm.ch06.TestClass$Foo);</span><br><span class="line">        descriptor: (Lcom&#x2F;jp&#x2F;jvm&#x2F;ch06&#x2F;TestClass$Foo;)V</span><br><span class="line">        flags: ACC_PUBLIC</span><br><span class="line">        Code:</span><br><span class="line">        stack&#x3D;2, locals&#x3D;4, args_size&#x3D;2</span><br><span class="line">        0: aload_1                       &#x2F;&#x2F;将对象f入栈</span><br><span class="line">        1: dup                           &#x2F;&#x2F;复制栈顶元素（即f的引用）</span><br><span class="line">        2: astore_2                      &#x2F;&#x2F;将栈顶元素储存到局部变量表Slot2中</span><br><span class="line">        3: monitorenter                  &#x2F;&#x2F;已栈顶元素(f)作为锁，开始同步</span><br><span class="line">        4: aload_0                       &#x2F;&#x2F;将局部变量Slot0（即this指针）的元素入栈</span><br><span class="line">        5: invokevirtual #3              &#x2F;&#x2F;调用this.doSomething方法</span><br><span class="line">        8: aload_2                       &#x2F;&#x2F;将局部变量Slot2（即f）入栈</span><br><span class="line">        9: monitorexit                   &#x2F;&#x2F;释放f的监视器锁，退出同步</span><br><span class="line">        10: goto          18             &#x2F;&#x2F;方法正常结束，跳转到18返回  </span><br><span class="line">        13: astore_3                     &#x2F;&#x2F;从这步开始是异常路径，，见下面异常表Taget13</span><br><span class="line">        14: aload_2                      &#x2F;&#x2F;将局部变量Slot2（即f）入栈</span><br><span class="line">        15: monitorexit                  &#x2F;&#x2F;退出同步</span><br><span class="line">        16: aload_3                      &#x2F;&#x2F;将局部变量Slot3的元素（即异常对象）入栈</span><br><span class="line">        17: athrow                       &#x2F;&#x2F;把异常抛出</span><br><span class="line">        18: return                       &#x2F;&#x2F;方法正常返回</span><br><span class="line">        Exception table:                 &#x2F;&#x2F;异常表</span><br><span class="line">        from    to  target type</span><br><span class="line">        4    10    13   any</span><br><span class="line">        13    16    13   any</span><br></pre></td></tr></table></figure><br>&emsp;编译器必须确保无论方法通过何种方式完成,方法中调用过的每条monitorenter指令都必须执行其对应的monitorexit指令 ,而无论这个方法是正常结束还是异常结束。</p>
+<p>&emsp;从上面字节码序列中可以看到,为了保证在方法异常完成时momtorenter和monitorexit指令依然可以正确配对执行,编译器会自动产生一个异常处理器,这个异常处理器声明可处理所有的异常,它的目的就是用来执行momtorexit指令。</p>
+<p>&nbsp;</p>
+<blockquote>
+<p>参考：<br>《深入理解Java虚拟机》</p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/java/java-jvm-classLoader/" data-toggle="tooltip" data-placement="top" title="深入理解Java虚拟机 之 虚拟机类加载机制">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/java/java-jvm-class-file-struct/" data-toggle="tooltip" data-placement="top" title="深入理解Java虚拟机 之 类文件结构">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#字节码指令简介"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">字节码指令简介</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-字节码与数据类型"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1. 字节码与数据类型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-加载和储存指令"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2. 加载和储存指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-运算指令"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">3. 运算指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-类型转换指令"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">4. 类型转换指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#5-对象创建与访问指令"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">5. 对象创建与访问指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#6-操作数栈管理指令"><span class="toc-nav-number">1.6.</span> <span class="toc-nav-text">6. 操作数栈管理指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#7-控制转移指令"><span class="toc-nav-number">1.7.</span> <span class="toc-nav-text">7. 控制转移指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#8-方法调用和返回指令"><span class="toc-nav-number">1.8.</span> <span class="toc-nav-text">8. 方法调用和返回指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#9-异常处理指令"><span class="toc-nav-number">1.9.</span> <span class="toc-nav-text">9. 异常处理指令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#10-同步指令"><span class="toc-nav-number">1.10.</span> <span class="toc-nav-text">10. 同步指令</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#java" title="java">java</a>
+                        
+                          <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                        
+                          <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

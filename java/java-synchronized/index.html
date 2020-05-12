@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Java 并发编程 之 synchronized 的实现原理 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/java/java-synchronized/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#java" title="java">java</a>
+                            
+                              <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                            
+                              <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                            
+                        </div>
+                        <h1>Java 并发编程 之 synchronized 的实现原理</h1>
+                        <h2 class="subheading">synchronized 的实现原理</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-10-11
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.8k</span> and
+                                Reading Time <span class="post-count">15</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="synchronized-的实现原理"><a href="#synchronized-的实现原理" class="headerlink" title="synchronized 的实现原理"></a>synchronized 的实现原理</h1><h2 id="synchronized-常见三种使用方法："><a href="#synchronized-常见三种使用方法：" class="headerlink" title="synchronized 常见三种使用方法：　"></a>synchronized 常见三种使用方法：　</h2><ul>
+<li>1）普通同步方法，锁是当前实例，即对象锁；<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">increase</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    i++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>2）静态同步方法，锁是当前类的Class实例，Class数据存在永久代中，是该类的一个全局锁，即类锁；<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">increase</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    i++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>3）对于同步代码块，锁是synchronized括号里配置的对象。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (a) &#123;</span><br><span class="line">        System.out.println(<span class="string">"..."</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>Java中的每个对象都可以作为锁。当一个线程访问同步代码块时，需要首先获取锁，退出代码块或抛出异常时必须释放锁。</p>
+<h2 id="“锁”到底是什么？"><a href="#“锁”到底是什么？" class="headerlink" title="“锁”到底是什么？"></a>“锁”到底是什么？</h2><p>首先通过源代码和反汇编代码研究锁的实现原理。</p>
+<p><strong>1）同步代码块源代码：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedBlock</span> </span>&#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">                    System.out.println(<span class="string">"..."</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(<span class="string">"..."</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure><br>字节码（javap -c）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">public class SynchronizedBlock &#123;</span><br><span class="line">  </span><br><span class="line">              &#x2F;&#x2F; Method descriptor #6 ()V</span><br><span class="line">              &#x2F;&#x2F; Stack: 1, Locals: 1</span><br><span class="line">              public SynchronizedBlock();</span><br><span class="line"> aload_0 [this]</span><br><span class="line"> invokespecial java.lang.Object() [8]</span><br><span class="line"> return</span><br><span class="line">                  Line numbers:</span><br><span class="line">                [pc: 0, line: 5]</span><br><span class="line">                  Local variable table:</span><br><span class="line">                [pc: 0, pc: 5] local: this index: 0 type: SynchronizedBlock</span><br><span class="line">              </span><br><span class="line">              &#x2F;&#x2F; Method descriptor #6 ()V</span><br><span class="line">              &#x2F;&#x2F; Stack: 2, Locals: 2</span><br><span class="line">              public void method();</span><br><span class="line"> aload_0 [this]</span><br><span class="line"> dup</span><br><span class="line"> astore_1</span><br><span class="line"> monitorenter    &#x2F;&#x2F;在同步块开始位置插入monitorenter指令</span><br><span class="line"> getstatic java.lang.System.out : java.io.PrintStream [15]</span><br><span class="line"> ldc &lt;String &quot;...&quot;&gt; [21]</span><br><span class="line"> invokevirtual java.io.PrintStream.println(java.lang.String) : void [23]</span><br><span class="line"> aload_1</span><br><span class="line"> monitorexit    &#x2F;&#x2F;在同步块结束位置插入</span><br><span class="line"> goto 20</span><br><span class="line"> aload_1</span><br><span class="line"> monitorexit    &#x2F;&#x2F;在抛出异常位置释放锁</span><br><span class="line"> athrow        &#x2F;&#x2F;抛出异常指令</span><br><span class="line"> getstatic java.lang.System.out : java.io.PrintStream [15]</span><br><span class="line"> ldc &lt;String &quot;...&quot;&gt; [21]</span><br><span class="line"> invokevirtual java.io.PrintStream.println(java.lang.String) : void [23]</span><br><span class="line"> return</span><br><span class="line">                  Exception Table:</span><br><span class="line">                [pc: 4, pc: 14] -&gt; 17 when : any</span><br><span class="line">                [pc: 17, pc: 19] -&gt; 17 when : any</span><br><span class="line">                  Line numbers:</span><br><span class="line">                [pc: 0, line: 7]</span><br><span class="line">                [pc: 4, line: 8]</span><br><span class="line">                [pc: 12, line: 7]</span><br><span class="line">                [pc: 20, line: 10]</span><br><span class="line">                [pc: 28, line: 11]</span><br><span class="line">                  Local variable table:</span><br><span class="line">                [pc: 0, pc: 29] local: this index: 0 type: SynchronizedBlock</span><br><span class="line">                  Stack map table: number of frames 2</span><br><span class="line">                [pc: 17, full, stack: &#123;java.lang.Throwable&#125;, locals: &#123;SynchronizedBlock, SynchronizedBlock&#125;]</span><br><span class="line">                [pc: 20, chop 1 local(s)]</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>2）同步方法源代码：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedMethod</span> </span>&#123;</span><br><span class="line">                    <span class="comment">//普通同步方法</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">"..."</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">//静态同步方法</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">"..."</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure><br>字节码（javap -v）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">public class SynchronizedMethod</span><br><span class="line">              SourceFile: &quot;SynchronizedMethod.java&quot;</span><br><span class="line">              minor version: 0</span><br><span class="line">              major version: 51</span><br><span class="line">              flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">            Constant pool:</span><br><span class="line">               #1 &#x3D; Class              #2             &#x2F;&#x2F;  SynchronizedMethod</span><br><span class="line">               #2 &#x3D; Utf8               SynchronizedMethod</span><br><span class="line">               #3 &#x3D; Class              #4             &#x2F;&#x2F;  java&#x2F;lang&#x2F;Object</span><br><span class="line">               #4 &#x3D; Utf8               java&#x2F;lang&#x2F;Object</span><br><span class="line">               #5 &#x3D; Utf8               &lt;init&gt;</span><br><span class="line">               #6 &#x3D; Utf8               ()V</span><br><span class="line">               #7 &#x3D; Utf8               Code</span><br><span class="line">               #8 &#x3D; Methodref          #3.#9          &#x2F;&#x2F;  java&#x2F;lang&#x2F;Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">               #9 &#x3D; NameAndType        #5:#6          &#x2F;&#x2F;  &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">              #10 &#x3D; Utf8               LineNumberTable</span><br><span class="line">              #11 &#x3D; Utf8               LocalVariableTable</span><br><span class="line">              #12 &#x3D; Utf8               this</span><br><span class="line">              #13 &#x3D; Utf8               LSynchronizedMethod;</span><br><span class="line">              #14 &#x3D; Utf8               method1</span><br><span class="line">              #15 &#x3D; Fieldref           #16.#18        &#x2F;&#x2F;  java&#x2F;lang&#x2F;System.out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">              #16 &#x3D; Class              #17            &#x2F;&#x2F;  java&#x2F;lang&#x2F;System</span><br><span class="line">              #17 &#x3D; Utf8               java&#x2F;lang&#x2F;System</span><br><span class="line">              #18 &#x3D; NameAndType        #19:#20        &#x2F;&#x2F;  out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">              #19 &#x3D; Utf8               out</span><br><span class="line">              #20 &#x3D; Utf8               Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">              #21 &#x3D; String             #22            &#x2F;&#x2F;  ...</span><br><span class="line">              #22 &#x3D; Utf8               ...</span><br><span class="line">              #23 &#x3D; Methodref          #24.#26        &#x2F;&#x2F;  java&#x2F;io&#x2F;PrintStream.println:(Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">              #24 &#x3D; Class              #25            &#x2F;&#x2F;  java&#x2F;io&#x2F;PrintStream</span><br><span class="line">              #25 &#x3D; Utf8               java&#x2F;io&#x2F;PrintStream</span><br><span class="line">              #26 &#x3D; NameAndType        #27:#28        &#x2F;&#x2F;  println:(Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">              #27 &#x3D; Utf8               println</span><br><span class="line">              #28 &#x3D; Utf8               (Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">              #29 &#x3D; Utf8               method2</span><br><span class="line">              #30 &#x3D; Utf8               SourceFile</span><br><span class="line">              #31 &#x3D; Utf8               SynchronizedMethod.java</span><br><span class="line">            &#123;</span><br><span class="line">              public SynchronizedMethod();</span><br><span class="line">                flags: ACC_PUBLIC</span><br><span class="line">                Code:</span><br><span class="line">                  stack&#x3D;1, locals&#x3D;1, args_size&#x3D;1</span><br><span class="line">                 0: aload_0       </span><br><span class="line">                 1: invokespecial #8                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">                 4: return        </span><br><span class="line">                  LineNumberTable:</span><br><span class="line">                line 3: 0</span><br><span class="line">                  LocalVariableTable:</span><br><span class="line">                Start  Length  Slot  Name   Signature</span><br><span class="line">      5     0  this   LSynchronizedMethod;</span><br><span class="line"></span><br><span class="line">              public synchronized void method1();</span><br><span class="line">                flags: ACC_PUBLIC, ACC_SYNCHRONIZED        &#x2F;&#x2F;同步方法增加了ACC_SYNCHRONIZED标志</span><br><span class="line">                Code:</span><br><span class="line">                  stack&#x3D;2, locals&#x3D;1, args_size&#x3D;1</span><br><span class="line">                 0: getstatic     #15                 &#x2F;&#x2F; Field java&#x2F;lang&#x2F;System.out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">                 3: ldc           #21                 &#x2F;&#x2F; String ...</span><br><span class="line">                 5: invokevirtual #23                 &#x2F;&#x2F; Method java&#x2F;io&#x2F;PrintStream.println:(Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">                 8: return        </span><br><span class="line">                  LineNumberTable:</span><br><span class="line">                line 6: 0</span><br><span class="line">                line 7: 8</span><br><span class="line">                  LocalVariableTable:</span><br><span class="line">                Start  Length  Slot  Name   Signature</span><br><span class="line">      9     0  this   LSynchronizedMethod;</span><br><span class="line"></span><br><span class="line">              public static synchronized void method2();</span><br><span class="line">                flags: ACC_PUBLIC, ACC_STATIC, ACC_SYNCHRONIZED</span><br><span class="line">                Code:</span><br><span class="line">                  stack&#x3D;2, locals&#x3D;0, args_size&#x3D;0</span><br><span class="line">                 0: getstatic     #15                 &#x2F;&#x2F; Field java&#x2F;lang&#x2F;System.out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">                 3: ldc           #21                 &#x2F;&#x2F; String ...</span><br><span class="line">                 5: invokevirtual #23                 &#x2F;&#x2F; Method java&#x2F;io&#x2F;PrintStream.println:(Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">                 8: return        </span><br><span class="line">                  LineNumberTable:</span><br><span class="line">                line 10: 0</span><br><span class="line">                line 11: 8</span><br><span class="line">                  LocalVariableTable:</span><br><span class="line">                Start  Length  Slot  Name   Signature</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure><br>&emsp;通过反汇编代码可以观察到：<br>&emsp;同步代码块是使用 <strong>MonitorEnter</strong> 和 <strong>MoniterExit</strong> 指令实现的，在编译时，MonitorEnter指令被插入到同步代码块的开始位置，MoniterExit指令被插入到同步代码块的结束位置和异常位置。任何对象都有一个Monitor与之关联，当Monitor被持有后将处于锁定状态。MonitorEnter指令会尝试获取Monitor的持有权，即尝试获取锁。<br>&emsp;同步方法依赖flags标志 <strong>ACC_SYNCHRONIZED</strong> 实现，字节码中没有具体的逻辑，可能需要查看JVM的底层实现（同步方法也可以通过Monitor指令实现）。ACC_SYNCHRONIZED标志表示方法为同步方法，如果为非静态方法（没有 <strong>ACC_STATIC</strong> 标志），使用调用该方法的对象作为锁对象；如果为静态方法（有ACC_STATIC标志），使用该方法所属的Class类在JVM的内部对象表示Klass作为锁对象。</p>
+<p>&emsp;下面是摘自《Java虚拟机规范》的话：<br>&emsp;<em>Java虚拟机可以支持方法级的同步和方法内部一段指令序列的同步，这两种同步结构都是使用管程（Monitor）来支持的。</em><br>&emsp;<em>方法级的同步是隐式，即无需通过字节码指令来控制的，它实现在方法调用和返回操作之中。虚拟机可以从方法常量池中的方法表结构中的ACC_SYNCHRONIZED访问标志区分一个方法是否同步方法。当方法调用时，调用指令将会检查方法的ACC_SYNCHRONIZED访问标志是否被设置，如果设置了，执行线程将先持有管程，然后再执行方法，最后在方法完成（无论是正常完成还是非正常完成）时释放管程。在方法执行期间，执行线程持有了管程，其他任何线程都无法再获得同一个管程。如果一个同步方法执行期间抛出了异常，并且在方法内部无法处理此异常，那这个同步方法所持有的管程将在异常抛到同步方法之外时自动释放。</em><br>&emsp;<em>同步一段指令集序列通常是由Java语言中的synchronized块来表示的，Java虚拟机的指令集中有monitorenter和monitorexit两条指令来支持synchronized关键字的语义，正确实现synchronized关键字需要编译器与Java虚拟机两者协作支持。</em><br>&emsp;<em>Java虚拟机中的同步（Synchronization）基于进入和退出管程（Monitor）对象实现。无论是显式同步（有明确的monitorenter和monitorexit指令）还是隐式同步（依赖方法调用和返回指令实现的）都是如此。</em><br>&emsp;<em>编译器必须确保无论方法通过何种方式完成，方法中调用过的每条monitorenter指令都必须有执行其对应monitorexit指令，而无论这个方法是正常结束还是异常结束。为了保证在方法异常完成时monitorenter和monitorexit指令依然可以正确配对执行，编译器会自动产生一个异常处理器，这个异常处理器声明可处理所有的异常，它的目的就是用来执行monitorexit指令。</em></p>
+<h2 id="Monitor-到底是什么？"><a href="#Monitor-到底是什么？" class="headerlink" title="Monitor 到底是什么？"></a>Monitor 到底是什么？</h2><p>&emsp;那Monitor到底是什么？一个作为锁的对象是什么样的工作机制？（Java对象头和Monitor）</p>
+<h3 id="Java对象头"><a href="#Java对象头" class="headerlink" title="Java对象头"></a>Java对象头</h3><p>&emsp;对象头含有三部分：Mark Word（存储对象自身运行时数据）、Class Metadata Address（存储类元数据的指针）、Array length（数组长度，只有数组类型才有）。<br>&emsp;重点在Mark Word部分，Mark Word数据结构被设计成非固定的，会随着对象的不同状态而变化，如下表所示。<br>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-c3ow">锁状态</th>
+    <th class="tg-c3ow">25bit</th>
+    <th class="tg-c3ow">25bit</th>
+    <th class="tg-c3ow">4bit</th>
+    <th class="tg-c3ow">1bit是否是偏向锁</th>
+    <th class="tg-c3ow">2bit锁标志位</th>
+  </tr>
+  <tr>
+    <td class="tg-c3ow">无锁状态</td>
+    <td class="tg-c3ow">hashCode</td>
+    <td class="tg-c3ow">hashCode</td>
+    <td class="tg-c3ow">age</td>
+    <td class="tg-c3ow">0</td>
+    <td class="tg-c3ow">01</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow">轻量级锁</td>
+    <td class="tg-c3ow" colspan="4">执行栈中锁记录的指针</td>
+    <td class="tg-c3ow">00</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow">重量级锁</td>
+    <td class="tg-c3ow" colspan="4">执行栈中锁记录的指针</td>
+    <td class="tg-c3ow">10</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow">GC标记</td>
+    <td class="tg-c3ow" colspan="4">空</td>
+    <td class="tg-c3ow">11</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow">偏向锁</td>
+    <td class="tg-c3ow">线程ID</td>
+    <td class="tg-c3ow">Epoch</td>
+    <td class="tg-c3ow">age</td>
+    <td class="tg-c3ow">1</td>
+    <td class="tg-c3ow">01</td>
+  </tr>
+</table>
+</p>
+<p>&emsp;锁的级别从低到高：无锁、偏向锁、轻量级锁、重量级锁。</p>
+<h3 id="Monitor"><a href="#Monitor" class="headerlink" title="Monitor"></a>Monitor</h3><p>&emsp;Monitor可以理解为一种同步工具，也可理解为一种同步机制，常常被描述为一个Java对象。</p>
+<ul>
+<li>1）互斥：一个Monitor在一个时刻只能被一个线程持有，即Monitor中的所有方法都是互斥的。</li>
+<li>2）signal机制：如果条件变量不满足，允许一个正在持有Monitor的线程暂时释放持有权，当条件变量满足时，当前线程可以唤醒正在等待该条件变量的线程，然后重新获取Monitor的持有权。</li>
+</ul>
+<p>&emsp;所有的Java对象是天生的Monitor，每一个Java对象都有成为Monitor的潜质，因为在Java的设计中 ，每一个Java对象自打娘胎里出来就带了一把看不见的锁，它叫做内部锁或者<strong>Monitor锁</strong>。<br>&emsp;<strong>Monitor的本质是依赖于底层操作系统的Mutex Lock实现，操作系统实现线程之间的切换需要从用户态到内核态的转换，成本非常高。</strong></p>
+<p>　　</p>
+<h3 id="JDK1-6对锁的优化"><a href="#JDK1-6对锁的优化" class="headerlink" title="JDK1.6对锁的优化"></a>JDK1.6对锁的优化</h3><ul>
+<li><p>重量级锁<br>重量级锁基于Monitor实现，成本高。</p>
+</li>
+<li><p>轻量级锁</p>
+<ul>
+<li>优化点：在没有多线程竞争的情况下，通过CAS减少重量级锁使用操作系统互斥量产生的性能消耗。</li>
+<li>什么情况下使用：关闭偏向锁或由于多线程竞争导致的偏向锁升级为轻量级锁。</li>
+<li><p>获取锁步骤：</p>
+<ul>
+<li>1）判断是否处于无锁状态，若是，则JVM在当前线程的栈帧中创建锁记录（Lock Record）空间，用于存放锁对象中的Mark Word的拷贝，官方称为Displaced Mark Word；否则执行步骤3）。</li>
+<li>2）当前线程尝试利用CAS将锁对象的Mark Word更新为指向锁记录的指针。如果更新成功意味着获取到锁，将锁标志位置为00，执行同步代码块；如果更新失败，执行步骤3）。</li>
+<li>3）判断锁对象的Mark Word是否指向当前线程的栈帧，若是说明当前线程已经获取了锁，执行同步代码，否则说明其他线程已经获取了该锁对象，执行步骤4）。</li>
+<li>4）当前线程尝试使用自旋来获取锁，自旋期间会不断的执行步骤1），直到获取到锁或自旋结束。因为自旋锁会消耗CPU，所以不能无限的自旋。如果自旋期间获取到锁（其他线程释放锁），执行同步块；否则锁膨胀为重量级锁，当前线程阻塞，等待持有锁的线程释放锁时的唤醒。</li>
+</ul>
+</li>
+<li><p>释放锁步骤：</p>
+<ul>
+<li>1）从当前线程的栈帧中取出Displaced Mark Word存储的锁记录的内容。</li>
+<li>2）当前线程尝试使用CAS将锁记录内容更新到锁对象中的Mark Word中。如果更新成功，则释放锁成功，将锁标志位置为01无锁状态；否则，执行3）。</li>
+<li>3）CAS更新失败，说明有其他线程尝试获取锁。需要释放锁并同时唤醒等待的线程。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>偏向锁</p>
+<ul>
+<li>优化点：在没有多线程竞争的情况下，减少轻量级锁的不必要的CAS操作。在无竞争情况下，完全消除同步。</li>
+<li>优化方法：锁对象的Mark Word中记录获取锁的线程ID。</li>
+<li>获取锁步骤：<ul>
+<li>1）判断锁对象是否是偏向锁（即锁标志位为01，偏向锁位为1），若为偏向锁状态执行2）。</li>
+<li>2）判断锁对象的线程ID是否为当前线程的ID，如果是则说明已经获取到锁，执行代码块；否则执行3）。</li>
+<li>3）当前线程使用CAS更新锁对象的线程ID为当前线程ID。如果成功，获取到锁；否则执行4）</li>
+<li>4）当到达全局安全点，当前线程根据Mark Word中的线程ID通知持有锁的线程挂起，将锁对象Mark Word中的锁对象指针指向当前堆栈中最近的一个锁记录，偏向锁升级为轻量级锁，恢复被挂起的线程。</li>
+</ul>
+</li>
+<li>释放锁步骤：偏向锁采用一种等到竞争出现时才释放锁的机制。当其他线程尝试竞争偏向锁时，当前线程才会释放释放锁，线程不会主动去释放偏向锁。偏向锁的撤销需要等待全局安全点。<ul>
+<li>1）首先暂停持有偏向锁的线程。</li>
+<li>2）撤销偏向锁，恢复到无锁状态或轻量级锁状态。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="几种锁的对比"><a href="#几种锁的对比" class="headerlink" title="几种锁的对比"></a>几种锁的对比</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">优点</th>
+<th style="text-align:center">缺点</th>
+<th style="text-align:center">适用情况</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">偏向锁</td>
+<td style="text-align:center">加锁和解锁不需要额外的消耗，和执行非同步代码相差无几。</td>
+<td style="text-align:center">如果线程存在锁竞争，需要额外的锁撤销的消耗。</td>
+<td style="text-align:center">适用于只有一个线程访问同步块的情况</td>
+</tr>
+<tr>
+<td style="text-align:center">轻量级锁</td>
+<td style="text-align:center">竞争的线程不会阻塞，提高了响应速度</td>
+<td style="text-align:center">长时间得不到锁的线程使用自旋消耗CPU</td>
+<td style="text-align:center">追求响应速度。同步代码执行非常快</td>
+</tr>
+<tr>
+<td style="text-align:center">重量级锁</td>
+<td style="text-align:center">线程竞争不会使用自旋，不会消耗CPU</td>
+<td style="text-align:center">线程出现竞争时会阻塞，响应速度慢</td>
+<td style="text-align:center">追求吞吐量。同步代码执行时间长</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="synchronized-的一些理解"><a href="#synchronized-的一些理解" class="headerlink" title="synchronized 的一些理解"></a>synchronized 的一些理解</h2><ol>
+<li><p>相对于ReentrantLock而言，synchronized锁是<strong>重量级锁</strong>，重量级体现在活跃性差一点。synchronized锁是内置锁，意味着JVM能基于synchronized锁做一些优化：比如增加锁的粒度(锁粗化)、锁消除。</p>
+</li>
+<li><p>在synchronized锁上阻塞的线程是不可中断的：线程A获得了synchronized锁，当线程B也去获取synchronized锁时会被阻塞。而且，线程B无法被其他线程中断(不可中断的阻塞)，而ReentrantLock锁能实现可中断的阻塞。</p>
+</li>
+<li><p>synchronized锁释放是自动的，当线程执行退出synchronized锁保护的同步代码块时，会自动释放synchronized锁。而ReentrantLock需要显示地释放：即在try-finally块中释放锁。</p>
+</li>
+<li><p>线程在竞争synchronized锁时是非公平的：假设synchronized锁目前被线程A占有，线程B请求锁未果，被放入队列中，线程C请求锁未果，也被 放入队列中，线程D也来请求锁，恰好此时线程A将锁释放了，那么线程D将跳过队列中所有的等待线程(即：线程B和线程C)并获得这个锁。而ReentrantLock能够实现锁的公平性。</p>
+</li>
+<li><p>synchronized锁是读写互斥并且 读读也互斥，ReentrantReadWriteLock 分为读锁和写锁，而读锁可以同时被多个线程持有，适合于读多写少场景的并发。<br>&nbsp;<br>&nbsp;</p>
+<blockquote>
+<p>参考：<br><a href="https://www.cnblogs.com/zaizhoumo/p/7700161.html" target="_blank" rel="noopener">https://www.cnblogs.com/zaizhoumo/p/7700161.html</a><br><a href="https://www.cnblogs.com/hapjin/p/4678773.html" target="_blank" rel="noopener">https://www.cnblogs.com/hapjin/p/4678773.html</a></p>
+</blockquote>
+</li>
+</ol>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/java/java-CountDownLatch/" data-toggle="tooltip" data-placement="top" title="Java 线程同步器 之 CountDownLatch 原理剖析">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/markdown/markdown-table/" data-toggle="tooltip" data-placement="top" title="markdown 中表格单元格合并的问题">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#synchronized-的实现原理"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">synchronized 的实现原理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#synchronized-常见三种使用方法："><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">synchronized 常见三种使用方法：　</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#“锁”到底是什么？"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">“锁”到底是什么？</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Monitor-到底是什么？"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">Monitor 到底是什么？</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Java对象头"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">Java对象头</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Monitor"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">Monitor</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#JDK1-6对锁的优化"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">JDK1.6对锁的优化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#几种锁的对比"><span class="toc-nav-number">1.3.4.</span> <span class="toc-nav-text">几种锁的对比</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#synchronized-的一些理解"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">synchronized 的一些理解</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#java" title="java">java</a>
+                        
+                          <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                        
+                          <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

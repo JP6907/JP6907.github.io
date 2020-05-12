@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Spark 源码阅读 之 部署模式 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/Spark/spark-deploy-mode/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                            
+                              <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                            
+                              <a class="tag" href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                            
+                        </div>
+                        <h1>Spark 源码阅读 之 部署模式</h1>
+                        <h2 class="subheading">Spark 部署模式</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-09-11
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.9k</span> and
+                                Reading Time <span class="post-count">14</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="Spark-部署模式"><a href="#Spark-部署模式" class="headerlink" title="Spark 部署模式"></a>Spark 部署模式</h1><blockquote>
+<p>Spark版本：2.4.0</p>
+</blockquote>
+<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p>&emsp;Spark 支持多种集群运行模式：</p>
+<ul>
+<li>Local - 本地模式，也可以使用伪分布式模式</li>
+<li><a href="http://spark.apache.org/docs/2.4.0/spark-standalone.html" target="_blank" rel="noopener">Standalone</a> - Spark自身提供的集群资源管理器</li>
+<li><a href="http://spark.apache.org/docs/2.4.0/running-on-mesos.html" target="_blank" rel="noopener">Mesos</a> - 外部集群资源管理器</li>
+<li><a href="http://spark.apache.org/docs/2.4.0/running-on-yarn.html" target="_blank" rel="noopener">Yarn</a> - 外部集群资源管理器</li>
+<li><a href="http://spark.apache.org/docs/2.4.0/running-on-kubernetes.html" target="_blank" rel="noopener">Kubernetes</a> - 外部集群资源管理器</li>
+</ul>
+<p>&emsp;下图表示 Spark 的基本工作流程架构图：<br><img src="https://gitee.com/JP6907/Pic/raw/master/spark/cluster-overview.png?raw=true" alt="cluster-overview"><br>&emsp;其中的 Cluster Manager 集群管理器是可插拔的，也就是本文的介绍重点。</p>
+<p>&emsp;我们可以在调用 spark-submit 脚本的时候通过参数指定集群的运行模式。spark-submit 脚本会调用 SparkSubmit 类，通过反射启动指定的 mainClass，mainClass 中会创建 SparkContext，在 SprkContext 调用 createTaskScheduler 就会创建我们需要的资源调度器。关于 SparkSubmit 的详细介绍可以参考文章<a href="http://zhoujiapeng.top/Spark/spark-application/#2sparksubmit-1">《Spark Application 提交》</a>，这里不再多加赘述。具体集群运行模式的匹配是在 SparkContext 的 createTaskScheduler 方法中，我们看一下这个方法：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SparkContext.createTaskScheduler</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">createTaskScheduler</span></span>(</span><br><span class="line">      sc: <span class="type">SparkContext</span>,</span><br><span class="line">      master: <span class="type">String</span>,</span><br><span class="line">      deployMode: <span class="type">String</span>): (<span class="type">SchedulerBackend</span>, <span class="type">TaskScheduler</span>) = &#123;</span><br><span class="line">    <span class="keyword">import</span> <span class="type">SparkMasterRegex</span>._</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When running locally, don't try to re-execute tasks on failure.</span></span><br><span class="line">    <span class="keyword">val</span> <span class="type">MAX_LOCAL_TASK_FAILURES</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    master <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"local"</span> =&gt;</span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc, <span class="type">MAX_LOCAL_TASK_FAILURES</span>, isLocal = <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, <span class="number">1</span>)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        (backend, scheduler)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="type">LOCAL_N_REGEX</span>(threads) =&gt;</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">localCpuCount</span></span>: <span class="type">Int</span> = <span class="type">Runtime</span>.getRuntime.availableProcessors()</span><br><span class="line">        <span class="comment">// local[*] estimates the number of cores on the machine; local[N] uses exactly N threads.</span></span><br><span class="line">        <span class="keyword">val</span> threadCount = <span class="keyword">if</span> (threads == <span class="string">"*"</span>) localCpuCount <span class="keyword">else</span> threads.toInt</span><br><span class="line">        <span class="keyword">if</span> (threadCount &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Asked to run locally with <span class="subst">$threadCount</span> threads"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc, <span class="type">MAX_LOCAL_TASK_FAILURES</span>, isLocal = <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, threadCount)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        (backend, scheduler)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="type">LOCAL_N_FAILURES_REGEX</span>(threads, maxFailures) =&gt;</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">localCpuCount</span></span>: <span class="type">Int</span> = <span class="type">Runtime</span>.getRuntime.availableProcessors()</span><br><span class="line">        <span class="comment">// local[*, M] means the number of cores on the computer with M failures</span></span><br><span class="line">        <span class="comment">// local[N, M] means exactly N threads with M failures</span></span><br><span class="line">        <span class="keyword">val</span> threadCount = <span class="keyword">if</span> (threads == <span class="string">"*"</span>) localCpuCount <span class="keyword">else</span> threads.toInt</span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc, maxFailures.toInt, isLocal = <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, threadCount)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        (backend, scheduler)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="type">SPARK_REGEX</span>(sparkUrl) =&gt;</span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc)</span><br><span class="line">        <span class="keyword">val</span> masterUrls = sparkUrl.split(<span class="string">","</span>).map(<span class="string">"spark://"</span> + _)</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">StandaloneSchedulerBackend</span>(scheduler, sc, masterUrls)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        (backend, scheduler)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="type">LOCAL_CLUSTER_REGEX</span>(numSlaves, coresPerSlave, memoryPerSlave) =&gt;</span><br><span class="line">        <span class="comment">// Check to make sure memory requested &lt;= memoryPerSlave. Otherwise Spark will just hang.</span></span><br><span class="line">        <span class="keyword">val</span> memoryPerSlaveInt = memoryPerSlave.toInt</span><br><span class="line">        <span class="keyword">if</span> (sc.executorMemory &gt; memoryPerSlaveInt) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(</span><br><span class="line">            <span class="string">"Asked to launch cluster with %d MB RAM / worker but requested %d MB/worker"</span>.format(</span><br><span class="line">              memoryPerSlaveInt, sc.executorMemory))</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc)</span><br><span class="line">        <span class="keyword">val</span> localCluster = <span class="keyword">new</span> <span class="type">LocalSparkCluster</span>(</span><br><span class="line">          numSlaves.toInt, coresPerSlave.toInt, memoryPerSlaveInt, sc.conf)</span><br><span class="line">        <span class="keyword">val</span> masterUrls = localCluster.start()</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">StandaloneSchedulerBackend</span>(scheduler, sc, masterUrls)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        backend.shutdownCallback = (backend: <span class="type">StandaloneSchedulerBackend</span>) =&gt; &#123;</span><br><span class="line">          localCluster.stop()</span><br><span class="line">        &#125;</span><br><span class="line">        (backend, scheduler)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> masterUrl =&gt;</span><br><span class="line">        <span class="keyword">val</span> cm = getClusterManager(masterUrl) <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">Some</span>(clusterMgr) =&gt; clusterMgr</span><br><span class="line">          <span class="keyword">case</span> <span class="type">None</span> =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">"Could not parse Master URL: '"</span> + master + <span class="string">"'"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">val</span> scheduler = cm.createTaskScheduler(sc, masterUrl)</span><br><span class="line">          <span class="keyword">val</span> backend = cm.createSchedulerBackend(sc, masterUrl, scheduler)</span><br><span class="line">          cm.initialize(scheduler, backend)</span><br><span class="line">          (backend, scheduler)</span><br><span class="line">        &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> se: <span class="type">SparkException</span> =&gt; <span class="keyword">throw</span> se</span><br><span class="line">          <span class="keyword">case</span> <span class="type">NonFatal</span>(e) =&gt;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">"External scheduler cannot be instantiated"</span>, e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;这里通过正则表达式来确定具体指定的集群部署模式，下面我们详细看一下其中的各种模式。</p>
+<h1 id="2-各种部署模式"><a href="#2-各种部署模式" class="headerlink" title="2. 各种部署模式"></a>2. 各种部署模式</h1><h2 id="2-1-local"><a href="#2-1-local" class="headerlink" title="2.1 local"></a>2.1 local</h2><p>&emsp;在 local 模式下，execuor、backend、master 都运行在同一个 JVM 进程中，executor 会创建多线程来运行 tasks(单节点多线程)。local 模式最大的好处就是很方便我们在单机上调试应用程序。在 SparkContext.createTaskScheduler 方法中我们可以看到，local 模式可以有3种参数指定的方式：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">"local"</span> =&gt;</span><br><span class="line">  <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc, <span class="type">MAX_LOCAL_TASK_FAILURES</span>, isLocal = <span class="literal">true</span>)</span><br><span class="line">  <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, <span class="number">1</span>)</span><br><span class="line">  scheduler.initialize(backend)</span><br><span class="line">  (backend, scheduler)</span><br><span class="line"></span><br><span class="line"><span class="comment">//val LOCAL_N_REGEX = """local\[([0-9]+|\*)\]""".r</span></span><br><span class="line"><span class="keyword">case</span> <span class="type">LOCAL_N_REGEX</span>(threads) =&gt;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">localCpuCount</span></span>: <span class="type">Int</span> = <span class="type">Runtime</span>.getRuntime.availableProcessors()</span><br><span class="line">  <span class="comment">// local[*] estimates the number of cores on the machine; local[N] uses exactly N threads.</span></span><br><span class="line">  <span class="keyword">val</span> threadCount = <span class="keyword">if</span> (threads == <span class="string">"*"</span>) localCpuCount <span class="keyword">else</span> threads.toInt</span><br><span class="line">  <span class="keyword">if</span> (threadCount &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Asked to run locally with <span class="subst">$threadCount</span> threads"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc, <span class="type">MAX_LOCAL_TASK_FAILURES</span>, isLocal = <span class="literal">true</span>)</span><br><span class="line">  <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, threadCount)</span><br><span class="line">  scheduler.initialize(backend)</span><br><span class="line">  (backend, scheduler)</span><br><span class="line"></span><br><span class="line"><span class="comment">//val LOCAL_N_FAILURES_REGEX = """local\[([0-9]+|\*)\s*,\s*([0-9]+)\]""".r</span></span><br><span class="line"><span class="keyword">case</span> <span class="type">LOCAL_N_FAILURES_REGEX</span>(threads, maxFailures) =&gt;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">localCpuCount</span></span>: <span class="type">Int</span> = <span class="type">Runtime</span>.getRuntime.availableProcessors()</span><br><span class="line">  <span class="comment">// local[*, M] means the number of cores on the computer with M failures</span></span><br><span class="line">  <span class="comment">// local[N, M] means exactly N threads with M failures</span></span><br><span class="line">  <span class="keyword">val</span> threadCount = <span class="keyword">if</span> (threads == <span class="string">"*"</span>) localCpuCount <span class="keyword">else</span> threads.toInt</span><br><span class="line">  <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc, maxFailures.toInt, isLocal = <span class="literal">true</span>)</span><br><span class="line">  <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, threadCount)</span><br><span class="line">  scheduler.initialize(backend)</span><br><span class="line">  (backend, scheduler)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>“local” ： 这里的参数 1 指定核数，也就是说，最多只能有一个线程同时运行。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></li>
+<li>LOCAL_N_REGEX（ “local[N]” 或 “local[*]” ） : local[N] 指定了运行 N 个线程，local[*] 创建的线程数和当前机器的核数一样。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> threadCount = <span class="keyword">if</span> (threads == <span class="string">"*"</span>) localCpuCount <span class="keyword">else</span> threads.toInt</span><br><span class="line"><span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, threadCount)</span><br></pre></td></tr></table></figure></li>
+<li>LOCAL_N_FAILURES_REGEX（ “local[*, M]” 或 “local[N, M]” ）：local[N, M] 表示运行 N 个线程，最多允许有 M 个线程失败，local[*, M] 创建的线程数和当前机器的核数一样，最多允许有 M 个线程失败。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> threadCount = <span class="keyword">if</span> (threads == <span class="string">"*"</span>) localCpuCount <span class="keyword">else</span> threads.toInt</span><br><span class="line"><span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">LocalSchedulerBackend</span>(sc.getConf, scheduler, threadCount)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&emsp;这三种方式都是创建了 LocalSchedulerBackend，在<a href="http://zhoujiapeng.top/Spark/spark-job/#3taskschedulertask">《Spark 作业和调度》</a>中讲到，当提交 TaskSet 给 TaskScheduler 的时候会调用 backend.reviveOffers() 进行计算资源的分配并启动 Task。我们看一下 LocalSchedulerBackend.reviveOffers() 方法：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//LocalSchedulerBackend</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reviveOffers</span></span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> offers = <span class="type">IndexedSeq</span>(<span class="keyword">new</span> <span class="type">WorkerOffer</span>(localExecutorId, localExecutorHostname, freeCores,</span><br><span class="line">      <span class="type">Some</span>(rpcEnv.address.hostPort)))</span><br><span class="line">    <span class="keyword">for</span> (task &lt;- scheduler.resourceOffers(offers).flatten) &#123;</span><br><span class="line">      freeCores -= scheduler.<span class="type">CPUS_PER_TASK</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">//启动task</span></span><br><span class="line">      executor.launchTask(executorBackend, task)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> executor = <span class="keyword">new</span> <span class="type">Executor</span>(</span><br><span class="line">    localExecutorId, localExecutorHostname, <span class="type">SparkEnv</span>.get, userClassPath, isLocal = <span class="literal">true</span>)</span><br></pre></td></tr></table></figure><br>&emsp;可以看到，所有的 task 都是由同一个 executor（意味着单进程） 调用 launchTask 来启动的。再看一下 executor.launchTask 方法：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">launchTask</span></span>(context: <span class="type">ExecutorBackend</span>, taskDescription: <span class="type">TaskDescription</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> tr = <span class="keyword">new</span> <span class="type">TaskRunner</span>(context, taskDescription)</span><br><span class="line">    runningTasks.put(taskDescription.taskId, tr)</span><br><span class="line">    threadPool.execute(tr)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;这里是将 task 包装成 TaskRunner，然后放进线程池里面去执行。到这里我们可以知道，</p>
+<h2 id="2-2-local-cluster"><a href="#2-2-local-cluster" class="headerlink" title="2.2 local-cluster"></a>2.2 local-cluster</h2><p>&emsp;local-cluster，本地集群模式，也就是伪分布式模式。Driver、Master 和 Worker 在同一个 JVM 进程，可以存在多个 Worker，每个 Worker 会有多个 Executor，但这些 Executor 都独自存在一个 JVM 进程中。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//val LOCAL_CLUSTER_REGEX = """local-cluster\[\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*]""".r</span></span><br><span class="line"><span class="keyword">case</span> <span class="type">LOCAL_CLUSTER_REGEX</span>(numSlaves, coresPerSlave, memoryPerSlave) =&gt;</span><br><span class="line">        <span class="comment">// Check to make sure memory requested &lt;= memoryPerSlave. Otherwise Spark will just hang.</span></span><br><span class="line">        <span class="keyword">val</span> memoryPerSlaveInt = memoryPerSlave.toInt</span><br><span class="line">        <span class="keyword">if</span> (sc.executorMemory &gt; memoryPerSlaveInt) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(</span><br><span class="line">            <span class="string">"Asked to launch cluster with %d MB RAM / worker but requested %d MB/worker"</span>.format(</span><br><span class="line">              memoryPerSlaveInt, sc.executorMemory))</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc)</span><br><span class="line">        <span class="keyword">val</span> localCluster = <span class="keyword">new</span> <span class="type">LocalSparkCluster</span>(</span><br><span class="line">          numSlaves.toInt, coresPerSlave.toInt, memoryPerSlaveInt, sc.conf)</span><br><span class="line">        <span class="keyword">val</span> masterUrls = localCluster.start()</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">StandaloneSchedulerBackend</span>(scheduler, sc, masterUrls)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        backend.shutdownCallback = (backend: <span class="type">StandaloneSchedulerBackend</span>) =&gt; &#123;</span><br><span class="line">          localCluster.stop()</span><br><span class="line">        &#125;</span><br><span class="line">        (backend, scheduler)</span><br></pre></td></tr></table></figure><br>&emsp;这里先是创建了一个 LocalSparkCluster，构建一个本地 Spark 集群环境。接着创建一个 StandaloneSchedulerBackend，注意这里不是 LocalSchedulerBackend。集群环境是在本地运行还是多节点环境对于 StandaloneSchedulerBackend 是透明的。StandaloneSchedulerBackend 只需要知道 Master 节点的地址就可以了，具体的资源调度由 Master 负责就可以。Standalone 模式同样是创建 StandaloneSchedulerBackend。这里将 StandaloneSchedulerBackend 放到 Standalone 模式一起介绍。</p>
+<h2 id="2-3-standalone"><a href="#2-3-standalone" class="headerlink" title="2.3 standalone"></a>2.3 standalone</h2><p>&emsp;local 模式只有 Driver 和 Executor，且都在一个 JVM 进程中；loca-cluster 模式下的 Driver、Master、Worker 都位于一个 JVM 进程中。所以 local 模式和 local-cluster 模式便于开发、测试，也便于源码阅读和调试，但是不适合在生产环境使用。不同于这两种模式，Standalone 部署模式有下面的特点：</p>
+<ul>
+<li>Driver 是单独的进程、可以存在于集群中，也可存在于集群之外，也对 Spark Application 的执行进行驱动；</li>
+<li>Master 是单独的进程，甚至应该在单独的机器节点上。Master 可以有多个，但同时最多只有一个处于激活状态；</li>
+<li>Worker 是单独的进程，推荐在单独的机器节点上部署。<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//val SPARK_REGEX = """spark://(.*)""".r</span></span><br><span class="line"><span class="keyword">case</span> <span class="type">SPARK_REGEX</span>(sparkUrl) =&gt;</span><br><span class="line">        <span class="keyword">val</span> scheduler = <span class="keyword">new</span> <span class="type">TaskSchedulerImpl</span>(sc)</span><br><span class="line">        <span class="keyword">val</span> masterUrls = sparkUrl.split(<span class="string">","</span>).map(<span class="string">"spark://"</span> + _)</span><br><span class="line">        <span class="keyword">val</span> backend = <span class="keyword">new</span> <span class="type">StandaloneSchedulerBackend</span>(scheduler, sc, masterUrls)</span><br><span class="line">        scheduler.initialize(backend)</span><br><span class="line">        (backend, scheduler)</span><br></pre></td></tr></table></figure>
+&emsp;不同于 local-cluster 模式，Standalone 模式的 masterUrls 是由参数传入的，然后同样是创建一个 StandaloneSchedulerBackend。我们同样看一下 backend.reviveOffers() 方法。StandaloneSchedulerBackend 的 reviveOffers 是由父类 CoarseGrainedSchedulerBackend 实现的：<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//CoarseGrainedSchedulerBackend</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">reviveOffers</span></span>() &#123;</span><br><span class="line">    driverEndpoint.send(<span class="type">ReviveOffers</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>: <span class="type">PartialFunction</span>[<span class="type">Any</span>, <span class="type">Unit</span>] = &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">ReviveOffers</span> =&gt;</span><br><span class="line">        makeOffers()</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Make fake resource offers on all executors</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">makeOffers</span></span>() &#123;</span><br><span class="line">      <span class="comment">// Make sure no executor is killed while some task is launching on it</span></span><br><span class="line">      <span class="keyword">val</span> taskDescs = <span class="type">CoarseGrainedSchedulerBackend</span>.<span class="keyword">this</span>.synchronized &#123;</span><br><span class="line">        <span class="comment">// Filter out executors under killing</span></span><br><span class="line">        <span class="keyword">val</span> activeExecutors = executorDataMap.filterKeys(executorIsAlive)</span><br><span class="line">        <span class="keyword">val</span> workOffers = activeExecutors.map &#123;</span><br><span class="line">          <span class="keyword">case</span> (id, executorData) =&gt;</span><br><span class="line">            <span class="keyword">new</span> <span class="type">WorkerOffer</span>(id, executorData.executorHost, executorData.freeCores,</span><br><span class="line">              <span class="type">Some</span>(executorData.executorAddress.hostPort))</span><br><span class="line">        &#125;.toIndexedSeq</span><br><span class="line">        scheduler.resourceOffers(workOffers)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!taskDescs.isEmpty) &#123;</span><br><span class="line">        launchTasks(taskDescs)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+&emsp;这里的 executorDataMap 是一个 HashMap，储存了所有的 Executors。makeOffers() 首先是 调用 scheduler.resourceOffers 进行计算资源的分配，然后调用 launchTasks 去启动对应的 task。我们看一下 launchTasks 方法：<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Launch tasks returned by a set of resource offers</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">launchTasks</span></span>(tasks: <span class="type">Seq</span>[<span class="type">Seq</span>[<span class="type">TaskDescription</span>]]) &#123;</span><br><span class="line">      <span class="keyword">for</span> (task &lt;- tasks.flatten) &#123;</span><br><span class="line">        <span class="keyword">val</span> serializedTask = <span class="type">TaskDescription</span>.encode(task)</span><br><span class="line">        <span class="keyword">if</span> (serializedTask.limit() &gt;= maxRpcMessageSize) &#123;</span><br><span class="line">          <span class="type">Option</span>(scheduler.taskIdToTaskSetManager.get(task.taskId)).foreach &#123; taskSetMgr =&gt;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              <span class="keyword">var</span> msg = <span class="string">"Serialized task %s:%d was %d bytes, which exceeds max allowed: "</span> +</span><br><span class="line">                <span class="string">"spark.rpc.message.maxSize (%d bytes). Consider increasing "</span> +</span><br><span class="line">                <span class="string">"spark.rpc.message.maxSize or using broadcast variables for large values."</span></span><br><span class="line">              msg = msg.format(task.taskId, task.index, serializedTask.limit(), maxRpcMessageSize)</span><br><span class="line">              taskSetMgr.abort(msg)</span><br><span class="line">            &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">              <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt; logError(<span class="string">"Exception in error callback"</span>, e)</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">          <span class="comment">//获取 task 的执行位置</span></span><br><span class="line">          <span class="keyword">val</span> executorData = executorDataMap(task.executorId)</span><br><span class="line">          executorData.freeCores -= scheduler.<span class="type">CPUS_PER_TASK</span></span><br><span class="line"></span><br><span class="line">          logDebug(<span class="string">s"Launching task <span class="subst">$&#123;task.taskId&#125;</span> on executor id: <span class="subst">$&#123;task.executorId&#125;</span> hostname: "</span> +</span><br><span class="line">            <span class="string">s"<span class="subst">$&#123;executorData.executorHost&#125;</span>."</span>)</span><br><span class="line"></span><br><span class="line">          <span class="comment">//启动 task</span></span><br><span class="line">          executorData.executorEndpoint.send(<span class="type">LaunchTask</span>(<span class="keyword">new</span> <span class="type">SerializableBuffer</span>(serializedTask)))</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+&emsp;前面已经为所有的 task 分配好了计算资源，对于哪一个 task 会分配到哪一个 executor 上去执行已经是明确的了，并储存在 task.executorId 中。这里遍历每一个 task，然后调用直接在对应的 executor 上启动该 task。到这里就实现了将 不同的 task 分配到不同的 executor 进行中去运行。</li>
+</ul>
+<h2 id="2-4-Yarn"><a href="#2-4-Yarn" class="headerlink" title="2.4 Yarn"></a>2.4 Yarn</h2><p>&emsp;createTaskScheduler 方法中最后一种情况对应于所有的外部集群部署模式（yarn、k8s、Mesos）：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> masterUrl =&gt;</span><br><span class="line">        <span class="keyword">val</span> cm = getClusterManager(masterUrl) <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">Some</span>(clusterMgr) =&gt; clusterMgr</span><br><span class="line">          <span class="keyword">case</span> <span class="type">None</span> =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">"Could not parse Master URL: '"</span> + master + <span class="string">"'"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">val</span> scheduler = cm.createTaskScheduler(sc, masterUrl)</span><br><span class="line">          <span class="keyword">val</span> backend = cm.createSchedulerBackend(sc, masterUrl, scheduler)</span><br><span class="line">          cm.initialize(scheduler, backend)</span><br><span class="line">          (backend, scheduler)</span><br><span class="line">        &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> se: <span class="type">SparkException</span> =&gt; <span class="keyword">throw</span> se</span><br><span class="line">          <span class="keyword">case</span> <span class="type">NonFatal</span>(e) =&gt;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">"External scheduler cannot be instantiated"</span>, e)</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure><br>&emsp;getClusterManager 方法返回的是一个 ExternalClusterManager 对象，即外部集群管理器。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">getClusterManager</span></span>(url: <span class="type">String</span>): <span class="type">Option</span>[<span class="type">ExternalClusterManager</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> loader = <span class="type">Utils</span>.getContextOrSparkClassLoader</span><br><span class="line">    <span class="keyword">val</span> serviceLoaders =</span><br><span class="line">      <span class="type">ServiceLoader</span>.load(classOf[<span class="type">ExternalClusterManager</span>], loader).asScala.filter(_.canCreate(url))</span><br><span class="line">    <span class="keyword">if</span> (serviceLoaders.size &gt; <span class="number">1</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(</span><br><span class="line">        <span class="string">s"Multiple external cluster managers registered for the url <span class="subst">$url</span>: <span class="subst">$serviceLoaders</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    serviceLoaders.headOption</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;TaskScheduler 和 SchedulerBackend 是通过 ExternalClusterManager 的 createTaskScheduler 方法和 createSchedulerBackend 获得的。ExternalClusterManager 是一个特质，Yarn 模式的实现类是 YarnClusterManager。Yarn 模式根据 driver 的运行位置不同可以分为 cluster 模式和 client 模式：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//YarnClusterManager</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">createTaskScheduler</span></span>(sc: <span class="type">SparkContext</span>, masterURL: <span class="type">String</span>): <span class="type">TaskScheduler</span> = &#123;</span><br><span class="line">    sc.deployMode <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"cluster"</span> =&gt; <span class="keyword">new</span> <span class="type">YarnClusterScheduler</span>(sc)</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"client"</span> =&gt; <span class="keyword">new</span> <span class="type">YarnScheduler</span>(sc)</span><br><span class="line">      <span class="keyword">case</span> _ =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Unknown deploy mode '<span class="subst">$&#123;sc.deployMode&#125;</span>' for Yarn"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">createSchedulerBackend</span></span>(sc: <span class="type">SparkContext</span>,</span><br><span class="line">      masterURL: <span class="type">String</span>,</span><br><span class="line">      scheduler: <span class="type">TaskScheduler</span>): <span class="type">SchedulerBackend</span> = &#123;</span><br><span class="line">    sc.deployMode <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"cluster"</span> =&gt;</span><br><span class="line">        <span class="keyword">new</span> <span class="type">YarnClusterSchedulerBackend</span>(scheduler.asInstanceOf[<span class="type">TaskSchedulerImpl</span>], sc)</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"client"</span> =&gt;</span><br><span class="line">        <span class="keyword">new</span> <span class="type">YarnClientSchedulerBackend</span>(scheduler.asInstanceOf[<span class="type">TaskSchedulerImpl</span>], sc)</span><br><span class="line">      <span class="keyword">case</span>  _ =&gt;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Unknown deploy mode '<span class="subst">$&#123;sc.deployMode&#125;</span>' for Yarn"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;我们再看一下 SparkSubmit 的 prepareSubmitEnvironment 方法<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>[deploy] <span class="function"><span class="keyword">def</span> <span class="title">prepareSubmitEnvironment</span></span>(</span><br><span class="line">      args: <span class="type">SparkSubmitArguments</span>,</span><br><span class="line">      conf: <span class="type">Option</span>[<span class="type">HadoopConfiguration</span>] = <span class="type">None</span>)</span><br><span class="line">      : (<span class="type">Seq</span>[<span class="type">String</span>], <span class="type">Seq</span>[<span class="type">String</span>], <span class="type">SparkConf</span>, <span class="type">String</span>) = &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="comment">// In yarn-cluster mode, use yarn.Client as a wrapper around the user class</span></span><br><span class="line">    <span class="keyword">if</span> (isYarnCluster) &#123;</span><br><span class="line">      childMainClass = <span class="type">YARN_CLUSTER_SUBMIT_CLASS</span>  <span class="comment">//"org.apache.spark.deploy.yarn.YarnClusterApplication"</span></span><br><span class="line">      <span class="keyword">if</span> (args.isPython) &#123;</span><br><span class="line">        childArgs += (<span class="string">"--primary-py-file"</span>, args.primaryResource)</span><br><span class="line">        childArgs += (<span class="string">"--class"</span>, <span class="string">"org.apache.spark.deploy.PythonRunner"</span>)</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (args.isR) &#123;</span><br><span class="line">        <span class="keyword">val</span> mainFile = <span class="keyword">new</span> <span class="type">Path</span>(args.primaryResource).getName</span><br><span class="line">        childArgs += (<span class="string">"--primary-r-file"</span>, mainFile)</span><br><span class="line">        childArgs += (<span class="string">"--class"</span>, <span class="string">"org.apache.spark.deploy.RRunner"</span>)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (args.primaryResource != <span class="type">SparkLauncher</span>.<span class="type">NO_RESOURCE</span>) &#123;</span><br><span class="line">          childArgs += (<span class="string">"--jar"</span>, args.primaryResource)</span><br><span class="line">        &#125;</span><br><span class="line">        childArgs += (<span class="string">"--class"</span>, args.mainClass)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (args.childArgs != <span class="literal">null</span>) &#123;</span><br><span class="line">        args.childArgs.foreach &#123; arg =&gt; childArgs += (<span class="string">"--arg"</span>, arg) &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>&emsp;可以看到，childMainClass 被设置成了 YarnClusterApplication 类，传入参数则被添加到 childArgs 中，因此 Yarn-cluster 不同于其它方式通过反射(SparkSubmit.runMain)直接运行参数指定的类，而是先创建 YarnClusterApplication，再通过它来提交 Application。<br>&emsp;Yarn-client 模式和 local 模式一样，都是通过反射直接启动运行参数(SparkSubmit.runMain)指定的类。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SparkSubmit.prepareSubmitEnvironment</span></span><br><span class="line"><span class="comment">// yarn-client 模式</span></span><br><span class="line"><span class="keyword">if</span> (deployMode == <span class="type">CLIENT</span>) &#123;</span><br><span class="line">      childMainClass = args.mainClass</span><br><span class="line">      <span class="keyword">if</span> (localPrimaryResource != <span class="literal">null</span> &amp;&amp; isUserJar(localPrimaryResource)) &#123;</span><br><span class="line">        childClasspath += localPrimaryResource</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (localJars != <span class="literal">null</span>) &#123; childClasspath ++= localJars.split(<span class="string">","</span>) &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>未完待续</p>
+</blockquote>
+<p>&nbsp;<br>&nbsp;</p>
+<blockquote>
+<p>本文作者：ZJP<br>版权声明：本文为博主原创文章，遵循 <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC 4.0 BY-SA</a> 版权协议，转载请附上原文出处链接和本声明。<br>本文链接：<a href="http://zhoujiapeng.top/Spark/spark-deploy-mode/">http://zhoujiapeng.top/Spark/spark-deploy-mode/</a></p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/scala/scala-tailrec/" data-toggle="tooltip" data-placement="top" title="scala 尾递归优化">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/Spark/spark-dagscheduler/" data-toggle="tooltip" data-placement="top" title="Spark源码阅读 之 DAGScheduler 详解">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark-部署模式"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Spark 部署模式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-概述"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1. 概述</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-各种部署模式"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 各种部署模式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-1-local"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1 local</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-2-local-cluster"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2 local-cluster</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-3-standalone"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3 standalone</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-4-Yarn"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.4 Yarn</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                        
+                          <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                        
+                          <a class="tag" href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

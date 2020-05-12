@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/archives/5/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/header_img/home.jpg') 
+                /*config*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="site-heading">
+                        <h1>周佳鹏的博客</h1>
+                        <!--<hr class="small">-->
+                        <span id="subdusi" class="subheading">每个你不了解的世界，都值得说声“Hello World !”</span>
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+                <!-- Top -->
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/catalogue/catalogue/">
+                <h2 class="post-title">
+                    <img class="top_logo" src="/img/tp.png"/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;本站目录
+                </h2>
+                <h3 class="post-subtitle">
+                    
+                </h3>
+                <div class="post-content-preview">
+                    本站目录&emsp;本站文章汇总目录。
+
+Blockchain
+《BCOS 动态群组架构》
+《BCOS 动态群组架构源码分析》
+《Algorand 共识算法总结》
+
+JVM
+《Java 自动装箱的陷阱》
+《Java 内存模型》
+《volatile 的特殊规则和 long&amp;&amp;double 的非原子协定》
+《深入理解Java虚拟机 之 Java内存区域》
+《深入理解Java虚拟机......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-11-02
+                </p>
+                <div class="tags">
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+<!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/scala/scala-tailrec/">
+                <h2 class="post-title">
+                    scala 尾递归优化
+                </h2>
+                <h3 class="post-subtitle">
+                    scala.annotation.tailrec
+                </h3>
+                <div class="post-content-preview">
+                    scala 尾递归优化1. 递归1.1 递归的定义&emsp;一个函数直接或间接的调用它自己本身，就是递归。它通常把一个大型复杂的问题层层转化为一个与原问题相似的规模较小的问题来求解，递归策略只需少量的代码就可以执行多次重复的计算。
+1.2 递归的条件&emsp;一般来说，递归需要有边界条件、递归前进段和递归返回段。当边界条件不满足时，递归前进；当边界条件满足时，递归返回。&emsp;以递归......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-18
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
+                    
+                      <a href="/tags/#scala" title="scala">scala</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-deploy-mode/">
+                <h2 class="post-title">
+                    Spark 源码阅读 之 部署模式
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark 部署模式
+                </h3>
+                <div class="post-content-preview">
+                    Spark 部署模式
+Spark版本：2.4.0
+
+1. 概述&emsp;Spark 支持多种集群运行模式：
+
+Local - 本地模式，也可以使用伪分布式模式
+Standalone - Spark自身提供的集群资源管理器
+Mesos - 外部集群资源管理器
+Yarn - 外部集群资源管理器
+Kubernetes - 外部集群资源管理器
+
+&emsp;下图表示 Spark 的基本工作流程架构......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-11
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-dagscheduler/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 DAGScheduler 详解
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark DAGScheduler 详解
+                </h3>
+                <div class="post-content-preview">
+                    Spark DAGScheduler 详解
+Spark版本：2.4.0
+
+&emsp;DAGScheduler 是面向 Stage 的任务调度器，负责接收 Spark 应用提交的 Job，并根据 RDD 的依赖关系划分 Stage，并提交 Stage 给 TaskScheduler 调度器。本文将根据源码详细剖析 DAGScheduler 调度的完整流程。
+DAGScheduler&emsp......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-09
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-task/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 Task 详解
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark Task 详解
+                </h3>
+                <div class="post-content-preview">
+                    Spark Task 详解
+Spark版本：2.4.0
+
+1. Task &emsp;首先我们先来看一下源码中的介绍，Task 抽象类有这么一段注释：12345678&#x2F;* * A Spark job consists of one or more stages. The very last stage in a job consists of multiple * ResultTa......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-09
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Hexo/hexo-article-set-top/">
+                <h2 class="post-title">
+                    Hexo 文章置顶功能
+                </h2>
+                <h3 class="post-subtitle">
+                    Hexo 文章置顶
+                </h3>
+                <div class="post-content-preview">
+                    Hexo 实现文章置顶文章列表置顶&emsp;Hexo 中文章指定功能无法通过配置实现，需要修改 node_modules/hexo-generator-index/lib/generator.js 文件。需要添加的代码：12345678910111213posts.data = posts.data.sort(function(a, b) &#123;      if(a.top &amp......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-08
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#Hexo" title="Hexo">Hexo</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-dependency/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 Dependency 详解
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark Dependency 详解
+                </h3>
+                <div class="post-content-preview">
+                    Spark Dependency 实现
+Spark版本：2.4.0
+
+&emsp;在《Spark DAGScheduler 详解》中讲到，DADScheduler 根据 ShuffleDependency 来切分 Stage，那么 ShuffleDependency 是怎么实现的，Dependency 又有那些类型？本文根据源码详细剖析 Spark 中 Dependency 的实现原理。
+1......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-08
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-partitioner/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 Partitioner 详解
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark Partitioner 详解
+                </h3>
+                <div class="post-content-preview">
+                    Spark Partitioner 详解
+Spark版本：2.4.0
+
+&emsp;本文主要根据源码剖析 Spark Partitioner 分区器的实现原理，以及介绍如何自定义分区器。
+1.概述&emsp;Partitioner 是 shuffle 过程中 key 重分区时的策略，即计算 key 决定 k-v 属于哪个分区，Transformation 是宽依赖的算子时，父 RDD 和子 ......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-08
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-tuning/">
+                <h2 class="post-title">
+                    Spark 性能调优
+                </h2>
+                <h3 class="post-subtitle">
+                    Tuning Spark
+                </h3>
+                <div class="post-content-preview">
+                    Spark 性能调优&emsp;Spark 具有”内存计算”的天性，集群中的所有资源：CPU、网络带宽或者内存都会成为 Spark 程序的瓶颈。这里主要讲解两方面的 Sprk 性能优化：数据序列化和内存优化。
+1.数据序列化&emsp;序列化对于提高分布式程序的性能起到非常重要的作用。这里的数据序列化指的是网络传输的序列化，并不包含 RDD 的序列化储存（在第2节），数据序列化不但能提高网络......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-06
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-share-variable/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 共享变量
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark 共享变量
+                </h3>
+                <div class="post-content-preview">
+                    Spark 共享变量
+Spark版本：2.4.0
+
+&emsp;Spark一个非常重要的特性就是共享变量。通常情况下，传递给 Spark 操作（例如 map 或 reduce）的函数是在远程集群节点上执行的，函数中使用的变量，在多个节点上执行时是同一变量的多个副本。这些变量被拷贝到每台机器上，并且在远程机器上对变量的更新不会回传给驱动程序。在任务之间支持通用的，可读写的共享变量是效率是非常低......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-05
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-storage/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 Storage储存模块
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark Storage储存模块
+                </h3>
+                <div class="post-content-preview">
+                    Spark储存体系
+Spark版本：2.4.0
+
+1.储存体系架构&emsp;简单来说，Spark 储存体系是各个 Driver 和 Executor 实例中的 BlockManager 所组成的，但从一个整体上看，Spark 储存体系包含很多组件，如图所示。
+
+BlockManagerMaster：代理 BlockManager 与 Driver 上的 BlockManagerMaster......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-05
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/archives/4/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/archives/6/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+            </div>
+
+            <!-- Sidebar Container -->
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+        
+<!--
+<h5>SEARCH</h5>
+<div class="search-article" class="tags">
+	<input id="search-kw" type="text" name="search_article" placeholder="Enter keywords for search" />
+	<div class="search-img">
+		<img 
+			src="/img/search.png" 
+			alt="search" 
+			onMouseOver="this.src='/img/search-focus.png'" 
+			onMouseOut="this.src='/img/search.png'"/>
+	</div>
+</div>-->
+
+<h5>SEARCH</h5>
+<div id="site_search">
+	<div class="form-group">
+		<input type="text" id="local-search-input" name="q" results="0" placeholder="search" class="st-search-input st-default-search-input form-control"/>
+	</div>  
+	<div id="local-search-result"></div>
+</div>
+
+        <hr>
+    
+        <!-- Featured Tags -->
+
+<section>
+    <!-- no hr -->
+    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+            
+            <a href="/tags/#blockchain" title="blockchain" rel="2">blockchain</a>
+            
+        
+            
+            <a href="/tags/#bcos" title="bcos" rel="2">bcos</a>
+            
+        
+            
+            <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            
+        
+            
+            <a href="/tags/#java" title="java" rel="34">java</a>
+            
+        
+            
+            <a href="/tags/#编程语言" title="编程语言" rel="36">编程语言</a>
+            
+        
+            
+            <a href="/tags/#并发" title="并发" rel="22">并发</a>
+            
+        
+            
+            <a href="/tags/#jvm" title="jvm" rel="10">jvm</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#spark" title="spark" rel="12">spark</a>
+            
+        
+            
+            <a href="/tags/#大数据" title="大数据" rel="12">大数据</a>
+            
+        
+            
+            <a href="/tags/#scala" title="scala" rel="2">scala</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#jdk" title="jdk" rel="3">jdk</a>
+            
+        
+            
+            <a href="/tags/#源码阅读" title="源码阅读" rel="10">源码阅读</a>
+            
+        
+            
+        
+    </div>
+</section>
+
+        <hr>
+    
+        <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5><a href="/about/">ABOUT ME</a></h5>
+    <div class="short-about">
+
+        
+            <img id = "avatar_pic" src="/img/h1.png" />
+        
+
+        
+            <p>Welcome, I&#39;m ZJP!</p>
+        
+
+        <!-- SNS Link -->
+        <ul class="list-inline">
+
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/JP6907">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+
+            
+
+            
+
+            
+
+            
+
+            
+
+        </ul>
+    </div>
+</section>
+        <hr>
+    
+        
+  <h5>RECENT POSTS</h5>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/blockchain/bcos-group-architecture/">BCOS 动态群组架构</a>
+        </li>
+      
+        <li>
+          <a href="/blockchain/bcos-group-architecture-code/">BCOS 动态群组架构源码分析</a>
+        </li>
+      
+        <li>
+          <a href="/catalogue/catalogue/">本站目录</a>
+        </li>
+      
+        <li>
+          <a href="/java/mybatis-cache/">Mybatis 缓存详解</a>
+        </li>
+      
+        <li>
+          <a href="/java/java-jvm-classLoader/">深入理解Java虚拟机 之 虚拟机类加载机制</a>
+        </li>
+      
+    </ul>
+  </div>
+
+        <hr>
+    
+        <!-- Friends Blog -->
+
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+
+    
+        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+    
+        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+    
+</ul>
+
+        <hr>
+    
+        
+    <h5>ARCHIVES</h5>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+
+        <hr>
+    
+        <!-- Categories -->
+
+    <h5>categories</h5>
+    <div class="widget">
+      <ul>
+        
+          <a href="categories/#blockchain"><li>blockchain</li></a>
+        
+          <a href="categories/#catalogue"><li>catalogue</li></a>
+        
+          <a href="categories/#Hexo"><li>Hexo</li></a>
+        
+          <a href="categories/#java"><li>java</li></a>
+        
+          <a href="categories/#markdown"><li>markdown</li></a>
+        
+          <a href="categories/#Spark"><li>Spark</li></a>
+        
+          <a href="categories/#scala"><li>scala</li></a>
+        
+          <a href="categories/#cryptography"><li>cryptography</li></a>
+        
+      </ul>
+    </div>
+
+        <hr>
+    
+        
+  <h5>VISITORS</h5>
+  <div class="widget">
+    <span>
+    	本站访客数 :&emsp; <b><i><span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span></i></b>
+	</span>
+	<br/>
+	<span>
+		本站总访问量 : <b><i><span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span></i></b>
+	</span>
+  </div>
+
+        <hr>
+    
+</div>
+
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

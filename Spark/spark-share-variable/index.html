@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Spark源码阅读 之 共享变量 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/Spark/spark-share-variable/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                            
+                              <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                            
+                              <a class="tag" href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                            
+                        </div>
+                        <h1>Spark源码阅读 之 共享变量</h1>
+                        <h2 class="subheading">Spark 共享变量</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-09-05
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.3k</span> and
+                                Reading Time <span class="post-count">14</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="Spark-共享变量"><a href="#Spark-共享变量" class="headerlink" title="Spark 共享变量"></a>Spark 共享变量</h1><blockquote>
+<p>Spark版本：2.4.0</p>
+</blockquote>
+<p>&emsp;Spark一个非常重要的特性就是共享变量。通常情况下，传递给 Spark 操作（例如 map 或 reduce）的函数是在远程集群节点上执行的，函数中使用的变量，在多个节点上执行时是同一变量的多个副本。这些变量被拷贝到每台机器上，并且在远程机器上对变量的更新不会回传给驱动程序。在任务之间支持通用的，可读写的共享变量是效率是非常低的。<br>&emsp;Spark 提供了两种类型的共享变量 : 广播变量（broadcast variables）和 累加器（accumulators）。Broadcast Variable会将使用到的变量，仅仅为每个节点拷贝一份，更大的用处是优化性能，减少网络传输以及内存消耗。Accumulator则可以让多个task共同操作一份变量，主要可以进行累加操作。</p>
+<h2 id="1-广播变量"><a href="#1-广播变量" class="headerlink" title="1. 广播变量"></a>1. 广播变量</h2><p>&emsp;广播变量允许用户保留一个只读的<strong>变量</strong>，缓存在每一台机器上，而不用在任务（Task）之间传递变量。广播变量可以被用于有效地给<strong>每个节点</strong>一个大输入数据集的副本而<strong>非每个任务</strong>保存一份复制。同时 Spark 采用 <strong>P2P</strong> 的方式来传播广播变量，从而减少通信开销。<br>&emsp;广播变量的实例对象的 value 值不能在广播后被修改，这样可以保证所有节点收到的都是一样的广播值。<br>&emsp;广播变量通常使用方式包括共享配置文件、map数据集、树形数据结构等，为能够更好更快速为 Task 使用相关变量。<br>&emsp;接下来从三个方面解析广播变量：初始化、创建（写入）、使用（读取）。</p>
+<h3 id="1-1-初始化"><a href="#1-1-初始化" class="headerlink" title="1.1 初始化"></a>1.1 初始化</h3><p>&emsp;SparkEnv 中会有一个 BroadcastManager 对象被创建：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SparkEnv</span></span><br><span class="line"><span class="keyword">val</span> broadcastManager = <span class="keyword">new</span> <span class="type">BroadcastManager</span>(isDriver, conf, securityManager)</span><br></pre></td></tr></table></figure><br>&emsp;BroadcastManager 的初始化函数 initialize 中会创建一个 broadcastFactory，factory 负责创建我们所需要的 Broadcast 对象。BroadcastFactory 是一个 trait，但是在 Spark 2.4.0 版本中，BroadcastFactory 只有一种实现(1.X版本中有 HttpBroadcastFactory 方式)，也就是 BroadcastManager 中创建的 broadcastFactory 类型 —- TorrentBroadcastFactory。TorrentBroadcastFactory 使用类似于 BitTorrent 的协议（P2P方式）在 Executors 之间传输和广播变量。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//BroadcastManager</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">initialize</span></span>() &#123;</span><br><span class="line">    synchronized &#123;</span><br><span class="line">      <span class="keyword">if</span> (!initialized) &#123;</span><br><span class="line">        broadcastFactory = <span class="keyword">new</span> <span class="type">TorrentBroadcastFactory</span></span><br><span class="line">        broadcastFactory.initialize(isDriver, conf, securityManager)</span><br><span class="line">        initialized = <span class="literal">true</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;调用 SparkContext.broadcast(value) 可以创建一个 Broadcast 实例，它的值可以通过调用 Broadcast 实例的 value() 方法获得。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SparkContext</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">broadcast</span></span>[<span class="type">T</span>: <span class="type">ClassTag</span>](value: <span class="type">T</span>): <span class="type">Broadcast</span>[<span class="type">T</span>] = &#123;</span><br><span class="line">    assertNotStopped()</span><br><span class="line">    require(!classOf[<span class="type">RDD</span>[_]].isAssignableFrom(classTag[<span class="type">T</span>].runtimeClass),</span><br><span class="line">      <span class="string">"Can not directly broadcast RDDs; instead, call collect() and broadcast the result."</span>)</span><br><span class="line">    <span class="keyword">val</span> bc = env.broadcastManager.newBroadcast[<span class="type">T</span>](value, isLocal)</span><br><span class="line">    <span class="keyword">val</span> callSite = getCallSite</span><br><span class="line">    logInfo(<span class="string">"Created broadcast "</span> + bc.id + <span class="string">" from "</span> + callSite.shortForm)</span><br><span class="line">    cleaner.foreach(_.registerBroadcastForCleanup(bc))</span><br><span class="line">    bc</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;这里调用 env.broadcastManager 的 newBroadcast 方法来创建一个新的 Broadcast 对象，env 里面的 broadcastManager 是 TorrentBroadcastFactory，所以创建的是 TorrentBroadcast。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//TorrentBroadcastFactory</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">newBroadcast</span></span>[<span class="type">T</span>: <span class="type">ClassTag</span>](value_ : <span class="type">T</span>, isLocal: <span class="type">Boolean</span>, id: <span class="type">Long</span>): <span class="type">Broadcast</span>[<span class="type">T</span>] = &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="type">TorrentBroadcast</span>[<span class="type">T</span>](value_, id)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;在 TorrentBroadcast 的初始化过程中，会调用 setConf() 方法将 SparkConf 对象注入到 TorrentBroadcast 中，setConf() 方法里面会设置压缩方式。并调用 writeBlocks() 方法将数据切分储存。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//TorrentBroadcast</span></span><br><span class="line">setConf(<span class="type">SparkEnv</span>.get.conf)</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Total number of blocks this broadcast variable contains. */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> numBlocks: <span class="type">Int</span> = writeBlocks(obj)</span><br></pre></td></tr></table></figure></p>
+<h3 id="1-2-创建（写入）"><a href="#1-2-创建（写入）" class="headerlink" title="1.2 创建（写入）"></a>1.2 创建（写入）</h3><p>&emsp;上面讲到 TorrentBroadcast 实例创建过程，会调用 writeBlocks 方法，这个方法的主要功能是按照定义的广播块大小切分数据，切分块大小默认是4M（spark.broadcast.blockSize），在 setConf 方法中被设置。然后调用 blockManager 将切分后的数据信息储存到磁盘中。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//TorrentBroadcast</span></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Divide the object into multiple blocks and put those blocks in the block manager.</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * @param value the object to divide</span></span><br><span class="line"><span class="comment">   * @return number of blocks this broadcast variable is divided into</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">writeBlocks</span></span>(value: <span class="type">T</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">    <span class="keyword">import</span> <span class="type">StorageLevel</span>._</span><br><span class="line">    <span class="comment">// Store a copy of the broadcast variable in the driver so that tasks run on the driver</span></span><br><span class="line">    <span class="comment">// do not create a duplicate copy of the broadcast variable's value.</span></span><br><span class="line">    <span class="keyword">val</span> blockManager = <span class="type">SparkEnv</span>.get.blockManager</span><br><span class="line"></span><br><span class="line">    <span class="comment">//持久化广播对象，blockid是broadcastId</span></span><br><span class="line">    <span class="keyword">if</span> (!blockManager.putSingle(broadcastId, value, <span class="type">MEMORY_AND_DISK</span>, tellMaster = <span class="literal">false</span>)) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Failed to store <span class="subst">$broadcastId</span> in BlockManager"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//切分成块</span></span><br><span class="line">    <span class="keyword">val</span> blocks =</span><br><span class="line">      <span class="type">TorrentBroadcast</span>.blockifyObject(value, blockSize, <span class="type">SparkEnv</span>.get.serializer, compressionCodec)</span><br><span class="line">    <span class="keyword">if</span> (checksumEnabled) &#123;</span><br><span class="line">      checksums = <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">Int</span>](blocks.length)</span><br><span class="line">    &#125;</span><br><span class="line">    blocks.zipWithIndex.foreach &#123; <span class="keyword">case</span> (block, i) =&gt;</span><br><span class="line">      <span class="keyword">if</span> (checksumEnabled) &#123;</span><br><span class="line">        checksums(i) = calcChecksum(block)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">//序列化方式储存每个切分块，blockid是pieceId</span></span><br><span class="line">      <span class="keyword">val</span> pieceId = <span class="type">BroadcastBlockId</span>(id, <span class="string">"piece"</span> + i)</span><br><span class="line">      <span class="keyword">val</span> bytes = <span class="keyword">new</span> <span class="type">ChunkedByteBuffer</span>(block.duplicate())</span><br><span class="line">      <span class="keyword">if</span> (!blockManager.putBytes(pieceId, bytes, <span class="type">MEMORY_AND_DISK_SER</span>, tellMaster = <span class="literal">true</span>)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Failed to store <span class="subst">$pieceId</span> of <span class="subst">$broadcastId</span> in local BlockManager"</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    blocks.length</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;writeBlocks 在储存切分的广播块之前需要先调用 blockManager.putSingle 将广播变量以非序列化方式持久化，然后再将广播变量切分成块，调用 putBytes 将切分好的块以<strong>序列化</strong>的方式储存。putBytes 根据储存策略会优先写入本地，既然序列化数据是本地储存，由此而来的问题是读取问题，BlockManager 储存数据不会像 HDFS 依据备份策略储存多份数据放置不同节点，如果没有备份数据，那么必然产生数个问题：</p>
+<ul>
+<li>节点故障，无法访问节点数据；</li>
+<li>数据热点，所有任务都会使用该数据；</li>
+<li>网络传输，所有节点频繁访问单节点；</li>
+</ul>
+<h3 id="1-3-使用（读取）"><a href="#1-3-使用（读取）" class="headerlink" title="1.3 使用（读取）"></a>1.3 使用（读取）</h3><p>&emsp;为了解决广播变量读取的问题，Spark 采用 P2P 点对点方式，只要使用过广播变量数据，则在本节点储存数据，由此变成新的数据源，随着数据源不断增加，传输数据的速度也会越来越快。广播变量的值通过调用 Broadcast.value 来获取：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Broadcast</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">value</span></span>: <span class="type">T</span> = &#123;</span><br><span class="line">    assertValid()</span><br><span class="line">    getValue()</span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">//TorrentBroadcast</span></span><br><span class="line"><span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">getValue</span></span>() = &#123;</span><br><span class="line">    _value</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@transient</span> <span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">val</span> _value: <span class="type">T</span> = readBroadcastBlock()</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//TorrentBroadcast</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">readBroadcastBlock</span></span>(): <span class="type">T</span> = <span class="type">Utils</span>.tryOrIOException &#123;</span><br><span class="line">    <span class="type">TorrentBroadcast</span>.synchronized &#123;</span><br><span class="line">      <span class="keyword">val</span> broadcastCache = <span class="type">SparkEnv</span>.get.broadcastManager.cachedValues</span><br><span class="line"></span><br><span class="line">      <span class="type">Option</span>(broadcastCache.get(broadcastId)).map(_.asInstanceOf[<span class="type">T</span>]).getOrElse &#123;</span><br><span class="line">        setConf(<span class="type">SparkEnv</span>.get.conf)</span><br><span class="line">        <span class="keyword">val</span> blockManager = <span class="type">SparkEnv</span>.get.blockManager</span><br><span class="line"></span><br><span class="line">        <span class="comment">//尝试从本地读取</span></span><br><span class="line">        blockManager.getLocalValues(broadcastId) <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">Some</span>(blockResult) =&gt;</span><br><span class="line">            <span class="keyword">if</span> (blockResult.data.hasNext) &#123;</span><br><span class="line">              ...</span><br><span class="line">          <span class="keyword">case</span> <span class="type">None</span> =&gt;</span><br><span class="line">            logInfo(<span class="string">"Started reading broadcast variable "</span> + id)</span><br><span class="line">            <span class="keyword">val</span> startTimeMs = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line"></span><br><span class="line">            <span class="comment">//从其它节点获取</span></span><br><span class="line">            <span class="keyword">val</span> blocks = readBlocks()</span><br><span class="line">            logInfo(<span class="string">"Reading broadcast variable "</span> + id + <span class="string">" took"</span> + <span class="type">Utils</span>.getUsedTimeMs(startTimeMs))</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              ...</span><br><span class="line">              <span class="keyword">val</span> storageLevel = <span class="type">StorageLevel</span>.<span class="type">MEMORY_AND_DISK</span></span><br><span class="line"></span><br><span class="line">              <span class="comment">//储存到本地，并汇报给 master</span></span><br><span class="line">              <span class="keyword">if</span> (!blockManager.putSingle(broadcastId, obj, storageLevel, tellMaster = <span class="literal">false</span>)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Failed to store <span class="subst">$broadcastId</span> in BlockManager"</span>)</span><br><span class="line">              &#125;</span><br><span class="line"></span><br><span class="line">              ...</span><br><span class="line">              blocks.foreach(_.dispose())</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;readBlocks 方法会尝试从其它节点获取广播块：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//TorrentBroadcast</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">readBlocks</span></span>(): <span class="type">Array</span>[<span class="type">BlockData</span>] = &#123;</span><br><span class="line">    <span class="comment">// Fetch chunks of data. Note that all these chunks are stored in the BlockManager and reported</span></span><br><span class="line">    <span class="comment">// to the driver, so other executors can pull these chunks from this executor as well.</span></span><br><span class="line">    <span class="keyword">val</span> blocks = <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">BlockData</span>](numBlocks)</span><br><span class="line">    <span class="keyword">val</span> bm = <span class="type">SparkEnv</span>.get.blockManager</span><br><span class="line"></span><br><span class="line">    <span class="comment">//循环遍历所有块，避免访问热点，随即顺序读取数据</span></span><br><span class="line">    <span class="keyword">for</span> (pid &lt;- <span class="type">Random</span>.shuffle(<span class="type">Seq</span>.range(<span class="number">0</span>, numBlocks))) &#123;</span><br><span class="line">      <span class="keyword">val</span> pieceId = <span class="type">BroadcastBlockId</span>(id, <span class="string">"piece"</span> + pid)</span><br><span class="line">      logDebug(<span class="string">s"Reading piece <span class="subst">$pieceId</span> of <span class="subst">$broadcastId</span>"</span>)</span><br><span class="line">      <span class="comment">// First try getLocalBytes because there is a chance that previous attempts to fetch the</span></span><br><span class="line">      <span class="comment">// broadcast blocks have already fetched some of the blocks. In that case, some blocks</span></span><br><span class="line">      <span class="comment">// would be available locally (on this executor).</span></span><br><span class="line">      bm.getLocalBytes(pieceId) <span class="keyword">match</span> &#123;   <span class="comment">//获取本地数据成功</span></span><br><span class="line">        <span class="keyword">case</span> <span class="type">Some</span>(block) =&gt;</span><br><span class="line">          blocks(pid) = block</span><br><span class="line">          releaseLock(pieceId)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">None</span> =&gt;                    </span><br><span class="line">          bm.getRemoteBytes(pieceId) <span class="keyword">match</span> &#123;  </span><br><span class="line">            <span class="keyword">case</span> <span class="type">Some</span>(b) =&gt;</span><br><span class="line">              <span class="keyword">if</span> (checksumEnabled) &#123;</span><br><span class="line">                <span class="keyword">val</span> sum = calcChecksum(b.chunks(<span class="number">0</span>))</span><br><span class="line">                <span class="keyword">if</span> (sum != checksums(pid)) &#123;</span><br><span class="line">                  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"corrupt remote block <span class="subst">$pieceId</span> of <span class="subst">$broadcastId</span>:"</span> +</span><br><span class="line">                    <span class="string">s" <span class="subst">$sum</span> != <span class="subst">$&#123;checksums(pid)&#125;</span>"</span>)</span><br><span class="line">                &#125;</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="comment">// We found the block from remote executors/driver's BlockManager, so put the block</span></span><br><span class="line">              <span class="comment">// in this executor's BlockManager.</span></span><br><span class="line">              </span><br><span class="line">              <span class="comment">//储存到本地，并汇报Master</span></span><br><span class="line">              <span class="keyword">if</span> (!bm.putBytes(pieceId, b, <span class="type">StorageLevel</span>.<span class="type">MEMORY_AND_DISK_SER</span>, tellMaster = <span class="literal">true</span>)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(</span><br><span class="line">                  <span class="string">s"Failed to store <span class="subst">$pieceId</span> of <span class="subst">$broadcastId</span> in local BlockManager"</span>)</span><br><span class="line">              &#125;</span><br><span class="line">              blocks(pid) = <span class="keyword">new</span> <span class="type">ByteBufferBlockData</span>(b, <span class="literal">true</span>)</span><br><span class="line">            <span class="keyword">case</span> <span class="type">None</span> =&gt;</span><br><span class="line">              <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">s"Failed to get <span class="subst">$pieceId</span> of <span class="subst">$broadcastId</span>"</span>)</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    blocks</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;在 readBlocks 方法中，为了避免访问热点，会以随机顺序读取数据。读取某个块的时候，会先再一次尝试从本地读取，这是因为在上一次获取的时候可能已经成功获取到某些块。如果这一次还是无法从本地获取到数据，则调用 getRemoteBytes 从其它节点获取，getRemoteBytes 方法在<a href="http://zhoujiapeng.top/Spark/spark-storage/#532-get-1">《Spark储存体系》</a>文章中已经介绍过了，这里不再赘述。</p>
+<h3 id="1-4-广播变量总结"><a href="#1-4-广播变量总结" class="headerlink" title="1.4 广播变量总结"></a>1.4 广播变量总结</h3><p>&emsp;到这里我们知道，TorrentBroadcast 首先将广播变量数据分块，并存到 BlockManager 中；每个节点需要读取广播变量时，是分块读取，对每一块都读取其位置信息，然后选择其中一个存有此块的节点进行读取；每个节点读取后会将包含的广播块信息报告给 mBlockadeanagerMaster，这样本地节点就成了这个广播网络中的一个 peer。</p>
+<h3 id="1-5-一个特殊例子"><a href="#1-5-一个特殊例子" class="headerlink" title="1.5 一个特殊例子"></a>1.5 一个特殊例子</h3><p>&emsp;广播变量有时候可以用来解决由于数据切片造成的程序逻辑错误问题。<br>&emsp;举例来说，有两个表，ip规则表和日志表，ip规则表记录了ip和省份的映射关系，日志表记录了页面访问地址以及访问ip，现在需要使用这两个表进行匹配聚合，统计出各个省份的访问ip总数量，两个表的数据都是储存在HDFS中的。数据示例如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;访问日志示例</span><br><span class="line">20090121000132095572000|125.213.100.123|show.51.com|&#x2F;shoplist.php?phpfile&#x3D;shoplist2.php&amp;style&#x3D;1&amp;sex&#x3D;137|Mozilla&#x2F;4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Mozilla&#x2F;4.0(Compatible Mozilla&#x2F;4.0(Compatible-EmbeddedWB 14.59 http:&#x2F;&#x2F;bsalsa.com&#x2F; EmbeddedWB- 14.59  from: http:&#x2F;&#x2F;bsalsa.com&#x2F; )|http:&#x2F;&#x2F;show.51.com&#x2F;main.php|</span><br></pre></td></tr></table></figure><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;ip规则表示例，数据按照ip有序存放</span><br><span class="line">1.0.1.0|1.0.3.255|16777472|16778239|亚洲|中国|福建|福州||电信|350100|China|CN|119.306239|26.075302</span><br></pre></td></tr></table></figure><br>&emsp;稍微不注意的话，或许我们会这么做，从HDFS中将数据读取到 ipRulesRDD、和 logRDD 之后，遍历 logRDD，逐一使用二分法去比对 ipRulesRDD，通过这种方式查找出每一条日志记录中ip对应的省份。但是这种做法是错误的，这里忽略了一个问题，如果数据是存放在 HDFS 的话，那么读取数据的时候日志表和<strong>ip规则表都会被分区</strong>，每个 Executor 节点都只能读取到部分的ip规则表而不是完整的ip规则表，因此 Executor 在查找ip规则表的时候，就只能使用本地获取到的那部分ip规则表进行比对，这样势必会造成某些ip无法查找到对应的省份。<br>&emsp;为了解决这个问题，我们需要让每一个 Executor 节点都拥有完整的ip规则表，这时候广播变量就发挥作用了。我们可以先调用 RDD.collect 方法将完整的数据收集到 Driver 端，然后再调用 sc.broadcast 将数据ip规则表广播到所有的 Executor 节点上，这样的话，每一个 Executor 都能够持有一个完整的ip规则表的数据副本。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//从hdfs读取ip规则数据</span></span><br><span class="line"><span class="keyword">val</span> rulesLines = sc.textFile(args(<span class="number">0</span>))</span><br><span class="line"><span class="comment">//整理ip规则数据</span></span><br><span class="line"><span class="comment">//整理ip规则数据</span></span><br><span class="line"><span class="keyword">val</span> ipRulesRDD: <span class="type">RDD</span>[(<span class="type">Long</span>, <span class="type">Long</span>, <span class="type">String</span>)] = rulesLines.map(line =&gt; &#123;</span><br><span class="line">  <span class="keyword">val</span> fields = line.split(<span class="string">"[|]"</span>)</span><br><span class="line">  <span class="keyword">val</span> startNum = fields(<span class="number">2</span>).toLong</span><br><span class="line">  <span class="keyword">val</span> endNum = fields(<span class="number">3</span>).toLong</span><br><span class="line">  <span class="keyword">val</span> province = fields(<span class="number">6</span>)</span><br><span class="line">  (startNum, endNum, province)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//从各个executor收集ip规则到driver端</span></span><br><span class="line"><span class="keyword">val</span> rulesInDriver : <span class="type">Array</span>[(<span class="type">Long</span>,<span class="type">Long</span>,<span class="type">String</span>)] = ipRulesRDD.collect()</span><br><span class="line"><span class="comment">//从driver端广播ip规则到各个executor</span></span><br><span class="line"><span class="keyword">val</span> broadcastRef = sc.broadcast(rulesInDriver)</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-累加器"><a href="#2-累加器" class="headerlink" title="2. 累加器"></a>2. 累加器</h2><p>&emsp;累加器是一种只能通过关联操作进行“加”操作的变量，因此它能够高效的应用于并行操作中。它们能够用来实现计数器和求和器。Spark原生支持Int和Double类型的累加器，开发者可以自己添加支持的类型。运行在集群上的任务可以给累加器增加值，但是它们不能读取这个值，<strong>只有驱动程序（Driver端程序）可以使用 Accumulators 对象的 value 方法来读取累加器的值</strong>。<br>&emsp;我们可以创建命名或未命名的累加器。命名累加器会在 Web UI(4040端口) 中展示。Spark在Tasks 任务表中显示由任务修改的每个累加器的值。比如创建一个 longAccumulator 类型的累加器：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> longAccumulator = sc.longAccumulator(<span class="string">"long-account"</span>)</span><br><span class="line">sc.parallelize(<span class="type">Array</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)).foreach(x =&gt; longAccumulator.add(x))</span><br></pre></td></tr></table></figure><br>&emsp;在 WebUI 中可以看到：<br><img src="https://gitee.com/JP6907/Pic/raw/master/spark/accumulators.png?raw=true" alt="accumulators"><br>&emsp;跟踪 WebUI 中的累加器对于理解运行的 stage　的进度很有用。&nbsp;<br>&emsp;下面我们来看一下累加器的实现，以 longAccumulator 为例，当调用 sc.longAccumulator 的时候：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SparkContext</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longAccumulator</span></span>(name: <span class="type">String</span>): <span class="type">LongAccumulator</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> acc = <span class="keyword">new</span> <span class="type">LongAccumulator</span></span><br><span class="line">    register(acc, name)</span><br><span class="line">    acc</span><br><span class="line">  &#125;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">register</span></span>(acc: <span class="type">AccumulatorV2</span>[_, _], name: <span class="type">String</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    acc.register(<span class="keyword">this</span>, name = <span class="type">Option</span>(name))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//AccumulatorV2</span></span><br><span class="line"><span class="keyword">private</span>[spark] <span class="function"><span class="keyword">def</span> <span class="title">register</span></span>(</span><br><span class="line">      sc: <span class="type">SparkContext</span>,</span><br><span class="line">      name: <span class="type">Option</span>[<span class="type">String</span>] = <span class="type">None</span>,</span><br><span class="line">      countFailedValues: <span class="type">Boolean</span> = <span class="literal">false</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.metadata != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">IllegalStateException</span>(<span class="string">"Cannot register an Accumulator twice."</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.metadata = <span class="type">AccumulatorMetadata</span>(<span class="type">AccumulatorContext</span>.newId(), name, countFailedValues)</span><br><span class="line">    <span class="type">AccumulatorContext</span>.register(<span class="keyword">this</span>)</span><br><span class="line">    sc.cleaner.foreach(_.registerAccumulatorForCleanup(<span class="keyword">this</span>))</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>&emsp;最后会调用 AccumulatorV2 的 register 方法，可以看到，这个方法里面将累加器注册到了 AccumulatorContext 里面：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AccumulatorContext</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">register</span></span>(a: <span class="type">AccumulatorV2</span>[_, _]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    originals.putIfAbsent(a.id, <span class="keyword">new</span> jl.ref.<span class="type">WeakReference</span>[<span class="type">AccumulatorV2</span>[_, _]](a))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> originals = <span class="keyword">new</span> <span class="type">ConcurrentHashMap</span>[<span class="type">Long</span>, jl.ref.<span class="type">WeakReference</span>[<span class="type">AccumulatorV2</span>[_, _]]]</span><br></pre></td></tr></table></figure><br>&emsp;在 AccumulatorContext 中注册累加器其实就是将累加器添加到 originals 中，originals 是一个 HashMap。因此，Driver 端是通过 AccumulatorContext 里面的一个 HashMap 变量来维护所有的累加器。<br>&emsp;当调用累加器的 value 方法时，直接返回累加器的和：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//LongAccumulator</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">value</span></span>: jl.<span class="type">Long</span> = _sum</span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">add</span></span>(v: jl.<span class="type">Long</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    _sum += v</span><br><span class="line">    _count += <span class="number">1</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>&nbsp;<br>&nbsp;</p>
+<blockquote>
+<p>本文作者：ZJP<br>版权声明：本文为博主原创文章，遵循 <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC 4.0 BY-SA</a> 版权协议，转载请附上原文出处链接和本声明。<br>本文链接：<a href="http://zhoujiapeng.top/Spark/spark-share-variable/">http://zhoujiapeng.top/Spark/spark-share-variable/</a></p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/Spark/spark-tuning/" data-toggle="tooltip" data-placement="top" title="Spark 性能调优">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/Spark/spark-storage/" data-toggle="tooltip" data-placement="top" title="Spark源码阅读 之 Storage储存模块">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark-共享变量"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Spark 共享变量</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-广播变量"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1. 广播变量</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-1-初始化"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">1.1 初始化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-2-创建（写入）"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">1.2 创建（写入）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-3-使用（读取）"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">1.3 使用（读取）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-4-广播变量总结"><span class="toc-nav-number">1.1.4.</span> <span class="toc-nav-text">1.4 广播变量总结</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-5-一个特殊例子"><span class="toc-nav-number">1.1.5.</span> <span class="toc-nav-text">1.5 一个特殊例子</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-累加器"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2. 累加器</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                        
+                          <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                        
+                          <a class="tag" href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

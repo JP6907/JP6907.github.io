@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          深入理解Java虚拟机 之 垃圾收集算法 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/java/java-jvm-GC-alogrithm/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#java" title="java">java</a>
+                            
+                              <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                            
+                              <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                            
+                        </div>
+                        <h1>深入理解Java虚拟机 之 垃圾收集算法</h1>
+                        <h2 class="subheading">Garbage Collection</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-10-18
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">4.3k</span> and
+                                Reading Time <span class="post-count">15</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="Garbage-Collection"><a href="#Garbage-Collection" class="headerlink" title="Garbage Collection"></a>Garbage Collection</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p>&emsp;GC 需要完成的3件事为：</p>
+<ul>
+<li>哪些内存需要回收？</li>
+<li>什么时候回收？</li>
+<li>如何回收？</li>
+</ul>
+<p>&emsp;Java 内存运行时区域的各个部分，其中程序计数器、虚拟机栈、本地方法栈3个区域随线程而生，随线程而灭。而Java堆和方法区则不一样，一个接口的多个实现类需要的内存可能不一样，一个方法的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的就是这部分内存。</p>
+<h2 id="2-对象已死吗"><a href="#2-对象已死吗" class="headerlink" title="2. 对象已死吗"></a>2. 对象已死吗</h2><p>&emsp;在堆里存放着Java中几乎所有的对象实例，垃圾收集器在对堆进行回收前，第一件事就是要确认哪些对象还“存活”着，哪些已经“死去”（不可能再被使用）。</p>
+<h3 id="2-1-引用计数算法"><a href="#2-1-引用计数算法" class="headerlink" title="2.1 引用计数算法"></a>2.1 引用计数算法</h3><p>&emsp;引用计数算法（Reference Counting）：给对象添加一个引用计数器，每当有一个地方引用它，计数器就+1，引用失效，计数器-1：任何时刻计数器为0的对象就是不能再被使用的。<br>这种算法实现简单，判定效率也很高，但它难以解决对象之间相互循环引用的问题，如果两个对象中存在互相引用，就无法通知GC收集器回收它们。Java虚拟机并不是通过引用计数算法来判断对象是否存活的。</p>
+<h3 id="2-2-可达性分析算法"><a href="#2-2-可达性分析算法" class="headerlink" title="2.2 可达性分析算法"></a>2.2 可达性分析算法</h3><p>&emsp;在主流商用程序语言（Java、C#）的<strong>主流</strong>实现中，都是通过可达性分析（Reachability Analysis）来判定对象是否存活的。基本思路是通过一系列的称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连时，则证明此对象是不可用的。<br>Java中，可作为GC Roots的对象包括以下几种：</p>
+<ul>
+<li>虚拟机栈(栈帧中的本地变量表)中引用的对象。</li>
+<li>方法区中类静态属性引用的对象。</li>
+<li>方法区中常量引用的对象。</li>
+<li>本地方法栈中Native方法引用的对象。</li>
+</ul>
+<p><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/ReachabilityAnalysis.png" alt="ReachabilityAnalysis"></p>
+<h3 id="2-3-再谈引用"><a href="#2-3-再谈引用" class="headerlink" title="2.3 再谈引用"></a>2.3 再谈引用</h3><p>&emsp;Java将引用分为强引用(Strong Reference)、软引用(Soft Reference)、弱引用(weak Reference)、虚引用(Phantom Reference)。</p>
+<ul>
+<li>强引用是指类似 “Object obj=new Object()” 这类的引用，只要强引用还存在，垃圾收集器永远不会回收掉被引用的对象</li>
+<li>软引用是用来描述一些还有用但并非必需的对象。对于软引用关联着的对象    ，在系统将要发生内存溢出异常之前，将会把这些对象列进回收范围之中进行第二次回收。如果这次回收还没有足够的内存，才会抛出内存溢出异常。在JDK1.2之后，提供了SoftReference类来实现软引用。</li>
+<li>弱引用也是用来描述非必需对象的，但是它的强度要比软引用更弱一些，被弱引用关联的对象只能生存到下一次垃圾收集发生之前。当垃圾收集器工作时，无论当前内存是否足够，都会回收掉只被弱引用关联的对象。在JDK1.2之后，提供了WeakReference类来实现弱引用。</li>
+<li>虚引用是最弱的一种引用关系，一个对象是否有虚引用的存在，完全不会对其生存时间构成影响，也无法通过虚引用来取得一个对象实例。为一个对象设置虚引用关联的唯一目的就是能在这个对象被收集器回收时收到一个系统通知。在JDK1.2之后，提供了PhantomReference类来实现虚引用。</li>
+</ul>
+<h3 id="2-4-生存还是死亡"><a href="#2-4-生存还是死亡" class="headerlink" title="2.4 生存还是死亡"></a>2.4 生存还是死亡</h3><p>&emsp;即使在可达性分析算法中不可达的对象，也并非是“非死不可”，这时候它们暂时处于“缓刑”阶段，要真正宣告一个对象的死亡，至少要经历两次标记过程：如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那它将会被第一次标记并且进行一次筛选，筛选条件是此对象是否有必要执行finalize()方法。当对象没有覆盖finalize()方法，或者finalize()方法已经被jvm调用过，虚拟机将这两种情况都视为“没有必要执行”。</p>
+<p>​&emsp;如果这个对象被判定为有必要执行finalize方法，那么这个对象会放置在F-Queue队列中，并在稍后由一个由虚拟机自动建立的、低优先级的Finalizer线程去执行它（调用finalize方法）。执行是指触发这个方法，但不承诺会等待它运行结束，因为如果一个对象在F-Queue中执行缓慢，或者发生了死循环，很可能导致其他对象永久处于等待状态，甚至整个内存回收系统崩溃。稍后GC将对F-Queue中的对象进行第二次小规模的标记，如果对象要再finalize()中拯救自己——只需要重新与引用链上任意一个对象建立关联，譬如把自己（this）赋值给某个类变量或者对象的成员变量，那在第二次标记时它将被移出“即将回收”的集合；如果对象这时候还没有逃脱，那基本上它就真的被回收了。</p>
+<p>&emsp;上面的过程可以简单总结如下：</p>
+<ul>
+<li>可达性分析<ul>
+<li>1.可达，不回收</li>
+<li>2.不可达，标记为“即将回收”，判断该对象有 finalize 方法并且还未被 JVM 调用过？<ul>
+<li>2.1 是，将对象放入 F-Queue 队列，等待执行 finalize 方法<ul>
+<li>如果执行 finalize 方法中将自己和引用链上任意一个对象建立关联，则该对象会被移出“即将回收”的集合</li>
+</ul>
+</li>
+<li>2.2 否，即没有 finalize 方法或者 finalize 方法已经被调用过，回收该对象</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>&emsp;两次标记过程为：</p>
+<ul>
+<li><ol>
+<li>可达性分析判断对象不可达，标记为“即将回收”，将对象放入 F-Queue 队列</li>
+</ol>
+</li>
+<li><ol>
+<li>对 F-Queue 队列中对象，执行 finalize 方法，如果在该方法中对象没有“拯救自己“，则标记为”回收“</li>
+</ol>
+</li>
+</ul>
+<p>&emsp;对于对象在 finalize 方法中”拯救自己“，可以看一下下面这个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalizeEscapeGC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> FinalizeEscapeGC SAVE_HOOK = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">isAlive</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"yes,i am still alive"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">finalize</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.finalize();</span><br><span class="line">        System.out.println(<span class="string">"finalize method executed!"</span>);</span><br><span class="line">        FinalizeEscapeGC.SAVE_HOOK = <span class="keyword">this</span>;     <span class="comment">//自我拯救，使当前对象被引用</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        SAVE_HOOK = <span class="keyword">new</span> FinalizeEscapeGC();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//对象第一次成功拯救自己</span></span><br><span class="line">        SAVE_HOOK = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        <span class="comment">//因为finalize方法优先级很低，所以暂停0.5秒等待它</span></span><br><span class="line">        Thread.sleep(<span class="number">500</span>);</span><br><span class="line">        <span class="keyword">if</span>(SAVE_HOOK != <span class="keyword">null</span>)&#123;   <span class="comment">//不会被回收，仍然存活</span></span><br><span class="line">            SAVE_HOOK.isAlive();</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"no,i am dead!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//第二次自救，自救失败，代码跟上面完全一样</span></span><br><span class="line">        SAVE_HOOK = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        Thread.sleep(<span class="number">500</span>);</span><br><span class="line">        <span class="keyword">if</span>(SAVE_HOOK != <span class="keyword">null</span>)&#123;</span><br><span class="line">            SAVE_HOOK.isAlive();</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"no,i am dead!"</span>);  <span class="comment">//自救失败，被回收</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>执行结果为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">finalize method executed!</span><br><span class="line">yes,i am still alive</span><br><span class="line">no,i am dead!</span><br></pre></td></tr></table></figure><br>&emsp;需要注意的是，<strong>任何一个对象的 finalize() 方法都只会被系统自动调用一次</strong>，因此也只能”拯救“自己一次。<br>并不建议使用这种方式来拯救对象，它的运行代价高昂，不确定性大，无法保证各个对象的调用顺序，finalize 能做的，使用 try-finally 或者其它方式都可以做的更好、更及时，完全可以忘记这个方法的存在。</p>
+<h2 id="3-垃圾收集算法"><a href="#3-垃圾收集算法" class="headerlink" title="3. 垃圾收集算法"></a>3. 垃圾收集算法</h2><h3 id="3-1-标记-清除算法-Mark-Sweep"><a href="#3-1-标记-清除算法-Mark-Sweep" class="headerlink" title="3.1 标记-清除算法 Mark-Sweep"></a>3.1 标记-清除算法 Mark-Sweep</h3><p>&emsp;算法分为“标记”和”清除”(Mark-Sweep)两个阶段,首先标记出需要回收的对象,在标记完成后统一回收。后续的收集算法都基于这种思路并对其不足进行改进。<br>它的不足有两个：</p>
+<ul>
+<li>一是效率问题，标记和清除两个阶段的效率都不高；</li>
+<li>另一个是空间问题，标记清楚后会产生大量不连续的内存碎片，空间碎片太多可能导致以后在程序运行过程中需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集。</li>
+</ul>
+<p><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/MarkSweep.png" alt="MarkSweep"></p>
+<h3 id="3-2-复制算法-Copying"><a href="#3-2-复制算法-Copying" class="headerlink" title="3.2 复制算法 Copying"></a>3.2 复制算法 Copying</h3><p>&emsp;算法将可用内存按容量划分为大小相等的两块,每次只使用其中的一块。当这块内存用完了,就将还存活着的对象复制到另外一块上面,然后把已使用过的内存空间一次清理掉。这样使得每次都是对整个半区进行内存回收，也不会出现内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单、高效。但代价是将内存缩小为了原来的一半，代价比较大。</p>
+<p><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/Copying.png" alt="Copying"></p>
+<p>&emsp;商业虚拟机都采用这种收集算法来回收<strong>新生代</strong>。IBM研究表明，新生代中98%的对象都是“朝生夕死”，所以不需要1:1的比例来划分内存，而是将内存分为一块较大的Eden空间和两块较小的Survivor空间，每次使用Eden和其中一块Survivor。当回收时，将Eden和Survivor中和存活的对象一次性复制到另外一块Survivor上，最后清理Eden和用过的Survivor空间。HotSpot默认Eden和Survivor大小比例为8:1。也就是新生代中可用空间为整个新生代的90%，只有10%会被“浪费”。如果另一块Survivor空间不够用时，需要依赖其他内存（老年代）进行<strong>分配担保</strong>。</p>
+<h3 id="3-3-标记-整理算法-Mark-Compact"><a href="#3-3-标记-整理算法-Mark-Compact" class="headerlink" title="3.3 标记-整理算法 Mark-Compact"></a>3.3 标记-整理算法 Mark-Compact</h3><p>​&emsp;复制收集算法在对象存活率较高时要进行较多的复制操作，效率将会降低，更关键的在于如果不想浪费一半的内存空间，就需要有额外空间进行分配担保，以应对被使用的内存中所有对象都是100%存活的极端情况，所以在老年代一般不能直接使用这种算法。</p>
+<p>​&emsp;根据<strong>老年代</strong>的特点，有人提出了另外一种“标记-整理”（Mark-Compact）算法，标记过程与“标记-清除”一样，但后续步骤不是进行清理，而是让所有存活的对象都向一端移动，然后清理掉端边界以外的内存。</p>
+<p><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/MarkCompact.png" alt="MarkCompact"></p>
+<h3 id="3-4-分代收集算法-Generational-Collection"><a href="#3-4-分代收集算法-Generational-Collection" class="headerlink" title="3.4 分代收集算法 Generational Collection"></a>3.4 分代收集算法 Generational Collection</h3><p>&emsp;<strong>当前商业虚拟机的垃圾收集都采用“分代收集”（Generational Collection）算法</strong>，这种算法根据对象存活周期的不同，将内存划分为几块。一般是把Java堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法，在新生代，每次垃圾收集都有大量的对象死去，只有少量存活，那就选用复制算法，只需要付出少量存活对象的复制成本就可以完成收集。而老年代因为对象存活率高，没有额外空间进行分配担保，就必须使用“标记-清理”或者“标记-整理”算法进行回收。</p>
+<h2 id="4-HotSpot-的算法实现"><a href="#4-HotSpot-的算法实现" class="headerlink" title="4. HotSpot 的算法实现"></a>4. HotSpot 的算法实现</h2><h3 id="4-1-枚举根节点"><a href="#4-1-枚举根节点" class="headerlink" title="4.1 枚举根节点"></a>4.1 枚举根节点</h3><p>&emsp;可达行分析存在两个问题：</p>
+<ul>
+<li><p>一. 从可达性分析中从GC Roots节点找引用链这个操作为例，可作为GC Roots的节点主要在全局性的引用（例如常量或类静态属性）与执行上下文（例如栈帧中的本地变量表）中，现在很多应用仅仅方法区就有数百兆，如果要逐个检查这里面的引用，那么必然会消耗很多时间。</p>
+</li>
+<li><p>二. 可达性分析对执行时间的敏感还体现在GC停顿上，因为这项分析工作必须在一个能确保一致性的快照中进行——这里“一致性”的意思是指在整个分析期间整个执行系统看起来就像被冻结在某个时间点上，不可以出现分析过程中对象引用关系还在不断变化的情况，该点不满足的话分析结果准确性就无法得到保证。这点是导致GC进行时必须停顿所有Java执行线程（Sun将这件事情称为“Stop The World”）的其中一个重要原因，即使是在号称几乎不会发生停顿的CMS收集器中，枚举根节点时也是必须要停顿的。</p>
+</li>
+</ul>
+<p>&emsp;由于目前的主流Java虚拟机使用的都是<strong>准确式GC</strong>（虚拟机可以知道内存中某个位置的数据具体是什么类型），所以当执行系统停顿下来后，并不需要一个不漏地检查完所有执行上下文和全局的引用位置，虚拟机应当是有办法直接得知哪些地方存放着对象引用。在HotSpot的实现中，是使用一组称为<strong>OopMap</strong>的数据结构来达到这个目的的，在类加载完成的时候，HotSpot就把对象内什么偏移量上是什么类型的数据计算出来，在JIT编译过程中，也会在特定的位置记录下栈和寄存器中哪些位置是引用，GC在扫描时就可以直接得知这些信息了。</p>
+<p>&emsp;简单总结一下，可达性分析存在的问题以及 HotSpot 的解决方案为：</p>
+<ul>
+<li>GC Roots 引用链查找时间问题 - OopMap 记录引用信息</li>
+<li>GC 停顿 - 安全点/安全区域</li>
+</ul>
+<h3 id="4-2-安全点-Safepoint"><a href="#4-2-安全点-Safepoint" class="headerlink" title="4.2 安全点 Safepoint"></a>4.2 安全点 Safepoint</h3><p>&emsp;HotSpot 没有为每条指令都生成OopMap，只是在特定的位置记录了这些信息，这些位置称为<strong>安全点</strong>，即程序执行时并非在所有地方都能停顿下来开始GC，<strong>只有在到达安全点时才能暂停</strong>。安全点的选定基本上是以程序”<strong>是否具有让程序长时间执行的特征</strong>“为标准进行选定的——因为每条指令执行的时间都非常短暂，程序不太可能因为指令流长度太长这个原因而过长时间运行，长时间执行的最明显特征就是指令序列复用，例如方法调用、循环跳转、异常跳转等，所以具有这些功能的指令才会产生Safepoint。</p>
+<p>&emsp;对于Safepoint，另一个需要考虑的问题是如何在GC发生时让所有线程都跑到最近的安全点上再停顿下来。有两种方法：抢先式中断和主动式中断。</p>
+<p>&emsp;抢先式中断：抢先式中断不需要线程的执行代码主动去配合，在GC发生时，首先把所有线程全部中断，如果发现有线程中断的地方不在安全点上，就恢复线程，让它跑到安全点上。现在几乎没有虚拟机实现采用抢先式中断来暂停线程从而响应GC事件。</p>
+<p>&emsp;主动式中断：主动式中断的思想是当GC需要中断线程的时候，不直接对线程操作，仅仅简单地设置一个标志，各个线程执行时主动去轮询这个标志，发现中断标志为真时就自己中断挂起，轮询标志的地方和安全点是重合的，另外再加上创建对象需要分配内存的地方。</p>
+<h3 id="4-3-安全区域-Safe-Region"><a href="#4-3-安全区域-Safe-Region" class="headerlink" title="4.3 安全区域 Safe Region"></a>4.3 安全区域 Safe Region</h3><p>&emsp;Safepoint 机制保证了程序执行时，在不太长的时间内就会遇到可进入 GC 的 Safepoint，但线程处于Sleep状态或者Blocked状态，这时候线程无法响应JVM的中断请求,”走”到安全的地方去中断挂起，JVM也不太可能等待线程被重新分配CPU时间，这种情况就需要安全区域来解决。</p>
+<p>&emsp;安全区域是指在一段代码片段之中，引用关系不会发生变化。在这个区域中的任意地方开始GC都是安全的，可以把 Safe Region 看做是被扩展了的 Safepoint。</p>
+<p>&emsp;在线程执行到 Safe Region 中的代码时，首先标识自己已经进入了 Safe Region，那样，当在这段时间里JVM要发起GC时，就不用管标识自己为 Safe Region 状态的线程了。在线程要离开 Safe Region 时，它要检查系统是否已经完成了根节点枚举（或者整个GC过程），如果完成了，那线程就继续执行，否则它就必须等待直到收到可以安全离开 Safe Region 的信号为止。</p>
+<p>&nbsp;</p>
+<blockquote>
+<p>参考：<br>《深入理解Java虚拟机》</p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/java/java-annotation/" data-toggle="tooltip" data-placement="top" title="Java Annotation">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/java/java-HashMap2/" data-toggle="tooltip" data-placement="top" title="深入理解 HashMap(二)">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Garbage-Collection"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Garbage Collection</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-概述"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1. 概述</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-对象已死吗"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2. 对象已死吗</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-1-引用计数算法"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">2.1 引用计数算法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-2-可达性分析算法"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">2.2 可达性分析算法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-3-再谈引用"><span class="toc-nav-number">1.2.3.</span> <span class="toc-nav-text">2.3 再谈引用</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-4-生存还是死亡"><span class="toc-nav-number">1.2.4.</span> <span class="toc-nav-text">2.4 生存还是死亡</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-垃圾收集算法"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">3. 垃圾收集算法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-标记-清除算法-Mark-Sweep"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">3.1 标记-清除算法 Mark-Sweep</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-复制算法-Copying"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">3.2 复制算法 Copying</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-标记-整理算法-Mark-Compact"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">3.3 标记-整理算法 Mark-Compact</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-4-分代收集算法-Generational-Collection"><span class="toc-nav-number">1.3.4.</span> <span class="toc-nav-text">3.4 分代收集算法 Generational Collection</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-HotSpot-的算法实现"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">4. HotSpot 的算法实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-1-枚举根节点"><span class="toc-nav-number">1.4.1.</span> <span class="toc-nav-text">4.1 枚举根节点</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-2-安全点-Safepoint"><span class="toc-nav-number">1.4.2.</span> <span class="toc-nav-text">4.2 安全点 Safepoint</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-3-安全区域-Safe-Region"><span class="toc-nav-number">1.4.3.</span> <span class="toc-nav-text">4.3 安全区域 Safe Region</span></a></li></ol></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#java" title="java">java</a>
+                        
+                          <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                        
+                          <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

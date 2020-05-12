@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          BCOS 动态群组架构源码分析 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#blockchain" title="blockchain">blockchain</a>
+                            
+                              <a class="tag" href="/tags/#bcos" title="bcos">bcos</a>
+                            
+                        </div>
+                        <h1>BCOS 动态群组架构源码分析</h1>
+                        <h2 class="subheading">源码分析</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-11-20
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.1k</span> and
+                                Reading Time <span class="post-count">15</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="BCOS-动态群组架构源码分析"><a href="#BCOS-动态群组架构源码分析" class="headerlink" title="BCOS 动态群组架构源码分析"></a>BCOS 动态群组架构源码分析</h1><p>本文基于<a href="http://zhoujiapeng.top/blockchain/bcos-group-architecture/">《BCOS 动态群组架构》</a>，从源码角度对动态群组架构的实现做进一步分析。</p>
+<h2 id="3-1-群组信息的初始化"><a href="#3-1-群组信息的初始化" class="headerlink" title="3.1 群组信息的初始化"></a>3.1 群组信息的初始化</h2><p>这得从Ledger的构造说起。。。</p>
+<h3 id="3-1-1-groupId-和-protocol-id"><a href="#3-1-1-groupId-和-protocol-id" class="headerlink" title="3.1.1 groupId 和 protocol_id"></a>3.1.1 groupId 和 protocol_id</h3><p>Ledger 构造的时候需要传进一个 service，以及 groupId<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Ledger(<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;dev::p2p::P2PInterface&gt; service, dev::GROUP_ID <span class="keyword">const</span>&amp; _groupId,</span><br><span class="line">        dev::KeyPair <span class="keyword">const</span>&amp; _keyPair, <span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; _baseDir)</span><br><span class="line">      : LedgerInterface(_keyPair), m_service(service), m_groupId(_groupId)</span><br></pre></td></tr></table></figure><br>Ledger在初始化交易池的时候会计算一个protocol_id，它绑定了m_groupId<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// init txpool</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Ledger::initTxPool</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    dev::PROTOCOL_ID protocol_id = getGroupProtoclID(m_groupId, ProtocolID::TxPool);</span><br><span class="line">    ... </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>protocol_id 和 sealer 的构造有关。</p>
+<h3 id="3-1-2-pbftEngine-和-pbftSealer"><a href="#3-1-2-pbftEngine-和-pbftSealer" class="headerlink" title="3.1.2 pbftEngine 和 pbftSealer"></a>3.1.2 pbftEngine 和 pbftSealer</h3><p>看一下 Ledger 中 pbftSealer 的构造过程：<br>Ledger模块涉及到了PBFT，新的共识算法需要在这里做修改<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Sealer&gt; <span class="title">Ledger::createPBFTSealer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//获取protocol_id</span></span><br><span class="line">    dev::PROTOCOL_ID protocol_id = getGroupProtoclID(m_groupId, ProtocolID::PBFT);</span><br><span class="line">    <span class="comment">/// create consensus engine according to "consensusType"</span></span><br><span class="line">    Ledger_LOG(DEBUG) &lt;&lt; LOG_BADGE(<span class="string">"initLedger"</span>) &lt;&lt; LOG_BADGE(<span class="string">"createPBFTSealer"</span>)</span><br><span class="line">                      &lt;&lt; LOG_KV(<span class="string">"baseDir"</span>, m_param-&gt;baseDir()) &lt;&lt; LOG_KV(<span class="string">"Protocol"</span>, protocol_id);</span><br><span class="line">   　</span><br><span class="line">    <span class="comment">//pbftSealer和protocol_id是绑定的</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;PBFTSealer&gt; pbftSealer = <span class="built_in">std</span>::make_shared&lt;PBFTSealer&gt;(m_service, m_txPool,</span><br><span class="line">        m_blockChain, m_sync, m_blockVerifier, protocol_id, m_param-&gt;baseDir(), m_keyPair,</span><br><span class="line">        m_param-&gt;mutableConsensusParam().sealerList); <span class="comment">//这里读取了节点列表</span></span><br><span class="line"></span><br><span class="line">    pbftSealer-&gt;setEnableDynamicBlockSize(m_param-&gt;mutableConsensusParam().enableDynamicBlockSize);</span><br><span class="line">    pbftSealer-&gt;setBlockSizeIncreaseRatio(m_param-&gt;mutableConsensusParam().blockSizeIncreaseRatio);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// set params for PBFTEngine</span></span><br><span class="line">    <span class="comment">//使用pbftSealer创建pbftEngine</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;PBFTEngine&gt; pbftEngine =</span><br><span class="line">        <span class="built_in">std</span>::dynamic_pointer_cast&lt;PBFTEngine&gt;(pbftSealer-&gt;consensusEngine());</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> pbftSealer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>createPBFTSealer 方法中 protocol_id 作为创建 pbftSealer 的一个参数，然后根据 pbftSealer 创建 pbftEngine<br>因此 Ledger、groupId、protocol_id、pbftSealer、pbftEngine 是一一对应的关系<br>传递关系为：<br>groupId -&gt; protocol_id -&gt; Ledger -&gt; pbftSealer -&gt; pbftEngine</p>
+<h3 id="3-1-3-service"><a href="#3-1-3-service" class="headerlink" title="3.1.3 service"></a>3.1.3 service</h3><p>Ledger 创建的时候还有另外一个构造参数 service，类型是 dev::p2p::P2PInterface，它用来提供 P2P网络服务，群组信息就是保存在 p2pservice 中的<br>这个 service 会在系统初始化的时候 Initializer 中被设置：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Initializer.h</span></span><br><span class="line"><span class="function">LedgerInitializer::Ptr <span class="title">ledgerInitializer</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_ledgerInitializer; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Initializer.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Initializer::init</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; _path)</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">        m_ledgerInitializer = <span class="built_in">std</span>::make_shared&lt;LedgerInitializer&gt;();</span><br><span class="line">        <span class="comment">//设置p2pservice</span></span><br><span class="line">        m_ledgerInitializer-&gt;setP2PService(m_p2pInitializer-&gt;p2pService());</span><br><span class="line">        m_ledgerInitializer-&gt;setKeyPair(m_secureInitializer-&gt;keyPair());</span><br><span class="line">        m_ledgerInitializer-&gt;setChannelRPCServer(m_rpcInitializer-&gt;channelRPCServer());</span><br><span class="line">        m_ledgerInitializer-&gt;initConfig(pt);</span><br><span class="line">        </span><br><span class="line">        m_rpcInitializer-&gt;setLedgerManager(m_ledgerInitializer-&gt;ledgerManager());</span><br><span class="line">        m_rpcInitializer-&gt;initConfig(pt);</span><br><span class="line">        m_ledgerInitializer-&gt;startAll();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-1-4-Ledger-的初始化"><a href="#3-1-4-Ledger-的初始化" class="headerlink" title="3.1.4 Ledger 的初始化"></a>3.1.4 Ledger 的初始化</h3><p>Ledger的初始化由LedgerInitializer统一管理，它会为每个group创建独立的账本<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">LedgerInitializer::initLedgers() <span class="comment">//为每个group创建独立的账本</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;dev::GROUP_ID&gt; newGroupIDList;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        newGroupIDList = foreachLedgerConfigure(</span><br><span class="line">            m_groupConfigPath, [&amp;](dev::GROUP_ID <span class="keyword">const</span>&amp; _groupID, <span class="keyword">const</span> <span class="built_in">string</span>&amp; _configFileName) &#123;</span><br><span class="line">                <span class="comment">// skip existing group</span></span><br><span class="line">                <span class="keyword">if</span> (m_ledgerManager-&gt;isLedgerExist(_groupID))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//为每个group创建Ledger</span></span><br><span class="line">                <span class="keyword">bool</span> succ = initLedger(_groupID, m_groupDataDir, _configFileName);</span><br><span class="line">                <span class="keyword">if</span> (!succ)</span><br><span class="line">                &#123;</span><br><span class="line">                    INITIALIZER_LOG(ERROR)</span><br><span class="line">                        &lt;&lt; LOG_BADGE(<span class="string">"LedgerInitializer"</span>) &lt;&lt; LOG_DESC(<span class="string">"initSingleGroup failed"</span>)</span><br><span class="line">                        &lt;&lt; LOG_KV(<span class="string">"configFile"</span>, _configFileName);</span><br><span class="line">                    ERROR_OUTPUT &lt;&lt; LOG_BADGE(<span class="string">"LedgerInitializer"</span>)</span><br><span class="line">                                 &lt;&lt; LOG_DESC(<span class="string">"initSingleGroup failed"</span>)</span><br><span class="line">                                 &lt;&lt; LOG_KV(<span class="string">"configFile"</span>, _configFileName) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">                    BOOST_THROW_EXCEPTION(InitLedgerConfigFailed());</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//从配置文件中读取节点列表</span></span><br><span class="line">                h512s sealerList = m_ledgerManager-&gt;getParamByGroupId(_groupID)</span><br><span class="line">                                       -&gt;mutableConsensusParam()</span><br><span class="line">                                       .sealerList;</span><br><span class="line">                <span class="comment">//将节点列表保存到p2pservice中</span></span><br><span class="line">                m_p2pService-&gt;setNodeListByGroupID(_groupID, sealerList);</span><br><span class="line">                LOG(INFO) &lt;&lt; LOG_BADGE(<span class="string">"LedgerInitializer init group succ"</span>)</span><br><span class="line">                          &lt;&lt; LOG_KV(<span class="string">"groupID"</span>, _groupID);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (exception&amp; e)</span><br><span class="line">    &#123;</span><br><span class="line">        INITIALIZER_LOG(ERROR) &lt;&lt; LOG_BADGE(<span class="string">"LedgerInitializer"</span>)</span><br><span class="line">                               &lt;&lt; LOG_DESC(<span class="string">"parse group config faield"</span>)</span><br><span class="line">                               &lt;&lt; LOG_KV(<span class="string">"EINFO"</span>, boost::diagnostic_information(e));</span><br><span class="line">        ERROR_OUTPUT &lt;&lt; LOG_BADGE(<span class="string">"LedgerInitializer"</span>) &lt;&lt; LOG_DESC(<span class="string">"parse group config faield"</span>)</span><br><span class="line">                     &lt;&lt; LOG_KV(<span class="string">"EINFO"</span>, boost::diagnostic_information(e)) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        BOOST_THROW_EXCEPTION(e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> newGroupIDList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>initLedgers 方法的流程为：</p>
+<ul>
+<li>遍历所有group</li>
+<li>根据groupId创建Ledger</li>
+<li>从配置文件中读取sealerList</li>
+<li>保存sealerList到p2pservice中</li>
+</ul>
+<p>根据groupId从配置文件中读取节点列表：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">h512s sealerList = m_ledgerManager-&gt;getParamByGroupId(_groupID)</span><br><span class="line">                                       -&gt;mutableConsensusParam()</span><br><span class="line">                                       .sealerList;</span><br><span class="line">m_p2pService-&gt;setNodeListByGroupID(_groupID, sealerList);</span><br></pre></td></tr></table></figure><br>将sealer节点列表保存到p2pSerivce的m_groupID2NodeList中<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setNodeListByGroupID</span><span class="params">(GROUP_ID _groupID, dev::h512s _nodeList)</span> <span class="keyword">override</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">RecursiveGuard <span class="title">l</span><span class="params">(x_nodeList)</span></span>;</span><br><span class="line">        m_groupID2NodeList[_groupID] = _nodeList;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>群组关系会被储存到m_groupID2NodeList中</p>
+<p>前面介绍过，有两个地方会保存群组信息：</p>
+<ul>
+<li>ConsensusEngineBase 中的 m_sealerList</li>
+<li>P2PService 中的 m_groupID2NodeList 中</li>
+</ul>
+<p>initLedgers方法 或读取所有的群组信息保存到 m_groupID2NodeList 中，而 m_sealerList 是在 createPBFTSealer 方法中被初始化的：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Sealer&gt; <span class="title">Ledger::createPBFTSealer</span><span class="params">()</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;PBFTSealer&gt; pbftSealer = <span class="built_in">std</span>::make_shared&lt;PBFTSealer&gt;(m_service, m_txPool,</span><br><span class="line">        m_blockChain, m_sync, m_blockVerifier, protocol_id, m_param-&gt;baseDir(), m_keyPair,</span><br><span class="line">        m_param-&gt;mutableConsensusParam().sealerList); <span class="comment">//这里读取了节点列表</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这里通过m_param读取了节点列表。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Ledger(<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;dev::p2p::P2PInterface&gt; service, dev::GROUP_ID <span class="keyword">const</span>&amp; _groupId,</span><br><span class="line">        dev::KeyPair <span class="keyword">const</span>&amp; _keyPair, <span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; _baseDir)</span><br><span class="line">      : LedgerInterface(_keyPair), m_service(service), m_groupId(_groupId)</span><br><span class="line">    &#123;</span><br><span class="line">        m_param = <span class="built_in">std</span>::make_shared&lt;LedgerParam&gt;();</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> prefix = _baseDir + <span class="string">"/group"</span> + <span class="built_in">std</span>::to_string(_groupId);</span><br><span class="line">        <span class="keyword">if</span> (_baseDir == <span class="string">""</span>)</span><br><span class="line">            prefix = <span class="string">"./group"</span> + <span class="built_in">std</span>::to_string(_groupId);</span><br><span class="line">        m_param-&gt;setBaseDir(prefix);</span><br><span class="line">        <span class="comment">// m_keyPair = _keyPair;</span></span><br><span class="line">        assert(m_service);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><br>可以看到，这里已经指定了groupid，所以m_sealerList 保存的只是当前节点所在group的节点列表。</p>
+<h3 id="3-1-5-总结"><a href="#3-1-5-总结" class="headerlink" title="3.1.5 总结"></a>3.1.5 总结</h3><p>账本初始化 LedgerInitializer::initLedgers() 会为每个group初始化一个Ledger，并且从配置文件中读取群组信息，保存到 m_p2pService 的 m_groupID2NodeList 中，它保存了所有的群组信息。ConsensusEngineBase的m_sealerList 是在账本创建sealer的时候被初始化的，会根据groupId从配置文件中读取，它只保存当前节点所在group的节点列表信息。后面群组关系发生变化时，这两个变量会被更新。</p>
+<h2 id="3-2-群组信息的读取和动态更新"><a href="#3-2-群组信息的读取和动态更新" class="headerlink" title="3.2 群组信息的读取和动态更新"></a>3.2 群组信息的读取和动态更新</h2><p>获取节点列表信息有两种方式</p>
+<ul>
+<li>ConsensusEngineBase::sealerList()  直接返回 m_sealerList，这种方式是sealer需要获取当前节点所在组的节点列表时使用</li>
+<li>BlockChainImp::sealerList()   从账本白名单中查询节点列表，保存在 P2PService 的 m_groupID2NodeList 中，并更新 ConsensusEngineBase.m_sealerList，这种方式会在需要发送消息时调用 P2PService 时使用；</li>
+</ul>
+<h3 id="3-2-1-获取群组信息的时机"><a href="#3-2-1-获取群组信息的时机" class="headerlink" title="3.2.1 获取群组信息的时机"></a>3.2.1 获取群组信息的时机</h3><p>对于第一种方法，在sealer可以直接调用，第二种方法是在消息广播时触发的，广播消息的时候需要获取节点列表，才知道消息要发往何处：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">PBFTEngine::broadcastMsg</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">const</span>&amp; packetType, <span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; key,</span></span></span><br><span class="line"><span class="function"><span class="params">    bytesConstRef data, <span class="built_in">std</span>::<span class="built_in">unordered_set</span>&lt;h512&gt; <span class="keyword">const</span>&amp; filter, <span class="keyword">unsigned</span> <span class="keyword">const</span>&amp; ttl)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//从p2pservice获取session</span></span><br><span class="line">    <span class="keyword">auto</span> sessions = m_service-&gt;sessionInfosByProtocolID(m_protocolId);</span><br><span class="line">    m_connectedNode = sessions.<span class="built_in">size</span>();</span><br><span class="line">    NodeIDs nodeIdList;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> session : sessions)</span><br><span class="line">    &#123;</span><br><span class="line">        ...</span><br><span class="line">        nodeIdList.push_back(session.nodeID());</span><br><span class="line">        broadcastMark(session.nodeID(), packetType, key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/// send messages according to node id</span></span><br><span class="line">    m_service-&gt;asyncMulticastMessageByNodeIDList(</span><br><span class="line">        nodeIdList, transDataToMessage(data, packetType, ttl));</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;dev::p2p::P2PInterface&gt; m_service;</span><br></pre></td></tr></table></figure><br>这里根据 m_protocolId 从 p2pservice 中获取 session，session 里面就保存了nodeID。前面已经说过，m_protocolId 是根据 groupId 生成的，因此 p2pservice 就可以根据 m_protocolId 从Ledge中读取所在group的节点列表。</p>
+<h3 id="3-2-2-ConsensusEngineBase-sealerList"><a href="#3-2-2-ConsensusEngineBase-sealerList" class="headerlink" title="3.2.2 ConsensusEngineBase::sealerList()"></a>3.2.2 ConsensusEngineBase::sealerList()</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ConsensusEngineBase.h</span></span><br><span class="line"><span class="function">dev::h512s <span class="title">sealerList</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">ReadGuard <span class="title">l</span><span class="params">(m_sealerListMutex)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> m_sealerList;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="comment">/// append sealer</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">appendSealer</span><span class="params">(h512 <span class="keyword">const</span>&amp; _sealer)</span> <span class="keyword">override</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">WriteGuard <span class="title">l</span><span class="params">(m_sealerListMutex)</span></span>;</span><br><span class="line">            m_sealerList.push_back(_sealer);</span><br><span class="line">        &#125;</span><br><span class="line">        resetConfig();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在sealer中需要读取节点列表时会调用这个方法，直接返回 m_sealerList，但它并不负责对m_sealerList的更新维护。这里的 appendSealer() 方法没有被任何地方调用，貌似是用不着的？</p>
+<h3 id="3-2-3-BlockChainImp-sealerList"><a href="#3-2-3-BlockChainImp-sealerList" class="headerlink" title="3.2.3 BlockChainImp::sealerList()"></a>3.2.3 BlockChainImp::sealerList()</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dev::h512s <span class="title">BlockChainImp::sealerList</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int64_t</span> blockNumber = number();</span><br><span class="line">    <span class="function">UpgradableGuard <span class="title">l</span><span class="params">(m_nodeListMutex)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (m_cacheNumBySealer == blockNumber)</span><br><span class="line">    &#123;</span><br><span class="line">        BLOCKCHAIN_LOG(TRACE) &lt;&lt; LOG_DESC(<span class="string">"[#sealerList]Get sealer list by cache"</span>)</span><br><span class="line">                              &lt;&lt; LOG_KV(<span class="string">"size"</span>, m_sealerList.<span class="built_in">size</span>());</span><br><span class="line">        <span class="keyword">return</span> m_sealerList;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//获取最新的节点列表</span></span><br><span class="line">    dev::h512s <span class="built_in">list</span> = getNodeListByType(blockNumber, NODE_TYPE_SEALER);</span><br><span class="line">    <span class="function">UpgradeGuard <span class="title">ul</span><span class="params">(l)</span></span>;</span><br><span class="line">    m_cacheNumBySealer = blockNumber;</span><br><span class="line">    m_sealerList = <span class="built_in">list</span>;　　　<span class="comment">//更新 m_sealerList</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每次调用 BlockChainImp::sealerList()  都会调用 getNodeListByType 方法读取最新的sealer列表，并更新m_sealerList，使得在ConsensusEngineBase中调用sealerList返回的是最新的m_sealerList。</p>
+<h3 id="3-2-4-getNodeListByType"><a href="#3-2-4-getNodeListByType" class="headerlink" title="3.2.4 getNodeListByType()"></a>3.2.4 getNodeListByType()</h3><p>getNodeListByType() 是从账本中读取节点列表:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dev::h512s <span class="title">BlockChainImp::getNodeListByType</span><span class="params">(<span class="keyword">int64_t</span> blockNumber, <span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; type)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    dev::h512s <span class="built_in">list</span>;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//获取共识模块的缓存</span></span><br><span class="line">        Table::Ptr tb = getMemoryTableFactory()-&gt;openTable(storage::SYS_CONSENSUS);</span><br><span class="line">        <span class="keyword">if</span> (!tb)</span><br><span class="line">        &#123;</span><br><span class="line">            BLOCKCHAIN_LOG(ERROR) &lt;&lt; LOG_DESC(<span class="string">"[#getNodeListByType]Open table error"</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//获取节点列表</span></span><br><span class="line">        <span class="keyword">auto</span> nodes = tb-&gt;select(PRI_KEY, tb-&gt;newCondition());</span><br><span class="line">        <span class="keyword">if</span> (!nodes)</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; nodes-&gt;<span class="built_in">size</span>(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">auto</span> node = nodes-&gt;<span class="built_in">get</span>(i);</span><br><span class="line">            <span class="keyword">if</span> (!node)</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((node-&gt;getField(NODE_TYPE) == type) &amp;&amp;</span><br><span class="line">                (boost::lexical_cast&lt;<span class="keyword">int</span>&gt;(node-&gt;getField(NODE_KEY_ENABLENUM)) &lt;= blockNumber))</span><br><span class="line">            &#123;</span><br><span class="line">                h512 nodeID = h512(node-&gt;getField(NODE_KEY_NODEID));</span><br><span class="line">                <span class="built_in">list</span>.push_back(nodeID);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (<span class="built_in">std</span>::exception&amp; e)</span><br><span class="line">    &#123;</span><br><span class="line">        BLOCKCHAIN_LOG(ERROR) &lt;&lt; LOG_DESC(<span class="string">"[#getNodeListByType]Failed"</span>)</span><br><span class="line">                              &lt;&lt; LOG_KV(<span class="string">"EINFO"</span>, boost::diagnostic_information(e));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">stringstream</span> s;</span><br><span class="line">    s &lt;&lt; <span class="string">"[#getNodeListByType] "</span> &lt;&lt; type &lt;&lt; <span class="string">":"</span>;</span><br><span class="line">    <span class="keyword">for</span> (dev::h512 node : <span class="built_in">list</span>)</span><br><span class="line">        s &lt;&lt; toJS(node) &lt;&lt; <span class="string">","</span>;</span><br><span class="line">    BLOCKCHAIN_LOG(TRACE) &lt;&lt; LOG_DESC(s.str());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>从 SYS_CONSENSUS 的 MemoryTable (账本白名单)中读取的</p>
+<h3 id="3-2-5-updateConsensusNodeList"><a href="#3-2-5-updateConsensusNodeList" class="headerlink" title="3.2.5 updateConsensusNodeList()"></a>3.2.5 updateConsensusNodeList()</h3><p>除了在获取节点列表的时候会触发更新的操作，在ConsensusEngineBase中有直接更新节点列表的方法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ConsensusEngineBase.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConsensusEngineBase::updateConsensusNodeList</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">stringstream</span> s2;</span><br><span class="line">        s2 &lt;&lt; <span class="string">"[updateConsensusNodeList] Sealers:"</span>;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">WriteGuard <span class="title">l</span><span class="params">(m_sealerListMutex)</span></span>;</span><br><span class="line">            <span class="comment">//获取sealer节点列表</span></span><br><span class="line">            m_sealerList = m_blockChain-&gt;sealerList();</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">        s2 &lt;&lt; <span class="string">"Observers:"</span>;</span><br><span class="line">        <span class="comment">//获取observer节点列表</span></span><br><span class="line">        dev::h512s observerList = m_blockChain-&gt;observerList();</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-3-动态群组实现"><a href="#3-3-动态群组实现" class="headerlink" title="3.3 动态群组实现"></a>3.3 动态群组实现</h2><p>通过控制台可以实现群组关系的变更</p>
+<h3 id="3-3-1-控制台"><a href="#3-3-1-控制台" class="headerlink" title="3.3.1 控制台"></a>3.3.1 控制台</h3><p>通过控制台可以让节点加入某group<br>新节点加入群组前，需要确保：</p>
+<ul>
+<li>新加入NodeID存在</li>
+<li>群组内节点正常共识：正常共识的节点会输出+++日志<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 2. 将node2加入到共识节点</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> addSealer后面的参数是上步获取的node ID</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> [group:2]&gt; addSealer 6dc585319e4cf7d73ede73819c6966ea4bed74aadbbcba1bbb777132f63d355965c3502bed7a04425d99cdcfb7694a1c133079e6d9b0ab080e3b874882b95ff4</span></span><br><span class="line">&#123;</span><br><span class="line">    "code":0,</span><br><span class="line">    "msg":"success"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>查看控制台的源码：<br><a href="https://github.com/FISCO-BCOS/console/blob/master/src/main/java/console/ConsoleClient.java" target="_blank" rel="noopener">https://github.com/FISCO-BCOS/console/blob/master/src/main/java/console/ConsoleClient.java</a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">"addSealer"</span>:</span><br><span class="line">    precompiledFace.addSealer(params);</span><br><span class="line">    <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">precompiledFace.addSealer：</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addSealer</span><span class="params">(String[] params)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        String nodeId = params[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">"-h"</span>.equals(nodeId) || <span class="string">"--help"</span>.equals(nodeId)) &#123;</span><br><span class="line">            HelpInfo.addSealerHelp();</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (nodeId.length() != <span class="number">128</span>) &#123;</span><br><span class="line">            ConsoleUtils.printJson(</span><br><span class="line">                    PrecompiledCommon.transferToJson(PrecompiledCommon.InvalidNodeId));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            ConsensusService consensusService = <span class="keyword">new</span> ConsensusService(web3j, credentials);</span><br><span class="line">            String result;</span><br><span class="line">            result = consensusService.addSealer(nodeId);</span><br><span class="line">            ConsoleUtils.printJson(result);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><br>调用了consensusService.addSealer方法，ConsensusService位于 web3sdk 中，控制台通过web3sdk 向链上发送了一个增加节点的请求。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.fisco.bcos.web3j.precompile.consensus.ConsensusService;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-3-2-Web3SDK"><a href="#3-3-2-Web3SDK" class="headerlink" title="3.3.2 Web3SDK"></a>3.3.2 Web3SDK</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ConsensusService.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">addSealer</span><span class="params">(String nodeID)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!isValidNodeID(nodeID)) &#123;</span><br><span class="line">            <span class="keyword">return</span> PrecompiledCommon.transferToJson(PrecompiledCommon.P2pNetwork);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//获取原有节点列表</span></span><br><span class="line">        List&lt;String&gt; sealerList = web3j.getSealerList().send().getResult();</span><br><span class="line">        <span class="comment">//如果已经存在该节点</span></span><br><span class="line">        <span class="keyword">if</span> (sealerList.contains(nodeID)) &#123;</span><br><span class="line">            <span class="keyword">return</span> PrecompiledCommon.transferToJson(PrecompiledCommon.SealerList);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//不存在则添加</span></span><br><span class="line">        TransactionReceipt receipt = consensus.addSealer(nodeID).send();</span><br><span class="line">        <span class="keyword">return</span> PrecompiledCommon.handleTransactionReceipt(receipt, web3j);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里通过调用consensus的addSealer方法。<br>consensus是一个合约，它的函数体是空的，说明它是预编译合约的接口合约，它的具体逻辑在源码的Precompiled模块中。<br>接口合约：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity ^0.4.2;</span><br><span class="line"></span><br><span class="line">contract Consensus &#123;</span><br><span class="line">    function addSealer(string nodeID) public returns(int);</span><br><span class="line">    function addObserver(string nodeID) public returns(int);</span><br><span class="line">    function remove(string nodeID) public returns(int);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-3-3-源码预编译模块"><a href="#3-3-3-源码预编译模块" class="headerlink" title="3.3.3 源码预编译模块"></a>3.3.3 源码预编译模块</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">libprecompiled/ConsensusPrecompiled.cpp</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> CSS_METHOD_ADD_SEALER = <span class="string">"addSealer(string)"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> CSS_METHOD_ADD_SER = <span class="string">"addObserver(string)"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> CSS_METHOD_REMOVE = <span class="string">"remove(string)"</span>;</span><br><span class="line">ConsensusPrecompiled::ConsensusPrecompiled()</span><br><span class="line">&#123;</span><br><span class="line">    name2Selector[CSS_METHOD_ADD_SEALER] = getFuncSelector(CSS_METHOD_ADD_SEALER);</span><br><span class="line">    name2Selector[CSS_METHOD_ADD_SER] = getFuncSelector(CSS_METHOD_ADD_SER);</span><br><span class="line">    name2Selector[CSS_METHOD_REMOVE] = getFuncSelector(CSS_METHOD_REMOVE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>call方法实现了合约方法的逻辑:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">bytes <span class="title">ConsensusPrecompiled::call</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    ExecutiveContext::Ptr context, bytesConstRef param, Address <span class="keyword">const</span>&amp; origin)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PRECOMPILED_LOG(TRACE) &lt;&lt; LOG_BADGE(<span class="string">"ConsensusPrecompiled"</span>) &lt;&lt; LOG_DESC(<span class="string">"call"</span>)</span><br><span class="line">                           &lt;&lt; LOG_KV(<span class="string">"param"</span>, toHex(param));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// parse function name</span></span><br><span class="line">    <span class="keyword">uint32_t</span> func = getParamFunc(param);</span><br><span class="line">    bytesConstRef data = getParamData(param);</span><br><span class="line"></span><br><span class="line">    dev::eth::ContractABI abi;</span><br><span class="line">    bytes out;</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    showConsensusTable(context);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (func == name2Selector[CSS_METHOD_ADD_SEALER])  <span class="comment">//addSealer方法</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// addSealer(string)</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> nodeID;</span><br><span class="line">        abi.abiOut(data, nodeID);</span><br><span class="line">        <span class="comment">// Uniform lowercase nodeID</span></span><br><span class="line">        boost::to_lower(nodeID);</span><br><span class="line"></span><br><span class="line">        PRECOMPILED_LOG(DEBUG) &lt;&lt; LOG_BADGE(<span class="string">"ConsensusPrecompiled"</span>) &lt;&lt; LOG_DESC(<span class="string">"addSealer func"</span>)</span><br><span class="line">                               &lt;&lt; LOG_KV(<span class="string">"nodeID"</span>, nodeID);</span><br><span class="line">        <span class="keyword">if</span> (nodeID.<span class="built_in">size</span>() != <span class="number">128u</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            PRECOMPILED_LOG(ERROR) &lt;&lt; LOG_BADGE(<span class="string">"ConsensusPrecompiled"</span>)</span><br><span class="line">                                   &lt;&lt; LOG_DESC(<span class="string">"nodeID length error"</span>) &lt;&lt; LOG_KV(<span class="string">"nodeID"</span>, nodeID);</span><br><span class="line">            result = CODE_INVALID_NODEID;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            storage::Table::Ptr table = openTable(context, SYS_CONSENSUS);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//创建一个新condition对象，是一个查询条件，条件为nodeID</span></span><br><span class="line">            <span class="keyword">auto</span> condition = table-&gt;newCondition();</span><br><span class="line">            condition-&gt;EQ(NODE_KEY_NODEID, nodeID);</span><br><span class="line">            <span class="comment">//根据condition从table查找是否已经存在该node</span></span><br><span class="line">            <span class="keyword">auto</span> entries = table-&gt;select(PRI_KEY, condition);</span><br><span class="line">            <span class="keyword">auto</span> entry = table-&gt;newEntry();</span><br><span class="line">            entry-&gt;setField(NODE_TYPE, NODE_TYPE_SEALER);</span><br><span class="line">            entry-&gt;setField(PRI_COLUMN, PRI_KEY);</span><br><span class="line">            entry-&gt;setField(NODE_KEY_ENABLENUM,</span><br><span class="line">                boost::lexical_cast&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt;(context-&gt;blockInfo().number + <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (entries.<span class="built_in">get</span>())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (entries-&gt;<span class="built_in">size</span>() == <span class="number">0u</span>)<span class="comment">//为0,说明table里面不存在该nodeID</span></span><br><span class="line">                &#123;</span><br><span class="line">                    entry-&gt;setField(NODE_KEY_NODEID, nodeID);</span><br><span class="line">                    <span class="comment">//插入该nodeID</span></span><br><span class="line">                    count = table-&gt;insert(PRI_KEY, entry, <span class="built_in">std</span>::make_shared&lt;AccessOptions&gt;(origin));</span><br><span class="line">                    <span class="keyword">if</span> (count == storage::CODE_NO_AUTHORIZED)</span><br><span class="line">                    &#123;</span><br><span class="line">                        PRECOMPILED_LOG(DEBUG)</span><br><span class="line">                            &lt;&lt; LOG_BADGE(<span class="string">"ConsensusPrecompiled"</span>) &lt;&lt; LOG_DESC(<span class="string">"permission denied"</span>);</span><br><span class="line">                        result = storage::CODE_NO_AUTHORIZED;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        PRECOMPILED_LOG(DEBUG) &lt;&lt; LOG_BADGE(<span class="string">"ConsensusPrecompiled"</span>)</span><br><span class="line">                                               &lt;&lt; LOG_DESC(<span class="string">"addSealer successfully"</span>);</span><br><span class="line">                        result = count;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span>　　<span class="comment">//entries不为０，说明table已经存在该node</span></span><br><span class="line">                &#123;</span><br><span class="line">                    count = table-&gt;update(</span><br><span class="line">                        PRI_KEY, entry, condition, <span class="built_in">std</span>::make_shared&lt;AccessOptions&gt;(origin));</span><br><span class="line">                    <span class="keyword">if</span> (count == storage::CODE_NO_AUTHORIZED)</span><br><span class="line">                    &#123;</span><br><span class="line">                        PRECOMPILED_LOG(DEBUG)</span><br><span class="line">                            &lt;&lt; LOG_BADGE(<span class="string">"ConsensusPrecompiled"</span>) &lt;&lt; LOG_DESC(<span class="string">"permission denied"</span>);</span><br><span class="line">                        result = storage::CODE_NO_AUTHORIZED;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        PRECOMPILED_LOG(DEBUG) &lt;&lt; LOG_BADGE(<span class="string">"ConsensusPrecompiled"</span>)</span><br><span class="line">                                               &lt;&lt; LOG_DESC(<span class="string">"addSealer successfully"</span>);</span><br><span class="line">                        result = count;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span></span><br><span class="line">    .....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>addSealer 的基本流程为：</p>
+<ol>
+<li>打开SYS_CONSENSUS的table(账本节点白名单)</li>
+<li>使用nodeId创建查询条件 condition</li>
+<li>使用 condition 从 table 里面查找<br>3.1 查找得到，说明已经存在该nodeId<br>3.2 找不到，则插入 MemotyTable.insert()<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">storage::<span class="function">Table::Ptr <span class="title">Precompiled::openTable</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    ExecutiveContext::Ptr context, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; tableName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TableFactoryPrecompiled::Ptr tableFactoryPrecompiled =</span><br><span class="line">        <span class="built_in">std</span>::dynamic_pointer_cast&lt;TableFactoryPrecompiled&gt;(</span><br><span class="line">            context-&gt;getPrecompiled(Address(<span class="number">0x1001</span>)));</span><br><span class="line">    <span class="keyword">return</span> tableFactoryPrecompiled-&gt;getMemoryTableFactory()-&gt;openTable(tableName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="3-3-4-总结"><a href="#3-3-4-总结" class="headerlink" title="3.3.4 总结"></a>3.3.4 总结</h3><p>新增节点到群组的流程：</p>
+<ol>
+<li>通过 console 调用 addSealer 方法</li>
+<li>addSealer 方法调用预编译合约 ConsensusPrecompiled 的 addSealer 方法</li>
+<li>addSealer 方法将 nodeId 插入到名字为 SYS_CONSENSUS 的 MemotyTable(账本节点白名单) 中</li>
+</ol>
+<p>使用发送交易共识的方式修改账本白名单，保证了账本白名单群组内的一致性。</p>
+<h2 id="3-4-动态群组实现总结"><a href="#3-4-动态群组实现总结" class="headerlink" title="3.4 动态群组实现总结"></a>3.4 动态群组实现总结</h2><p>每个群组均持有一个账本白名单，用于维护该群组的节点列表。为了保证账本白名单群组内一致性，仅可通过发交易共识的方式修改账本白名单，修改账本白名单的合约是预编译合约。在运行过程中，需要获取群组信息的时候是从账本白名单中读取的，保证能够实时得到最新的节点列表。</p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blockchain/bcos-group-architecture/" data-toggle="tooltip" data-placement="top" title="BCOS 动态群组架构">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/catalogue/catalogue/" data-toggle="tooltip" data-placement="top" title="本站目录">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#BCOS-动态群组架构源码分析"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">BCOS 动态群组架构源码分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-1-群组信息的初始化"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">3.1 群组信息的初始化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-1-groupId-和-protocol-id"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">3.1.1 groupId 和 protocol_id</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-2-pbftEngine-和-pbftSealer"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">3.1.2 pbftEngine 和 pbftSealer</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-3-service"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">3.1.3 service</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-4-Ledger-的初始化"><span class="toc-nav-number">1.1.4.</span> <span class="toc-nav-text">3.1.4 Ledger 的初始化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-5-总结"><span class="toc-nav-number">1.1.5.</span> <span class="toc-nav-text">3.1.5 总结</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-2-群组信息的读取和动态更新"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">3.2 群组信息的读取和动态更新</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-1-获取群组信息的时机"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">3.2.1 获取群组信息的时机</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-2-ConsensusEngineBase-sealerList"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">3.2.2 ConsensusEngineBase::sealerList()</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-3-BlockChainImp-sealerList"><span class="toc-nav-number">1.2.3.</span> <span class="toc-nav-text">3.2.3 BlockChainImp::sealerList()</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-4-getNodeListByType"><span class="toc-nav-number">1.2.4.</span> <span class="toc-nav-text">3.2.4 getNodeListByType()</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-5-updateConsensusNodeList"><span class="toc-nav-number">1.2.5.</span> <span class="toc-nav-text">3.2.5 updateConsensusNodeList()</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-3-动态群组实现"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">3.3 动态群组实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-1-控制台"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">3.3.1 控制台</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-2-Web3SDK"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">3.3.2 Web3SDK</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-3-源码预编译模块"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">3.3.3 源码预编译模块</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-4-总结"><span class="toc-nav-number">1.3.4.</span> <span class="toc-nav-text">3.3.4 总结</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-4-动态群组实现总结"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">3.4 动态群组实现总结</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#blockchain" title="blockchain">blockchain</a>
+                        
+                          <a class="tag" href="/tags/#bcos" title="bcos">bcos</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>

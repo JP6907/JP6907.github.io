@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Java 内存模型 - 周佳鹏 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://zhoujiapeng.top/java/java-memoryModel/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/img/article_header/article_header.png')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#java" title="java">java</a>
+                            
+                              <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                            
+                              <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                            
+                              <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                            
+                        </div>
+                        <h1>Java 内存模型</h1>
+                        <h2 class="subheading">Java 内存模型</h2>
+                        <span class="meta">
+                            Posted by ZJP on
+                            2019-09-26
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">4.7k</span> and
+                                Reading Time <span class="post-count">16</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">周佳鹏的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">Photography</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="Java-内存模型"><a href="#Java-内存模型" class="headerlink" title="Java 内存模型"></a>Java 内存模型</h1><h1 id="1-硬件的效率与一致性"><a href="#1-硬件的效率与一致性" class="headerlink" title="1. 硬件的效率与一致性"></a>1. 硬件的效率与一致性</h1><p>&emsp;Java 内存模型的设计关键的一点在于处理并发问题，物理机遇到的并发问题与虚拟机中的情况有不少相似之处，物理机对并发的处理方案对于虚拟机的实现有相当大的参考意义。<br>&emsp;由于计算机的储存设备与处理器的运算速度有几个数量级的差距，所以现代计算机不得不加上一层读写速度尽可能接近处理器的<strong>高速缓存（cache）</strong>来作为内存和处理器之间的缓冲：将运算需要使用的数据复制到缓存中，让运算能够快速进行，当运算结束之后再从缓存同步回内存之中，这样处理器就无须等待缓慢的内存读写了。<br>&emsp;基于高速缓存的存储交互很好地解决了处理器与内存的速度矛盾，但是引入了一个新的问题：<strong>缓存一致性</strong>。<br><img src="https://gitee.com/JP6907/Pic/raw/master/java/cache.png" alt="cache"></p>
+<p>&emsp;如图所示，在多处理器系统中，每个处理器都有自己的高速缓存，而它们又共享同一主内存。当多个处理器的运算任务都涉及同一块主内存区域时，将可能导致各自的缓存数据不一致，那同步回主内存的数据应该以谁的缓存数据为准？针对这个问题，需要有某种缓存一致性协议。Java 中的内存模型，可以理解为在特定的操作协议下，对特定的内存或高速缓存进行读写访问的抽象过程。<br>&emsp;除了增加高速缓存之外，为了使得处理器内部的运算单元能够尽量被充分利用，处理器可能会对输入的代码进行<strong>乱序执行优化</strong>，处理器会在计算之后将乱序执行的结果重组，保证该结果与顺序执行的结果是一致的，但不保证程序中各个语句计算的先后顺序与输入代码中的顺序一致，因此，如果存在一个计算任务依赖另外一个结算任务的中间结果，那么其顺序性不能靠代码的先后顺序来保证，与处理器的乱序执行优化类似，Java 虚拟机的即时编译器中也有类似的<strong>指令重排序优化</strong>。</p>
+<h1 id="2-Java-内存模型"><a href="#2-Java-内存模型" class="headerlink" title="2. Java 内存模型"></a>2. Java 内存模型</h1><h2 id="2-1-主内存与工作内存"><a href="#2-1-主内存与工作内存" class="headerlink" title="2.1 主内存与工作内存"></a>2.1 主内存与工作内存</h2><p>&emsp;Java 内存模型的主要目标是定义程序中各个变量的访问规则，即虚拟机将变量储存到内存和从内存中取出变量这样的底层细节。这里的变量和Java编程中所说的变量有所区别，它包括了实例字段，静态字段和构成数组对象的元素，但不包括局部变量与方法参数，因为后者是线程私有的，不会被共享，不存在竞争问题。<br>&emsp;Java 内存模型规定了<strong>所有的变量都储存在主内存中</strong>。每个线程还有自己的工作内存，线程的工作内存保存了该线程被使用到的变量的主内存<strong>副本</strong>拷贝，线程对变量的所有操作（读取、赋值）都必须在工作内存中进行，而不能直接读写主内存中的变量。不同的线程之间无法直接访问对方工作内存的变量，线程间变量值的传递均需要通过主内存来完成。<br><img src="https://gitee.com/JP6907/Pic/raw/master/java/java-memory-model.png?raw=true" alt="java-memory-model"></p>
+<h2 id="2-2-内存间交互操作"><a href="#2-2-内存间交互操作" class="headerlink" title="2.2 内存间交互操作"></a>2.2 内存间交互操作</h2><p>&emsp;关于主内存与工作内存之间具体的交互协议，即一个变量如何从主内存拷贝到工作内存，如何从工作内存同步回主内存之类的实现细节，java内存模型中定义了8种操作来完成，虚拟机实现时必须保证这8种操作都是原子的、不可分割的(对于long和double类型的变量来说，load、store、read跟write在某些平台上允许例外)。<br>8种基本操作：</p>
+<ul>
+<li>lock(锁定):所用于主内存变量，它把一个变量标识为一条线程独占的状态。</li>
+<li>unlock(解锁):解锁后的变量才能被其他线程锁定。</li>
+<li>read(读取):所用于主内存变量，它把一个主内存变量的值，读取到工作内存中。</li>
+<li>load(载入):所用于工作内存变量，它把read读取的值，放到工作内存的变量副本中。</li>
+<li>use(使用):作用于工作内存变量，它把工作内存变量的值传递给执行引擎，当JVM遇到一个变量读取指令就会执行这个操作。</li>
+<li>assign(赋值):作用于工作内存变量，它把一个从执行引擎接收到的值赋值给工作内存变量。</li>
+<li>store(存储):作用域工作内存变量，它把工作内存变量值传送到主内存中。</li>
+<li>write(写入):作用于主内存变量，它把store从工作内存中得到的变量值写入到主内存变量中<br>&emsp;java内存模型还规定了在执行上述8种基本操作时必须满足如下规则：</li>
+<li>不允许read和load、store和write操作之一单独出现，即不允许加载或同步工作到一半。</li>
+<li>不允许一个线程丢弃它最近的assign操作，即变量在工作内存中改变了之后，必须吧改变化同步回主内存。</li>
+<li>不允许一个线程无原因地（无assign操作）把数据从工作内存同步到主内存中。</li>
+<li>一个新的变量只能在主内存中诞生。</li>
+<li>一个变量在同一时刻只允许一条线程对其进行lock操作，但lock操作可以被同一条线程重复执行多次，，多次lock之后必须要执行相同次数的unlock操作，变量才会解锁。</li>
+<li>如果对一个对象进行lock操作，那会清空工作内存变量中的值，在执行引擎使用这个变量前，需要重新执行load或assign操作初始化变量的值。</li>
+<li>如果一个变量事先没有被lock，就不允许对它进行unlock操作，也不允许去unlock一个被其他线程锁住的变量。</li>
+<li>对一个变量执行unlock操作之前，必须将此变量同步回主内存中（执行store、write）。<br>&emsp;有如上8种内存访问操作以及规则限定，再加上对volatile的一些特殊规定，就已经完全确定了java程序中哪些内存访问操作是在并发下安全的。</li>
+</ul>
+<h2 id="2-3-内存可见性问题"><a href="#2-3-内存可见性问题" class="headerlink" title="2.3 内存可见性问题"></a>2.3 内存可见性问题</h2><p>&emsp;Java 内存模型规定,将所有的变量都存放在主内存中,当线程使用变量时,会把主内存里面的变量复制到自己的工作空间或者叫作工作内存,线程读写变量时操作的是自己工作内存中的变量 。<br>&emsp;当一个线程操作共享变量时,它首先从主内存复制共享变量到自己的工作内存,然后对工作内存里的变量进行处理,处理完后将变量值更新到主内存。那么假如线程A和线程B同时处理 一个共享变量,会出现什么情况?<br>&emsp;假设线程 A 和线程 B 使用不同CPU执行,并且当前两级 Cache 都为空,那么这时候由于Cache的存在,将会导致内存不可见问 题, 具体看下面的分析。</p>
+<ul>
+<li>线程 A 首先获取共享变量 X 的值,由于两级 Cache 都没有命中 ,所以加载主内存中 X 的值,假如为0。然后把X=0的值缓存到两级缓存,线程 A 修改 X 的值为1,然后将其写入两级 Cache,并且刷新到主内存。线程 A 操作完毕后,线程 A 所在的CPU的两级 Cache 内和主内存里面的 X 的值都是l。</li>
+<li>线程 B 获取 X 的值,首先一级缓存没有命中,然后看二级缓存,二级缓存命中了,所以返回 X= 1;到这里一切都是正常的,因为这时候主内存中也是X= l。然后线程 B 修改X的值为 2 ,并将其存放到线程 2 所在的一级 Cache 和共享二级 Cache 中,最后更新主内存中 X 的值为 2,到这里一切都是好的 。</li>
+<li>线程 A 这次又需要修改 X 的值,获取时一级缓存命中,并且 X= l ,到这里问题就出现了,明明线程 B 已经把X的值修改为了 2 ,为何线程 A 获取的还是 l 呢? 这<br>就是共享变量的内存不可见问题 , 也就是线程 B 写入的值对线程 A 不可见。<br>&emsp;使用 Java 中的 volatile 关键字就可以解决内存不可见问题。</li>
+</ul>
+<h2 id="2-4-伪共享"><a href="#2-4-伪共享" class="headerlink" title="2.4 伪共享"></a>2.4 伪共享</h2><h3 id="2-4-1-什么是伪共享"><a href="#2-4-1-什么是伪共享" class="headerlink" title="2.4.1 什么是伪共享"></a>2.4.1 什么是伪共享</h3><p>&emsp;为了解决计算机系统中主内存与 CPU 之间运行速度差问题,会在 CPU 与主内存之间添加一级或者多级高速缓冲存储器( Cache )。这个 Cache 一般是被集成到 CPU 内部的,所以也叫 CPU Cache,下图所示是两级 Cache 结构。<br><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/cache.png?raw=true" alt="cache"></p>
+<p>&emsp;在 Cache 内部是按行存储的,其中每一行称为一个 Cache 行。 <strong>Cache 行</strong>是 Cache 与主内存进行数据交换的单位, Cache 行的大小一般为2的幂次数字节。<br><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/cacheline.png?raw=true" alt="cacheline"></p>
+<p>&emsp;当 CPU 访问某个变量时,首先会去看 CPU Cache 内是否有该变量,如果有则直接从中获取,否则就去主内存里面获取该变量,然后把<strong>该变量所在内存区域的一个 Cache 行</strong>大小的内存复制到 Cache 中。由于存放到  Cache 行的是内存块而不是单个变量,所以可能会把多个变量存放到一个 Cache 行中 。 当多个线程同时修改一个缓存行里面的多个变量时,由于同时只能有一个线程操作同一个缓存行（缓存一致性协议）,所以相比将每个变量放到 一个缓存行,性能会有所下降,这就是<strong>伪共享</strong>。<br><img src="https://gitee.com/JP6907/Pic/raw/master/java/jvm/cachelineshare.png?raw=true" alt="cachelineshare"></p>
+<p>&emsp;在该图中,变量 x 和 y 同时被放到了 CPU 的一级和二级缓存 ,当线程 l 使用 CPUl 对变量 x 进行更新时 ,首先会修改 CPUl 的一级缓存变量 x 所在的缓存行,这时候在缓存一致性协议下, CPU2 中变量 x 对应的缓存行失效 。那么线程 2 在写入变量 x 时就只能去二级缓存里查找,这就破坏了 一 级缓存。而一级缓存比二级缓存更快 ,这也说明了多个线程不可能 同时去修改自己所使用的 CPU 中相同缓存行里面的变量。更坏的情况是 ,如果CPU 只有一级缓存,则会导致频繁地访问主内存。</p>
+<h3 id="2-4-2-为何会出现伪共享"><a href="#2-4-2-为何会出现伪共享" class="headerlink" title="2.4.2 为何会出现伪共享"></a>2.4.2 为何会出现伪共享</h3><p>&emsp;伪共享的产生是因为<strong>多个变量被放入了一个缓存行中,并且多个线程同时去写入缓存行中不同的变量</strong> 。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> a;</span><br><span class="line"><span class="keyword">long</span> b;</span><br><span class="line"><span class="keyword">long</span> c;</span><br><span class="line"><span class="keyword">long</span> d;</span><br></pre></td></tr></table></figure><br>&emsp;如上代码声明了四个 long 变量,假设缓存行的大小为 32 字节,那么当 CPU 访问变量 a 时 , 发现该变量没有在缓存中,就会去主内存把变量 a 以及内存地址附近的 b、c、d放入缓存行,也就是<strong>地址连续的多个变量才有可能会被放到一个缓存行中</strong>。当创建数组时,数组里面的多个元素就会被放入同一个缓存行。<br>&emsp;根据程序执行的局部性原理，提前将可能需要的数据放入缓存中，能够加快程序执行速度。一个典型的例子是：一个二维数组，按行遍历能够比按列遍历快。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> [][] array = <span class="keyword">new</span> <span class="keyword">long</span> [LINE_NUM][COLUM_NUM];</span><br><span class="line"><span class="comment">//按行遍历</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;LINE_NUM;i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;COLUM_NUM;j++)&#123;</span><br><span class="line">        array[i][j] = i*<span class="number">2</span>+j</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//按列遍历</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;COLUM_NUM;i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;LINE_NUM;j++)&#123;</span><br><span class="line">        array[i][j] = i*<span class="number">2</span>+j</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>&emsp;这是因为数组内数组元素的内存地址是连续的,当访问数组第一个元素时,会把第一个元素后的若干元素一块放入缓存行,这样顺序访问数组元素时会在缓存中直接命中,因而就不会去主内存读取了,后续<br>访问也是这样。而按列访问是跳跃式访问数组元素的,不是顺序的,这破坏了程序访问的局部性原则,并且缓存是有容量控制的,当缓存满了时会根据一定淘汰算法替换缓存行,这会导致从内存置换过来的缓存行的元素还没等到被读取就被替换掉了。</p>
+<h3 id="2-4-3-如何避免伪共享"><a href="#2-4-3-如何避免伪共享" class="headerlink" title="2.4.3 如何避免伪共享"></a>2.4.3 如何避免伪共享</h3><p>&emsp;在 JDK8 之前一般都是通过<strong>字节填充</strong>的方式来避免该问题,也就是创建一个变量时使用填充字段填充该变量所在的缓存行,这样就避免了将多个变量存放在同一个缓存行中,例如如下代码:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FilledLong</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">long</span> value = <span class="number">0L</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">long</span> p1,p2,p3,p4,p5,p6;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>&emsp;假如缓存行为 64 字节,那么我们在 FilledLong 类里面填充了 6 个 long 类型的变量,每个 long 类型变量占用 8 字节,加上 value 变量的 8 字节总共 56 字节。另外,这里FilledLong 是一个类对象, 而类对象的字节码的对象头占用 8 字节,所以一个 FilledLong对象实际会占用 64 字节的内存,这正好可以放入一个缓存行 。<br>&emsp;JDK 8 提供了一个 <strong>sun.misc.Contended</strong> 注解,用来解决伪共享问题，可以修饰类或变量。将上面代码修改为如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@sun</span>.misc.Contended</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FilledLong</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">long</span> value = <span class="number">0L</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>&emsp;需要注意的是,在默认情况下,@Contended 注解只用于Java核心类, 比如rt包下的类。如果用户类路径下的类需要使用这个注解, 则需要添加JVM参数:-XX:-RestrictContended,填充的宽度默认为 128 ,要自定义宽度则可以设置 -XX:ContendPaddingWidth 参数。</p>
+<h2 id="2-5-原子性、可见性和有序性"><a href="#2-5-原子性、可见性和有序性" class="headerlink" title="2.5 原子性、可见性和有序性"></a>2.5 原子性、可见性和有序性</h2><p>&emsp;Java内存模型是围绕着并发过程中如何处理<strong>原子性、可见性、有序性</strong>这3个特征来建立的，我们逐个来看一下哪些操作实现了这三个特性。</p>
+<h3 id="2-5-1-原子性"><a href="#2-5-1-原子性" class="headerlink" title="2.5.1 原子性"></a>2.5.1 原子性</h3><p>&emsp;由内存模型直接保证原子性变量操作包括read、load、assign、use、store、write，我们大致可以认为<strong>基本数据类型的访问读写是具备原子性</strong>的（例外就是long和double的非原子性协定，可以参考文章《Java 一些变量类型的特殊规则》）。<br>&emsp;如果需要一个更大范围的原子性保证，Java内存模型还提供了lock和unlock操作来满足这种需求，尽管虚拟机没有把lock和unlock直接开放给用户，但是却提供了更高层次的字节码指令<strong>monitorenter和monitorexit</strong>来隐式使用这两个操作，这两个字节码指令反映到Java代码中就是同步块—-<strong>synchronized</strong>关键字，因此在synchronized块之间的操作也具备原子性。</p>
+<h3 id="2-5-2-可见性"><a href="#2-5-2-可见性" class="headerlink" title="2.5.2 可见性"></a>2.5.2 可见性</h3><p>&emsp;可见性是指当一个线程修改了共享变量的值，其它线程能够立即得知这个修改。例如对于<strong>volatile</strong>变量，Java内存模型是通过在变量修改后将新值同步回主内存，在变量读取前从主内存刷性变量值这种依赖主内存作为传递媒介的方式来实现可见性。普通变量与volatile变量的区别是：volatile的特殊规则保证新值能立即同步到主内存，以及每次使用前立即从主内存刷新，所以说volatile保证了多线程操作时变量的可见性。<br>&emsp;除了volatile之外，Java还有两个关键字能实现可见性，即<strong>synchronized和final</strong>。synchronized的可见性是由“对一个变量执行unlock操作之前，必须把此变量同步回主内存中(执行store、write)”这条规则获得的。而final关键字的可见性是指：被final修饰的字段在构造器中一旦初始化完成，并且构造器没有把“this”引用传递出去（this引用逃逸），那么在其它线程中就能看见final字段的值。</p>
+<h3 id="2-5-3-有序性"><a href="#2-5-3-有序性" class="headerlink" title="2.5.3 有序性"></a>2.5.3 有序性</h3><p>&emsp;前面我们说到，为了使得处理器内部的运算单元能够尽量被充分利用，处理器可能会对输入的代码进行<strong>乱序执行优化</strong>，处理器会在计算之后将乱序执行的结果重组，保证该结果与顺序执行的结果是一致的，与处理器的乱序执行优化类似，Java 虚拟机的即时编译器中也有类似的<strong>指令重排序优化</strong>。Java程序中天然的有序性可以总结为一句话：如果在本线程内观察，所有操作都是有序的；如果在一个线程观察另外一个线程，所有操作都是无序的。后半句是指“指令重排序“现象和”工作内存与主内存同步延迟“现象。<br>&emsp;Java提供了volaile和synchronized两个关键字来保证线程之间操作的有序性，volaile关键字本身就包含了禁止指令重排序的语义(可以参考文章《Java 一些变量类型的特殊规则》），而synchronized则是由”一个变量在同一时刻只允许一条线程对其进行lock操作“这条规则获得的，这条规则决定了持有同一个锁的两个同步块只能串行地进入。</p>
+<h2 id="3-volatile-的语义"><a href="#3-volatile-的语义" class="headerlink" title="3. volatile 的语义"></a>3. volatile 的语义</h2><p><a href="http://zhoujiapeng.top/java/java-special-variable">《volatile 的特殊规则和 long&amp;&amp;double 的非原子协定》</a></p>
+<h2 id="4-long-amp-amp-double-的非原子协定"><a href="#4-long-amp-amp-double-的非原子协定" class="headerlink" title="4. long&amp;&amp;double 的非原子协定"></a>4. long&amp;&amp;double 的非原子协定</h2><p><a href="http://zhoujiapeng.top/java/java-special-variable">《volatile 的特殊规则和 long&amp;&amp;double 的非原子协定》</a></p>
+<p>&nbsp;<br>&nbsp;</p>
+<blockquote>
+<p>参考：<br>《深入理解Java虚拟机》<br>《Java并发编程之美》</p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/java/java-aba-question/" data-toggle="tooltip" data-placement="top" title="Java 并发编程 之 ABA 问题">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/java/java-threadPoolExecutor-statusControl/" data-toggle="tooltip" data-placement="top" title="线程池 之 ThreadPoolExecutor 状态控制">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2947902768"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                <!--  -->
+                
+                    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+                    <script type="text/javascript">
+                       (function(d, s) {
+                           var j, e = d.getElementsByTagName(s)[0];
+                    
+                           if (typeof LivereTower === 'function') { return; }
+                    
+                           j = d.createElement(s);
+                           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                           j.async = true;
+                    
+                           e.parentNode.insertBefore(j, e);
+                       })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                    <!-- 来必力City版 公共JS代码 end -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC80NjIwNi8yMjcxNw=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+                <!--  -->
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Java-内存模型"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Java 内存模型</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-硬件的效率与一致性"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. 硬件的效率与一致性</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-Java-内存模型"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. Java 内存模型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-1-主内存与工作内存"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">2.1 主内存与工作内存</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-2-内存间交互操作"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">2.2 内存间交互操作</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-3-内存可见性问题"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">2.3 内存可见性问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-4-伪共享"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">2.4 伪共享</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-4-1-什么是伪共享"><span class="toc-nav-number">3.4.1.</span> <span class="toc-nav-text">2.4.1 什么是伪共享</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-4-2-为何会出现伪共享"><span class="toc-nav-number">3.4.2.</span> <span class="toc-nav-text">2.4.2 为何会出现伪共享</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-4-3-如何避免伪共享"><span class="toc-nav-number">3.4.3.</span> <span class="toc-nav-text">2.4.3 如何避免伪共享</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-5-原子性、可见性和有序性"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">2.5 原子性、可见性和有序性</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-5-1-原子性"><span class="toc-nav-number">3.5.1.</span> <span class="toc-nav-text">2.5.1 原子性</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-5-2-可见性"><span class="toc-nav-number">3.5.2.</span> <span class="toc-nav-text">2.5.2 可见性</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-5-3-有序性"><span class="toc-nav-number">3.5.3.</span> <span class="toc-nav-text">2.5.3 有序性</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-volatile-的语义"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">3. volatile 的语义</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-long-amp-amp-double-的非原子协定"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">4. long&amp;&amp;double 的非原子协定</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#java" title="java">java</a>
+                        
+                          <a class="tag" href="/tags/#编程语言" title="编程语言">编程语言</a>
+                        
+                          <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                        
+                          <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://zhoujiapeng.top" target="_blank">ZJP</a></li>
+                    
+                        <li><a href="http://ian824.xyz/" target="_blank">十七小栈</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/JP6907">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; ZJP 2020 
+                    <br>
+                    Theme by <a href="http://www.huweihuang.com" target="_blank" rel="noopener">huweihuang</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.zhoujiapeng.top" target="_blank" rel="noopener">zhoujiapeng</a> 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px" 
+                        src="https://ghbtns.com/github-btn.html?user=JP6907&repo=hexo-theme-zjp&type=star" >
+                    </iframe> 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://zhoujiapeng.top/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;Try your best!&#34;,&#34;Time will bring a surprise, if you believe. &#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+</body>
+
+</html>
