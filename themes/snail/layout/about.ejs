@@ -1,0 +1,38 @@
+---
+layout: page
+---
+<style type="text/css">
+    header.intro-header{
+        background-position: right; 
+    }
+</style>
+
+<!-- Chinese Version -->
+<div class="zh post-container">
+    <%- page.content %>
+</div>
+
+<% if(config['livere_uid']) { %>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+<% } %>
+
+<% if(config['livere_uid']) { %>
+    <div class="comment">
+        <div id="lv-container" data-id="city" data-uid="<%= config['livere_uid'] %>"></div>
+    </div>
+<% } %>
