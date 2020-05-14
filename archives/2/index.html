@@ -160,6 +160,13 @@
 
                         
                         <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -174,13 +181,6 @@
 
                         
                         <li>
-                            <a href="/photography/">Photography</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/tags/">Tags</a>
                         </li>
                         
@@ -188,7 +188,7 @@
 
                         
                         <li>
-                            <a href="/categories/">Categories</a>
+                            <a href="/photography/">Photography</a>
                         </li>
                         
                     
@@ -246,8 +246,6 @@
                 post-container
             ">
                 <!-- Top -->
-
-    
 
     
 
@@ -398,9 +396,93 @@ JVM
 
     
 
+    
+
+    
+
+    
+
 
 
 <!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/java/java-annotation/">
+                <h2 class="post-title">
+                    Java Annotation
+                </h2>
+                <h3 class="post-subtitle">
+                    Annotation
+                </h3>
+                <div class="post-content-preview">
+                    Java Annotation1. 概述&emsp;Java 注解（Annotation）又称 Java 标注，是 JDK5.0 引入的一种注释机制。&emsp;Java 语言中的类、方法、变量、参数和包等都可以被标注。和 Javadoc 不同，Java 标注可以通过反射获取标注内容。在编译器生成类文件时，标注可以被嵌入到字节码中。Java 虚拟机可以保留标注内容，在运行时可以获取到标注内容......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-10-20
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#java" title="java">java</a>
+                    
+                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
+                    
+                      <a href="/tags/#jdk" title="jdk">jdk</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/java/java-jvm-GC-alogrithm/">
+                <h2 class="post-title">
+                    深入理解Java虚拟机 之 垃圾收集算法
+                </h2>
+                <h3 class="post-subtitle">
+                    Garbage Collection
+                </h3>
+                <div class="post-content-preview">
+                    Garbage Collection1. 概述&emsp;GC 需要完成的3件事为：
+
+哪些内存需要回收？
+什么时候回收？
+如何回收？
+
+&emsp;Java 内存运行时区域的各个部分，其中程序计数器、虚拟机栈、本地方法栈3个区域随线程而生，随线程而灭。而Java堆和方法区则不一样，一个接口的多个实现类需要的内存可能不一样，一个方法的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-10-18
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#java" title="java">java</a>
+                    
+                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
+                    
+                      <a href="/tags/#jvm" title="jvm">jvm</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
 
     
 
@@ -585,9 +667,9 @@ JVM
                     
                       <a href="/tags/#编程语言" title="编程语言">编程语言</a>
                     
-                      <a href="/tags/#并发" title="并发">并发</a>
-                    
                       <a href="/tags/#jvm" title="jvm">jvm</a>
+                    
+                      <a href="/tags/#并发" title="并发">并发</a>
                     
                 </div>
             
@@ -710,79 +792,6 @@ JVM
 
     
 
-    
-
-        <div class="post-preview">
-
-            <a href="/java/java-ThreadLocal/">
-                <h2 class="post-title">
-                    Java 并发编程 之 ThreadLocal
-                </h2>
-                <h3 class="post-subtitle">
-                    ThreadLocal 详解
-                </h3>
-                <div class="post-content-preview">
-                    ThreadLocal 详解1. 前言&emsp;在我们日常 Java Web 开发中难免遇到需要把一个参数层层的传递到最内层，然后中间层根本不需要使用这个参数，或者是仅仅在特定的工具类中使用，这样我们完全没有必要在每一个方法里面都传递这样一个通用的参数。如果有一个办法能够在任何一个类里面想用的时候直接拿来使用就太好了。Java的Web项目大部分都是基于Tomcat，每次访问都是一个新的线程......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by ZJP on
-                    2019-10-13
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#java" title="java">java</a>
-                    
-                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
-                    
-                      <a href="/tags/#并发" title="并发">并发</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
-    
-
-        <div class="post-preview">
-
-            <a href="/java/java-thread-base/">
-                <h2 class="post-title">
-                    Java 并发编程 之 线程基础
-                </h2>
-                <h3 class="post-subtitle">
-                    线程基础
-                </h3>
-                <div class="post-content-preview">
-                    1. 线程的创建与运行&emsp;Java 中由三种线程创建方式，分别为实现 Runnable 接口的run方法，继承 Thread 类并重写run方法，使用 FutureTask 方式。
-1.1 Thread 方式示例1234567891011121314151617181920import java.util.concurrent.Callable;import java.util.co......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by ZJP on
-                    2019-10-13
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#java" title="java">java</a>
-                    
-                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
-                    
-                      <a href="/tags/#并发" title="并发">并发</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
 
 
 <!-- Pager -->
@@ -844,6 +853,10 @@ JVM
     <div class="tags">
         
             
+            <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            
+        
+            
             <a href="/tags/#blockchain" title="blockchain" rel="2">blockchain</a>
             
         
@@ -852,25 +865,25 @@ JVM
             
         
             
-            <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            <a href="/tags/#java" title="java" rel="36">java</a>
             
         
             
-            <a href="/tags/#java" title="java" rel="34">java</a>
-            
-        
-            
-            <a href="/tags/#编程语言" title="编程语言" rel="36">编程语言</a>
-            
-        
-            
-            <a href="/tags/#并发" title="并发" rel="22">并发</a>
+            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
             
         
             
             <a href="/tags/#jvm" title="jvm" rel="10">jvm</a>
             
         
+            
+            <a href="/tags/#并发" title="并发" rel="24">并发</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#scala" title="scala" rel="2">scala</a>
             
         
             
@@ -882,17 +895,13 @@ JVM
             
         
             
-            <a href="/tags/#scala" title="scala" rel="2">scala</a>
+            <a href="/tags/#源码阅读" title="源码阅读" rel="10">源码阅读</a>
             
         
             
         
             
             <a href="/tags/#jdk" title="jdk" rel="3">jdk</a>
-            
-        
-            
-            <a href="/tags/#源码阅读" title="源码阅读" rel="10">源码阅读</a>
             
         
             
@@ -952,6 +961,14 @@ JVM
     <ul>
       
         <li>
+          <a href="/java/java-ConcurrentHashMap2/">Java 并发容器 之 ConcurrentHashMap(二)</a>
+        </li>
+      
+        <li>
+          <a href="/java/java-ConcurrentHashMap/">Java 并发容器 之 ConcurrentHashMap(一)</a>
+        </li>
+      
+        <li>
           <a href="/blockchain/bcos-group-architecture/">BCOS 动态群组架构</a>
         </li>
       
@@ -961,14 +978,6 @@ JVM
       
         <li>
           <a href="/catalogue/catalogue/">本站目录</a>
-        </li>
-      
-        <li>
-          <a href="/java/mybatis-cache/">Mybatis 缓存详解</a>
-        </li>
-      
-        <li>
-          <a href="/java/java-jvm-classLoader/">深入理解Java虚拟机 之 虚拟机类加载机制</a>
         </li>
       
     </ul>
@@ -993,7 +1002,7 @@ JVM
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
 
         <hr>
@@ -1004,19 +1013,19 @@ JVM
     <div class="widget">
       <ul>
         
-          <a href="categories/#blockchain"><li>blockchain</li></a>
-        
           <a href="categories/#catalogue"><li>catalogue</li></a>
         
           <a href="categories/#Hexo"><li>Hexo</li></a>
+        
+          <a href="categories/#blockchain"><li>blockchain</li></a>
         
           <a href="categories/#java"><li>java</li></a>
         
           <a href="categories/#markdown"><li>markdown</li></a>
         
-          <a href="categories/#Spark"><li>Spark</li></a>
-        
           <a href="categories/#scala"><li>scala</li></a>
+        
+          <a href="categories/#Spark"><li>Spark</li></a>
         
           <a href="categories/#cryptography"><li>cryptography</li></a>
         

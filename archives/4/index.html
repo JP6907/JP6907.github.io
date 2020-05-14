@@ -160,6 +160,13 @@
 
                         
                         <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -174,13 +181,6 @@
 
                         
                         <li>
-                            <a href="/photography/">Photography</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/tags/">Tags</a>
                         </li>
                         
@@ -188,7 +188,7 @@
 
                         
                         <li>
-                            <a href="/categories/">Categories</a>
+                            <a href="/photography/">Photography</a>
                         </li>
                         
                     
@@ -246,8 +246,6 @@
                 post-container
             ">
                 <!-- Top -->
-
-    
 
     
 
@@ -398,9 +396,87 @@ JVM
 
     
 
+    
+
+    
+
+    
+
 
 
 <!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/java/java-atomicOperationClass/">
+                <h2 class="post-title">
+                    Java 并发编程 之 原子操作类
+                </h2>
+                <h3 class="post-subtitle">
+                    原子操作类
+                </h3>
+                <div class="post-content-preview">
+                    Java 并发包中的原子操作类1. 原子变量操作类&emsp;JUC 并发包中包含有 Atomiclnteger、AtomicLong 和 AtomicBoolean 等原子性操作类,本文以 AtomicLong 类为例，AtomicLong 是原子性递增或者递减类,其内部使用 Unsafe 来实现,我们看下面的代码：1234567891011121314151617181920212223......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-30
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#java" title="java">java</a>
+                    
+                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
+                    
+                      <a href="/tags/#并发" title="并发">并发</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/java/java-threadLocalRandom/">
+                <h2 class="post-title">
+                    Java 并发编程 之 ThreadLocalRandom
+                </h2>
+                <h3 class="post-subtitle">
+                    ThreadLocalRandom
+                </h3>
+                <div class="post-content-preview">
+                    Java 并发编程 之 ThreadLocalRandom1. Random 类及其局限性&emsp;java.util.Random 是使用比较广泛的随机数生成工具类，而且 java.lang.Math 中的随机数也是使用 java.util.Random 的实例。我们看一下 Random 的 nextInt 方法：12345678910111213141516171819public i......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-29
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#java" title="java">java</a>
+                    
+                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
+                    
+                      <a href="/tags/#并发" title="并发">并发</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
 
     
 
@@ -541,9 +617,9 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
                     
                       <a href="/tags/#编程语言" title="编程语言">编程语言</a>
                     
-                      <a href="/tags/#并发" title="并发">并发</a>
-                    
                       <a href="/tags/#jvm" title="jvm">jvm</a>
+                    
+                      <a href="/tags/#并发" title="并发">并发</a>
                     
                 </div>
             
@@ -698,78 +774,6 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
 
     
 
-    
-
-        <div class="post-preview">
-
-            <a href="/java/java-threadPoolExecutor-overview/">
-                <h2 class="post-title">
-                    线程池 之 ThreadPoolExecutor 概述
-                </h2>
-                <h3 class="post-subtitle">
-                    ThreadPoolExecutor 概述
-                </h3>
-                <div class="post-content-preview">
-                    ThreadPoolExecutor 概述&emsp;合理利用线程池能够带来三个好处。第一：降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。第二：提高响应速度。当任务到达时，任务可以不需要等到线程创建就能立即执行。第三：提高线程的可管理性。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。但是要做到合理的......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by ZJP on
-                    2019-09-25
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#java" title="java">java</a>
-                    
-                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
-                    
-                      <a href="/tags/#并发" title="并发">并发</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
-    
-
-        <div class="post-preview">
-
-            <a href="/java/java-risk-of-autoboxing/">
-                <h2 class="post-title">
-                    Java 自动装箱的陷阱
-                </h2>
-                <h3 class="post-subtitle">
-                    自动装箱
-                </h3>
-                <div class="post-content-preview">
-                    Java 自动装箱的陷阱1. 自动装箱&emsp;自动装箱、拆箱是Java语言中使用的最多的语法糖之一。装箱就是自动将基本数据类型转换为包装器类型；拆箱就是自动将包装器类型转换为基本数据类型。12345678public class Main &#123;    public static void main(String[] args) &#123;    //自动装箱    Intege......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by ZJP on
-                    2019-09-18
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#java" title="java">java</a>
-                    
-                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
-                    
-                      <a href="/tags/#jvm" title="jvm">jvm</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
 
 
 <!-- Pager -->
@@ -831,6 +835,10 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
     <div class="tags">
         
             
+            <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            
+        
+            
             <a href="/tags/#blockchain" title="blockchain" rel="2">blockchain</a>
             
         
@@ -839,25 +847,25 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
             
         
             
-            <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            <a href="/tags/#java" title="java" rel="36">java</a>
             
         
             
-            <a href="/tags/#java" title="java" rel="34">java</a>
-            
-        
-            
-            <a href="/tags/#编程语言" title="编程语言" rel="36">编程语言</a>
-            
-        
-            
-            <a href="/tags/#并发" title="并发" rel="22">并发</a>
+            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
             
         
             
             <a href="/tags/#jvm" title="jvm" rel="10">jvm</a>
             
         
+            
+            <a href="/tags/#并发" title="并发" rel="24">并发</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#scala" title="scala" rel="2">scala</a>
             
         
             
@@ -869,17 +877,13 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
             
         
             
-            <a href="/tags/#scala" title="scala" rel="2">scala</a>
+            <a href="/tags/#源码阅读" title="源码阅读" rel="10">源码阅读</a>
             
         
             
         
             
             <a href="/tags/#jdk" title="jdk" rel="3">jdk</a>
-            
-        
-            
-            <a href="/tags/#源码阅读" title="源码阅读" rel="10">源码阅读</a>
             
         
             
@@ -939,6 +943,14 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
     <ul>
       
         <li>
+          <a href="/java/java-ConcurrentHashMap2/">Java 并发容器 之 ConcurrentHashMap(二)</a>
+        </li>
+      
+        <li>
+          <a href="/java/java-ConcurrentHashMap/">Java 并发容器 之 ConcurrentHashMap(一)</a>
+        </li>
+      
+        <li>
           <a href="/blockchain/bcos-group-architecture/">BCOS 动态群组架构</a>
         </li>
       
@@ -948,14 +960,6 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
       
         <li>
           <a href="/catalogue/catalogue/">本站目录</a>
-        </li>
-      
-        <li>
-          <a href="/java/mybatis-cache/">Mybatis 缓存详解</a>
-        </li>
-      
-        <li>
-          <a href="/java/java-jvm-classLoader/">深入理解Java虚拟机 之 虚拟机类加载机制</a>
         </li>
       
     </ul>
@@ -980,7 +984,7 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
 
         <hr>
@@ -991,19 +995,19 @@ mapB ⇒ B): List[B]定义一个变换,把该变换应用到列表的每个元�
     <div class="widget">
       <ul>
         
-          <a href="categories/#blockchain"><li>blockchain</li></a>
-        
           <a href="categories/#catalogue"><li>catalogue</li></a>
         
           <a href="categories/#Hexo"><li>Hexo</li></a>
+        
+          <a href="categories/#blockchain"><li>blockchain</li></a>
         
           <a href="categories/#java"><li>java</li></a>
         
           <a href="categories/#markdown"><li>markdown</li></a>
         
-          <a href="categories/#Spark"><li>Spark</li></a>
-        
           <a href="categories/#scala"><li>scala</li></a>
+        
+          <a href="categories/#Spark"><li>Spark</li></a>
         
           <a href="categories/#cryptography"><li>cryptography</li></a>
         

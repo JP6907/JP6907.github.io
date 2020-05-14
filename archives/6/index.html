@@ -160,6 +160,13 @@
 
                         
                         <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -174,13 +181,6 @@
 
                         
                         <li>
-                            <a href="/photography/">Photography</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/tags/">Tags</a>
                         </li>
                         
@@ -188,7 +188,7 @@
 
                         
                         <li>
-                            <a href="/categories/">Categories</a>
+                            <a href="/photography/">Photography</a>
                         </li>
                         
                     
@@ -246,8 +246,6 @@
                 post-container
             ">
                 <!-- Top -->
-
-    
 
     
 
@@ -398,9 +396,95 @@ JVM
 
     
 
+    
+
+    
+
+    
+
 
 
 <!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-share-variable/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 共享变量
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark 共享变量
+                </h3>
+                <div class="post-content-preview">
+                    Spark 共享变量
+Spark版本：2.4.0
+
+&emsp;Spark一个非常重要的特性就是共享变量。通常情况下，传递给 Spark 操作（例如 map 或 reduce）的函数是在远程集群节点上执行的，函数中使用的变量，在多个节点上执行时是同一变量的多个副本。这些变量被拷贝到每台机器上，并且在远程机器上对变量的更新不会回传给驱动程序。在任务之间支持通用的，可读写的共享变量是效率是非常低......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-05
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/Spark/spark-storage/">
+                <h2 class="post-title">
+                    Spark源码阅读 之 Storage储存模块
+                </h2>
+                <h3 class="post-subtitle">
+                    Spark Storage储存模块
+                </h3>
+                <div class="post-content-preview">
+                    Spark储存体系
+Spark版本：2.4.0
+
+1.储存体系架构&emsp;简单来说，Spark 储存体系是各个 Driver 和 Executor 实例中的 BlockManager 所组成的，但从一个整体上看，Spark 储存体系包含很多组件，如图所示。
+
+BlockManagerMaster：代理 BlockManager 与 Driver 上的 BlockManagerMaster......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-05
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#spark" title="spark">spark</a>
+                    
+                      <a href="/tags/#大数据" title="大数据">大数据</a>
+                    
+                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
 
     
 
@@ -652,6 +736,10 @@ Spark版本：2.4.0
     <div class="tags">
         
             
+            <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            
+        
+            
             <a href="/tags/#blockchain" title="blockchain" rel="2">blockchain</a>
             
         
@@ -660,25 +748,25 @@ Spark版本：2.4.0
             
         
             
-            <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            <a href="/tags/#java" title="java" rel="36">java</a>
             
         
             
-            <a href="/tags/#java" title="java" rel="34">java</a>
-            
-        
-            
-            <a href="/tags/#编程语言" title="编程语言" rel="36">编程语言</a>
-            
-        
-            
-            <a href="/tags/#并发" title="并发" rel="22">并发</a>
+            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
             
         
             
             <a href="/tags/#jvm" title="jvm" rel="10">jvm</a>
             
         
+            
+            <a href="/tags/#并发" title="并发" rel="24">并发</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#scala" title="scala" rel="2">scala</a>
             
         
             
@@ -690,17 +778,13 @@ Spark版本：2.4.0
             
         
             
-            <a href="/tags/#scala" title="scala" rel="2">scala</a>
+            <a href="/tags/#源码阅读" title="源码阅读" rel="10">源码阅读</a>
             
         
             
         
             
             <a href="/tags/#jdk" title="jdk" rel="3">jdk</a>
-            
-        
-            
-            <a href="/tags/#源码阅读" title="源码阅读" rel="10">源码阅读</a>
             
         
             
@@ -760,6 +844,14 @@ Spark版本：2.4.0
     <ul>
       
         <li>
+          <a href="/java/java-ConcurrentHashMap2/">Java 并发容器 之 ConcurrentHashMap(二)</a>
+        </li>
+      
+        <li>
+          <a href="/java/java-ConcurrentHashMap/">Java 并发容器 之 ConcurrentHashMap(一)</a>
+        </li>
+      
+        <li>
           <a href="/blockchain/bcos-group-architecture/">BCOS 动态群组架构</a>
         </li>
       
@@ -769,14 +861,6 @@ Spark版本：2.4.0
       
         <li>
           <a href="/catalogue/catalogue/">本站目录</a>
-        </li>
-      
-        <li>
-          <a href="/java/mybatis-cache/">Mybatis 缓存详解</a>
-        </li>
-      
-        <li>
-          <a href="/java/java-jvm-classLoader/">深入理解Java虚拟机 之 虚拟机类加载机制</a>
         </li>
       
     </ul>
@@ -801,7 +885,7 @@ Spark版本：2.4.0
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
 
         <hr>
@@ -812,19 +896,19 @@ Spark版本：2.4.0
     <div class="widget">
       <ul>
         
-          <a href="categories/#blockchain"><li>blockchain</li></a>
-        
           <a href="categories/#catalogue"><li>catalogue</li></a>
         
           <a href="categories/#Hexo"><li>Hexo</li></a>
+        
+          <a href="categories/#blockchain"><li>blockchain</li></a>
         
           <a href="categories/#java"><li>java</li></a>
         
           <a href="categories/#markdown"><li>markdown</li></a>
         
-          <a href="categories/#Spark"><li>Spark</li></a>
-        
           <a href="categories/#scala"><li>scala</li></a>
+        
+          <a href="categories/#Spark"><li>Spark</li></a>
         
           <a href="categories/#cryptography"><li>cryptography</li></a>
         
