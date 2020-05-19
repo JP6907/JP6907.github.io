@@ -108,7 +108,7 @@ i18n_dir: :lang
 skip_render:
 
 # Writing
-new_post_name: :year-:month-:day-:title.md # File name of new posts
+new_post_name: :title.md # File name of new posts
 default_layout: post
 titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
@@ -174,9 +174,7 @@ theme: snail
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo:
-      github: https://github.com/JP6907/JP6907.github.io
-      coding:
+  repository: https://github.com/JP6907/JP6907.github.io
   branch: master
 
 ## share
@@ -220,7 +218,7 @@ livere_uid:  MTAyMC80NjIwNi8yMjcxNw==
 
 # Tip
 tip:
-  enable: true
+  enable: false
   copyright: This is copyright.
   content: false
 

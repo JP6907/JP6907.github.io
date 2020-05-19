@@ -1,29 +1,26 @@
 ---
-title: 本站目录
+title: Java 学习汇总
+subtitle: 目录
 catalog: true
-date: 2019-11-02 10:53:56
 header-img: /img/article_header/article_header.png
+tags:
+  - java
 categories:
-  - catalogue
-top: 100
+  - java
+top: 90
+date: 2019-09-26 09:45:58
 ---
 
-# 本站目录
 
-&emsp;本站文章汇总目录。
+
+# Java 学习汇总
+
+&emsp;本文为 Java 相关学习笔记汇总目录。
 
 --- 
 
-
-## cmake
-- [《cmake中find_package()函数的使用》](http://zhoujiapeng.top/cmake/cmake-find-package/)
-
-## Blockchain
-- [《BCOS 动态群组架构》](http://zhoujiapeng.top/blockchain/bcos-group-architecture/)
-- [《BCOS 动态群组架构源码分析》](http://zhoujiapeng.top/blockchain/bcos-group-architecture-code/)
-- 《Algorand 共识算法总结》
-
 ## JVM
+#### 笔记
 - [《Java 自动装箱的陷阱》](http://zhoujiapeng.top/java/java-risk-of-autoboxing/)
 - [《Java 内存模型》](http://zhoujiapeng.top/java/java-memoryModel/)
 - [《volatile 的特殊规则和 long&&double 的非原子协定》](http://zhoujiapeng.top/java/java-special-variable)
@@ -36,12 +33,13 @@ top: 100
 - [《深入理解Java虚拟机 之 虚拟机类加载机制》](http://zhoujiapeng.top/java/java-jvm-classLoader)
 
 
-> 参考资料
-《深入理解Java虚拟机》
+#### 参考资料
+- 《深入理解Java虚拟机》
 
 --- 
 
-## Java(1.8)
+## JDK1.8
+#### 笔记
 
 Java 基础
 - [《深入理解 HashMap(一)》](http://zhoujiapeng.top/java/java-HashMap)
@@ -60,8 +58,8 @@ Java 基础
 并发容器
 - [《Java 并发容器 之 BlockingQueue》](http://zhoujiapeng.top/java/java-blockingQueue)
 - [《Java 并发容器 之 ConcurrentLinkedQueue》](http://zhoujiapeng.top/java/java-ConcurrentLinkedQueue)
-- [《Java 并发容器 之 ConcurrentHashMap(一)》](http://zhoujiapeng.top/java/java-java-ConcurrentHashMap)
-- [《Java 并发容器 之 ConcurrentHashMap(二)》](http://zhoujiapeng.top/java/java-java-ConcurrentHashMap2)
+- 《Java 并发容器 之 ConcurrentHashMap(一)》
+- 《Java 并发容器 之 ConcurrentHashMap(二)》
 - [《Java 并发编程 之 AbstractQueuedSynchronizer》](http://zhoujiapeng.top/java/java-AbstractQueuedSynchronizer)
 
 线程池
@@ -80,95 +78,21 @@ Java 基础
 - [《Java 线程同步器 之 CyclicBarrier 原理剖析》](http://zhoujiapeng.top/java/java-CyclicBarrier)
 - [《Java 线程同步器 之 Semaphore 原理剖析》](http://zhoujiapeng.top/java/java-Semaphore)
 
-收藏
+#### 收藏
 - [《非阻塞算法在并发容器中的实现》](https://www.ibm.com/developerworks/cn/java/j-lo-concurrent/index.html)
 
-> 参考资料
-《Java并发编程之美》
-https://www.jianshu.com/u/bc1552d8e95d
-https://www.cnblogs.com/zaizhoumo/
-https://segmentfault.com/a/1190000016058789
+#### 参考资料和博客收藏
+- 《Java并发编程之美》
+- https://www.jianshu.com/u/bc1552d8e95d
+- https://www.cnblogs.com/zaizhoumo/
+- https://segmentfault.com/a/1190000016058789
 
---- 
 
 ## Mybatis
 - [《Mybatis 缓存详解》](http://zhoujiapeng.top/java/mybatis-cache/)
 
-> 参考资料
-《MyBatis从入门到精通(刘增辉)》
-
 --- 
 
-## 面试+博客收藏
+## 面试
 - https://github.com/Snailclimb/JavaGuide
 - https://www.cnblogs.com/aspirant/category/548388.html
-- https://blog.csdn.net/u013256816
-
-
---- 
-
-## scala
-
-
-- [《Scala 尾递归优化》](http://zhoujiapeng.top/scala/scala-tailrec/)
-- [《Scala 强大的集合操作》](http://zhoujiapeng.top/scala/scala-scala-operation/)
-
-
-> 参考资料
-《Scala 编程实战》
-《快学 Scala》
-
-
----
-
-## Spark 
-> Spark版本：2.4.0
-
-
-API
-- [Spark ２.4.0 ScalaDoc](http://spark.apache.org/docs/2.4.0/api/scala/index.html#org.apache.spark.package)
-- [Spark RDD API ](http://homepage.cs.latrobe.edu.au/zhe/ZhenHeSparkRDDAPIExamples.html#glom)
-
-Configuration
-- [Spark Configuration](http://spark.apache.org/docs/2.4.0/configuration.html#Dynamically-Loading-Spark-Properties)
-
-Notes
-- [《Spark集群架构》](http://zhoujiapeng.top/Spark/spark-overview/)
-- [《Spark源码阅读 之 Spark Application 的提交》](http://zhoujiapeng.top/Spark/spark-application/)
-- [《Spark源码阅读 之 Spark 作业和调度》](http://zhoujiapeng.top/Spark/spark-job/)
-- [《Spark源码阅读 之 容错机制》](http://zhoujiapeng.top/Spark/spark-fault-tolerant/)
-- [《Spark源码阅读 之 Storage储存模块》](http://zhoujiapeng.top/Spark/spark-storage/)
-- [《Spark源码阅读 之 共享变量》](http://zhoujiapeng.top/Spark/spark-share-variable/)
-- [《Spark 性能调优》](http://zhoujiapeng.top/Spark/spark-tuning/)
-- [《Spark源码阅读 之 Partitioner 详解》](http://zhoujiapeng.top/Spark/spark-partitioner/)
-- [《Spark源码阅读 之 Dependency 详解》](http://zhoujiapeng.top/Spark/spark-dependency/)
-- [《Spark源码阅读 之 DAGScheduler 详解》](http://zhoujiapeng.top/Spark/spark-dagscheduler/)
-- [《Spark源码阅读 之 Task 详解》](http://zhoujiapeng.top/Spark/spark-task/)
-- [《Spark源码阅读 之 部署模式》](http://zhoujiapeng.top/Spark/spark-deploy-mode/)
-- 《Spark 任务调度 之 数据本地性》
-- 《Spark Shuffle 机制解析》
-
-
-> 参考资料
-[《官方文档》](http://spark.apache.org/docs/2.4.0/)
-《Spark核心源码分析与开发实战》
-《Spark内核设计的艺术》
-
---- 
-
-
-## 密码学
-- [《密码学基础 - 群、环、域》](http://zhoujiapeng.top/cryptography/cryptography)
-
----
-
-## Kafka
-- https://www.orchome.com/kafka/index
-- http://kafka.apachecn.org/uses.html
-
----
-
-## 其它
-- [《markdown 中表格单元格合并的问题》](http://zhoujiapeng.top/markdown/markdown-table)
-
-
