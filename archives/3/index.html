@@ -160,6 +160,13 @@
 
                         
                         <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -167,7 +174,7 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -182,13 +189,6 @@
                         
                         <li>
                             <a href="/photography/">Photography</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -251,6 +251,10 @@
 
     
 
+    
+
+    
+
         <div class="post-preview">
 
             <a href="/catalogue/catalogue/">
@@ -264,8 +268,9 @@
                 <div class="post-content-preview">
                     本站目录&emsp;本站文章汇总目录。
 
-cmake
+其它
 《cmake中find_package()函数的使用》
+《Google Protobuf的使用》
 
 Blockchain
 《BCOS 动态群组架构》
@@ -275,8 +280,7 @@ Blockchain
 JVM
 《Java 自动装箱的陷阱》
 《Java 内存模型》
-《volatile 的特殊规则和 long&amp;&amp;double 的非原子协定》
-《深......
+《volatile 的特殊规则和 long&amp;&amp......
                 </div>
             </a>
             
@@ -404,11 +408,45 @@ JVM
 
     
 
-    
-
 
 
 <!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/java/java-ReentrantReadWriteLock/">
+                <h2 class="post-title">
+                    Java 并发编程 之 ReentrantReadWriteLock
+                </h2>
+                <h3 class="post-subtitle">
+                    ReentrantReadWriteLock 详解
+                </h3>
+                <div class="post-content-preview">
+                    ReentrantReadWriteLock 详解1. 概述&emsp;ReentrantLock 是一个排他锁，同一时间只允许一个线程访问，而 ReentrantReadWriteLock 允许多个读线程同时访问，但不允许写线程和读线程、写线程和写线程同时访问。相对于排他锁，提高了并发性。在实际应用中，大部分情况下对共享数据（如缓存）的访问都是读操作远多于写操作，这时ReentrantRe......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-10-14
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#java" title="java">java</a>
+                    
+                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
+                    
+                      <a href="/tags/#并发" title="并发">并发</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
 
     
 
@@ -739,42 +777,6 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
 
     
 
-    
-
-        <div class="post-preview">
-
-            <a href="/cryptography/cryptography/">
-                <h2 class="post-title">
-                    密码学基础 - 群、环、域
-                </h2>
-                <h3 class="post-subtitle">
-                    群、环、域 的基本概念
-                </h3>
-                <div class="post-content-preview">
-                    密码学基础-群、环、域群群的概念定义 设G是一个非空集合, “∗”是G是上的一个代数运算, 即对所有的a, b∈G, 有a∗b∈G.     如果G的运算还满足:
-
-(G1)结合律:即对所有的a, b, c∈G, 有 (a∗b)∗c=a∗(b∗c)
-(G2) G中存在元素e, 使得对每个a∈G, 有 e∗a=a∗e=a
-(G3) 对G中每个元素a, 存在元素b∈G, 使得 a∗b=b∗a=e......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by ZJP on
-                    2019-10-09
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#密码学" title="密码学">密码学</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
 
 
 <!-- Pager -->
@@ -840,14 +842,6 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
             
         
             
-            <a href="/tags/#scala" title="scala" rel="2">scala</a>
-            
-        
-            
-            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
-            
-        
-            
             <a href="/tags/#spark" title="spark" rel="12">spark</a>
             
         
@@ -860,10 +854,6 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
             
         
             
-        
-            
-        
-            
             <a href="/tags/#blockchain" title="blockchain" rel="2">blockchain</a>
             
         
@@ -872,7 +862,21 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
             
         
             
+            <a href="/tags/#c/c++" title="c/c++" rel="2">c/c++</a>
+            
+        
+            
+        
+            
             <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            
+        
+            
+            <a href="/tags/#scala" title="scala" rel="2">scala</a>
+            
+        
+            
+            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
             
         
             
@@ -889,6 +893,8 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
         
             
             <a href="/tags/#jdk" title="jdk" rel="3">jdk</a>
+            
+        
             
         
             
@@ -948,6 +954,10 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
     <ul>
       
         <li>
+          <a href="/serialization/protobuf/">Google Protobuf 的使用</a>
+        </li>
+      
+        <li>
           <a href="/cmake/cmake-find-package/">cmake中find_package()函数的使用</a>
         </li>
       
@@ -961,10 +971,6 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
       
         <li>
           <a href="/blockchain/bcos-group-architecture/">BCOS 动态群组架构</a>
-        </li>
-      
-        <li>
-          <a href="/blockchain/bcos-group-architecture-code/">BCOS 动态群组架构源码分析</a>
         </li>
       
     </ul>
@@ -989,7 +995,7 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
 
         <hr>
@@ -1002,21 +1008,23 @@ BlockingQueue不允许元素为null，如果入队一个null元素，会抛NullP
         
           <a href="categories/#java"><li>java</li></a>
         
-          <a href="categories/#scala"><li>scala</li></a>
-        
           <a href="categories/#Spark"><li>Spark</li></a>
-        
-          <a href="categories/#cmake"><li>cmake</li></a>
-        
-          <a href="categories/#catalogue"><li>catalogue</li></a>
         
           <a href="categories/#blockchain"><li>blockchain</li></a>
         
+          <a href="categories/#cmake"><li>cmake</li></a>
+        
           <a href="categories/#Hexo"><li>Hexo</li></a>
+        
+          <a href="categories/#catalogue"><li>catalogue</li></a>
+        
+          <a href="categories/#scala"><li>scala</li></a>
         
           <a href="categories/#markdown"><li>markdown</li></a>
         
           <a href="categories/#cryptography"><li>cryptography</li></a>
+        
+          <a href="categories/#serialization"><li>serialization</li></a>
         
       </ul>
     </div>

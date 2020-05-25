@@ -160,6 +160,13 @@
 
                         
                         <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -167,7 +174,7 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -182,13 +189,6 @@
                         
                         <li>
                             <a href="/photography/">Photography</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -251,6 +251,10 @@
 
     
 
+    
+
+    
+
         <div class="post-preview">
 
             <a href="/catalogue/catalogue/">
@@ -264,8 +268,9 @@
                 <div class="post-content-preview">
                     本站目录&emsp;本站文章汇总目录。
 
-cmake
+其它
 《cmake中find_package()函数的使用》
+《Google Protobuf的使用》
 
 Blockchain
 《BCOS 动态群组架构》
@@ -275,8 +280,7 @@ Blockchain
 JVM
 《Java 自动装箱的陷阱》
 《Java 内存模型》
-《volatile 的特殊规则和 long&amp;&amp;double 的非原子协定》
-《深......
+《volatile 的特殊规则和 long&amp;&amp......
                 </div>
             </a>
             
@@ -404,11 +408,45 @@ JVM
 
     
 
-    
-
 
 
 <!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/java/java-scheduledthreadPoolExecutor/">
+                <h2 class="post-title">
+                    线程池 之 ScheduledThreadPoolExecutor 概述
+                </h2>
+                <h3 class="post-subtitle">
+                    ScheduledThreadPoolExecutor 概述
+                </h3>
+                <div class="post-content-preview">
+                    ScheduledThreadPoolExecutor 概述1. 简介&emsp;ScheduledThreadPoolExecutor 与其他线程池的概念有些区别，它是一个支持任务周期性调度的线程池。ScheduledThreadPoolExecutor 继承 ThreadPoolExecutor，同时通过实现 ScheduledExecutorSerivce 来扩展基础线程池的功能，使其......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2019-09-26
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#java" title="java">java</a>
+                    
+                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
+                    
+                      <a href="/tags/#并发" title="并发">并发</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
 
     
 
@@ -752,46 +790,6 @@ Spark版本：2.4.0
 
     
 
-    
-
-        <div class="post-preview">
-
-            <a href="/Spark/spark-partitioner/">
-                <h2 class="post-title">
-                    Spark源码阅读 之 Partitioner 详解
-                </h2>
-                <h3 class="post-subtitle">
-                    Spark Partitioner 详解
-                </h3>
-                <div class="post-content-preview">
-                    Spark Partitioner 详解
-Spark版本：2.4.0
-
-&emsp;本文主要根据源码剖析 Spark Partitioner 分区器的实现原理，以及介绍如何自定义分区器。
-1.概述&emsp;Partitioner 是 shuffle 过程中 key 重分区时的策略，即计算 key 决定 k-v 属于哪个分区，Transformation 是宽依赖的算子时，父 RDD 和子 ......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by ZJP on
-                    2019-09-08
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#spark" title="spark">spark</a>
-                    
-                      <a href="/tags/#大数据" title="大数据">大数据</a>
-                    
-                      <a href="/tags/#源码阅读" title="源码阅读">源码阅读</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
 
 
 <!-- Pager -->
@@ -857,14 +855,6 @@ Spark版本：2.4.0
             
         
             
-            <a href="/tags/#scala" title="scala" rel="2">scala</a>
-            
-        
-            
-            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
-            
-        
-            
             <a href="/tags/#spark" title="spark" rel="12">spark</a>
             
         
@@ -877,10 +867,6 @@ Spark版本：2.4.0
             
         
             
-        
-            
-        
-            
             <a href="/tags/#blockchain" title="blockchain" rel="2">blockchain</a>
             
         
@@ -889,7 +875,21 @@ Spark版本：2.4.0
             
         
             
+            <a href="/tags/#c/c++" title="c/c++" rel="2">c/c++</a>
+            
+        
+            
+        
+            
             <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            
+        
+            
+            <a href="/tags/#scala" title="scala" rel="2">scala</a>
+            
+        
+            
+            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
             
         
             
@@ -906,6 +906,8 @@ Spark版本：2.4.0
         
             
             <a href="/tags/#jdk" title="jdk" rel="3">jdk</a>
+            
+        
             
         
             
@@ -965,6 +967,10 @@ Spark版本：2.4.0
     <ul>
       
         <li>
+          <a href="/serialization/protobuf/">Google Protobuf 的使用</a>
+        </li>
+      
+        <li>
           <a href="/cmake/cmake-find-package/">cmake中find_package()函数的使用</a>
         </li>
       
@@ -978,10 +984,6 @@ Spark版本：2.4.0
       
         <li>
           <a href="/blockchain/bcos-group-architecture/">BCOS 动态群组架构</a>
-        </li>
-      
-        <li>
-          <a href="/blockchain/bcos-group-architecture-code/">BCOS 动态群组架构源码分析</a>
         </li>
       
     </ul>
@@ -1006,7 +1008,7 @@ Spark版本：2.4.0
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
 
         <hr>
@@ -1019,21 +1021,23 @@ Spark版本：2.4.0
         
           <a href="categories/#java"><li>java</li></a>
         
-          <a href="categories/#scala"><li>scala</li></a>
-        
           <a href="categories/#Spark"><li>Spark</li></a>
-        
-          <a href="categories/#cmake"><li>cmake</li></a>
-        
-          <a href="categories/#catalogue"><li>catalogue</li></a>
         
           <a href="categories/#blockchain"><li>blockchain</li></a>
         
+          <a href="categories/#cmake"><li>cmake</li></a>
+        
           <a href="categories/#Hexo"><li>Hexo</li></a>
+        
+          <a href="categories/#catalogue"><li>catalogue</li></a>
+        
+          <a href="categories/#scala"><li>scala</li></a>
         
           <a href="categories/#markdown"><li>markdown</li></a>
         
           <a href="categories/#cryptography"><li>cryptography</li></a>
+        
+          <a href="categories/#serialization"><li>serialization</li></a>
         
       </ul>
     </div>

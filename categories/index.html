@@ -160,6 +160,13 @@
 
                         
                         <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -167,7 +174,7 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -182,13 +189,6 @@
                         
                         <li>
                             <a href="/photography/">Photography</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -241,21 +241,23 @@
                 
                     <a href="#java" title="java" rel="36">java</a>
                 
-                    <a href="#scala" title="scala" rel="2">scala</a>
-                
                     <a href="#Spark" title="Spark" rel="12">Spark</a>
-                
-                    <a href="#cmake" title="cmake" rel="1">cmake</a>
-                
-                    <a href="#catalogue" title="catalogue" rel="1">catalogue</a>
                 
                     <a href="#blockchain" title="blockchain" rel="2">blockchain</a>
                 
+                    <a href="#cmake" title="cmake" rel="1">cmake</a>
+                
                     <a href="#Hexo" title="Hexo" rel="2">Hexo</a>
+                
+                    <a href="#catalogue" title="catalogue" rel="1">catalogue</a>
+                
+                    <a href="#scala" title="scala" rel="2">scala</a>
                 
                     <a href="#markdown" title="markdown" rel="1">markdown</a>
                 
                     <a href="#cryptography" title="cryptography" rel="1">cryptography</a>
+                
+                    <a href="#serialization" title="serialization" rel="1">serialization</a>
                 
             </div>
 
@@ -291,13 +293,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-risk-of-autoboxing/">
+                     <a href="/java/java-lock-summary/">
                         <h2 class="post-title">
-                            Java 自动装箱的陷阱
+                            Java 并发编程 之 锁的概述
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                自动装箱
+                                锁的概述
                             </h3>
                         
                     </a>
@@ -310,13 +312,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-lock-summary/">
+                     <a href="/java/java-risk-of-autoboxing/">
                         <h2 class="post-title">
-                            Java 并发编程 之 锁的概述
+                            Java 自动装箱的陷阱
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                锁的概述
+                                自动装箱
                             </h3>
                         
                     </a>
@@ -348,25 +350,6 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-threadPoolExecutor-statusControl/">
-                        <h2 class="post-title">
-                            线程池 之 ThreadPoolExecutor 状态控制
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                ThreadPoolExecutor 状态控制
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
                      <a href="/java/java-threadLocalRandom/">
                         <h2 class="post-title">
                             Java 并发编程 之 ThreadLocalRandom
@@ -386,32 +369,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-CyclicBarrier/">
+                     <a href="/java/java-threadPoolExecutor-statusControl/">
                         <h2 class="post-title">
-                            Java 线程同步器 之 CyclicBarrier 原理剖析
+                            线程池 之 ThreadPoolExecutor 状态控制
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                CyclicBarrier 原理剖析
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/java/java-Semaphore/">
-                        <h2 class="post-title">
-                            Java 线程同步器 之 Semaphore 原理剖析
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Semaphore 原理剖析
+                                ThreadPoolExecutor 状态控制
                             </h3>
                         
                     </a>
@@ -462,6 +426,25 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
+                     <a href="/java/java-Semaphore/">
+                        <h2 class="post-title">
+                            Java 线程同步器 之 Semaphore 原理剖析
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Semaphore 原理剖析
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
                      <a href="/java/java-ReentrantReadWriteLock/">
                         <h2 class="post-title">
                             Java 并发编程 之 ReentrantReadWriteLock
@@ -500,6 +483,25 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
+                     <a href="/java/java-CyclicBarrier/">
+                        <h2 class="post-title">
+                            Java 线程同步器 之 CyclicBarrier 原理剖析
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                CyclicBarrier 原理剖析
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
                      <a href="/java/java-jvm-GC-alogrithm/">
                         <h2 class="post-title">
                             深入理解Java虚拟机 之 垃圾收集算法
@@ -507,44 +509,6 @@
                         
                             <h3 class="post-subtitle">
                                 Garbage Collection
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/java/java-memory-area/">
-                        <h2 class="post-title">
-                            深入理解Java虚拟机 之 Java内存区域
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Java内存区域
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/java/java-special-variable/">
-                        <h2 class="post-title">
-                            volatile 的特殊规则和 long&&double 的非原子协定
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Java 一些变量类型的特殊规则
                             </h3>
                         
                     </a>
@@ -576,70 +540,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-threadPoolExecutor-executorAnalyze/">
+                     <a href="/java/java-memory-area/">
                         <h2 class="post-title">
-                            线程池 之 ThreadPoolExecutor 执行原理
+                            深入理解Java虚拟机 之 Java内存区域
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                ThreadPoolExecutor 执行原理
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/java/java-threadPoolExecutor-use/">
-                        <h2 class="post-title">
-                            线程池 之 ThreadPoolExecutor 使用
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                ThreadPoolExecutor 使用
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/java/java-threadPoolExecutor-overview/">
-                        <h2 class="post-title">
-                            线程池 之 ThreadPoolExecutor 概述
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                ThreadPoolExecutor 概述
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/java/java-unsafe/">
-                        <h2 class="post-title">
-                            Java 并发编程 之 Unsafe 类解析
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Unsafe 类解析
+                                Java内存区域
                             </h3>
                         
                     </a>
@@ -671,13 +578,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-ConcurrentHashMap/">
+                     <a href="/java/java-threadPoolExecutor-executorAnalyze/">
                         <h2 class="post-title">
-                            Java 并发容器 之 ConcurrentHashMap(一)
+                            线程池 之 ThreadPoolExecutor 执行原理
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                ConcurrentHashMap
+                                ThreadPoolExecutor 执行原理
                             </h3>
                         
                     </a>
@@ -690,13 +597,70 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-ConcurrentLinkedQueue/">
+                     <a href="/java/java-special-variable/">
                         <h2 class="post-title">
-                            Java 并发容器 之 ConcurrentLinkedQueue
+                            volatile 的特殊规则和 long&&double 的非原子协定
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                ConcurrentLinkedQueue 详解
+                                Java 一些变量类型的特殊规则
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/java/java-threadPoolExecutor-overview/">
+                        <h2 class="post-title">
+                            线程池 之 ThreadPoolExecutor 概述
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                ThreadPoolExecutor 概述
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/java/java-threadPoolExecutor-use/">
+                        <h2 class="post-title">
+                            线程池 之 ThreadPoolExecutor 使用
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                ThreadPoolExecutor 使用
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/java/java-unsafe/">
+                        <h2 class="post-title">
+                            Java 并发编程 之 Unsafe 类解析
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Unsafe 类解析
                             </h3>
                         
                     </a>
@@ -728,32 +692,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-atomicOperationClass/">
+                     <a href="/java/java-ConcurrentHashMap/">
                         <h2 class="post-title">
-                            Java 并发编程 之 原子操作类
+                            Java 并发容器 之 ConcurrentHashMap(一)
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                原子操作类
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/java/java-annotation/">
-                        <h2 class="post-title">
-                            Java Annotation
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Annotation
+                                ConcurrentHashMap
                             </h3>
                         
                     </a>
@@ -785,6 +730,63 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
+                     <a href="/java/java-ConcurrentLinkedQueue/">
+                        <h2 class="post-title">
+                            Java 并发容器 之 ConcurrentLinkedQueue
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                ConcurrentLinkedQueue 详解
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/java/java-annotation/">
+                        <h2 class="post-title">
+                            Java Annotation
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Annotation
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/java/java-atomicOperationClass/">
+                        <h2 class="post-title">
+                            Java 并发编程 之 原子操作类
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                原子操作类
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
                      <a href="/java/java-jvm-bytecode/">
                         <h2 class="post-title">
                             深入理解Java虚拟机 之 字节码指令
@@ -804,13 +806,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-memoryModel/">
+                     <a href="/java/java-jvm-classLoader/">
                         <h2 class="post-title">
-                            Java 内存模型
+                            深入理解Java虚拟机 之 虚拟机类加载机制
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                Java 内存模型
+                                虚拟机类加载机制
                             </h3>
                         
                     </a>
@@ -823,13 +825,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/java/java-jvm-classLoader/">
+                     <a href="/java/java-memoryModel/">
                         <h2 class="post-title">
-                            深入理解Java虚拟机 之 虚拟机类加载机制
+                            Java 内存模型
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                虚拟机类加载机制
+                                Java 内存模型
                             </h3>
                         
                     </a>
@@ -954,51 +956,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="scala">
-                    <span class="tag-text">scala</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/scala/scala-tailrec/">
-                        <h2 class="post-title">
-                            scala 尾递归优化
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                scala.annotation.tailrec
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/scala/scala-operation/">
-                        <h2 class="post-title">
-                            Scala 强大的集合操作
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Operations
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Spark">
                     <span class="tag-text">Spark</span>
                 </span>
@@ -1034,6 +991,25 @@
                         
                             <h3 class="post-subtitle">
                                 Spark Dependency 详解
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/Spark/spark-fault-tolerant/">
+                        <h2 class="post-title">
+                            Spark源码阅读 之 容错机制
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Spark 容错机制
                             </h3>
                         
                     </a>
@@ -1091,25 +1067,6 @@
                         
                             <h3 class="post-subtitle">
                                 Spark Task 详解
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/Spark/spark-fault-tolerant/">
-                        <h2 class="post-title">
-                            Spark源码阅读 之 容错机制
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Spark 容错机制
                             </h3>
                         
                     </a>
@@ -1234,54 +1191,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="cmake">
-                    <span class="tag-text">cmake</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/cmake/cmake-find-package/">
-                        <h2 class="post-title">
-                            cmake中find_package()函数的使用
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                find_package()
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="catalogue">
-                    <span class="tag-text">catalogue</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/catalogue/catalogue/">
-                        <h2 class="post-title">
-                            本站目录
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="blockchain">
                     <span class="tag-text">blockchain</span>
                 </span>
@@ -1317,6 +1226,32 @@
                         
                             <h3 class="post-subtitle">
                                 源码分析
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="cmake">
+                    <span class="tag-text">cmake</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/cmake/cmake-find-package/">
+                        <h2 class="post-title">
+                            cmake中find_package()函数的使用
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                find_package()
                             </h3>
                         
                     </a>
@@ -1372,6 +1307,73 @@
             </div>
             
             <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="catalogue">
+                    <span class="tag-text">catalogue</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/catalogue/catalogue/">
+                        <h2 class="post-title">
+                            本站目录
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="scala">
+                    <span class="tag-text">scala</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/scala/scala-tailrec/">
+                        <h2 class="post-title">
+                            scala 尾递归优化
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                scala.annotation.tailrec
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/scala/scala-operation/">
+                        <h2 class="post-title">
+                            Scala 强大的集合操作
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Operations
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="markdown">
                     <span class="tag-text">markdown</span>
                 </span>
@@ -1414,6 +1416,32 @@
                         
                             <h3 class="post-subtitle">
                                 群、环、域 的基本概念
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="serialization">
+                    <span class="tag-text">serialization</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/serialization/protobuf/">
+                        <h2 class="post-title">
+                            Google Protobuf 的使用
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Protobuf
                             </h3>
                         
                     </a>

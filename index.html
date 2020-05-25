@@ -160,6 +160,13 @@
 
                         
                         <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -167,7 +174,7 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -182,13 +189,6 @@
                         
                         <li>
                             <a href="/photography/">Photography</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/categories/">Categories</a>
                         </li>
                         
                     
@@ -251,6 +251,10 @@
 
     
 
+    
+
+    
+
         <div class="post-preview">
 
             <a href="/catalogue/catalogue/">
@@ -264,8 +268,9 @@
                 <div class="post-content-preview">
                     本站目录&emsp;本站文章汇总目录。
 
-cmake
+其它
 《cmake中find_package()函数的使用》
+《Google Protobuf的使用》
 
 Blockchain
 《BCOS 动态群组架构》
@@ -275,8 +280,7 @@ Blockchain
 JVM
 《Java 自动装箱的陷阱》
 《Java 内存模型》
-《volatile 的特殊规则和 long&amp;&amp;double 的非原子协定》
-《深......
+《volatile 的特殊规则和 long&amp;&amp......
                 </div>
             </a>
             
@@ -404,11 +408,47 @@ JVM
 
     
 
-    
-
 
 
 <!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/serialization/protobuf/">
+                <h2 class="post-title">
+                    Google Protobuf 的使用
+                </h2>
+                <h3 class="post-subtitle">
+                    Protobuf
+                </h3>
+                <div class="post-content-preview">
+                    Google Protobuf的使用Protobuf数据序列化方式除了常见的JSON和XML之外，还有Google 的 ProtoBuf，它在效率、兼容性等方面非常的出色。
+为什么选择Protobuf，可以看看官方文档给出的描述：
+
+protocol buffers 是一种语言无关、平台无关、可扩展的序列化结构数据的方法，它可用于（数据）通信协议、数据存储等。
+Protocol Buffer......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by ZJP on
+                    2020-05-25
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#c/c++" title="c/c++">c/c++</a>
+                    
+                      <a href="/tags/#序列化" title="序列化">序列化</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
 
     
 
@@ -715,42 +755,6 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
 
     
 
-    
-
-        <div class="post-preview">
-
-            <a href="/java/java-jvm-class-file-struct/">
-                <h2 class="post-title">
-                    深入理解Java虚拟机 之 类文件结构
-                </h2>
-                <h3 class="post-subtitle">
-                    .class
-                </h3>
-                <div class="post-content-preview">
-                    类文件结构&emsp;代码编译的结果从本地机器码转变为字节码，是存储格式发展的一小步，却是编程语言发展的一大步。&emsp;在JDK的bin目录中，Oracle公司已经为我们准备好一个专门用于分析Class文件字节码的工具：javap，使用javap工具的-verbose参数可以输出输出 class 文件字节码内容。12javac TestClass.javajavap -verbose T......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by ZJP on
-                    2019-10-20
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#java" title="java">java</a>
-                    
-                      <a href="/tags/#编程语言" title="编程语言">编程语言</a>
-                    
-                      <a href="/tags/#jvm" title="jvm">jvm</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
 
 
 <!-- Pager -->
@@ -812,14 +816,6 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
             
         
             
-            <a href="/tags/#scala" title="scala" rel="2">scala</a>
-            
-        
-            
-            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
-            
-        
-            
             <a href="/tags/#spark" title="spark" rel="12">spark</a>
             
         
@@ -832,10 +828,6 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
             
         
             
-        
-            
-        
-            
             <a href="/tags/#blockchain" title="blockchain" rel="2">blockchain</a>
             
         
@@ -844,7 +836,21 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
             
         
             
+            <a href="/tags/#c/c++" title="c/c++" rel="2">c/c++</a>
+            
+        
+            
+        
+            
             <a href="/tags/#Hexo" title="Hexo" rel="2">Hexo</a>
+            
+        
+            
+            <a href="/tags/#scala" title="scala" rel="2">scala</a>
+            
+        
+            
+            <a href="/tags/#编程语言" title="编程语言" rel="38">编程语言</a>
             
         
             
@@ -861,6 +867,8 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
         
             
             <a href="/tags/#jdk" title="jdk" rel="3">jdk</a>
+            
+        
             
         
             
@@ -920,6 +928,10 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
     <ul>
       
         <li>
+          <a href="/serialization/protobuf/">Google Protobuf 的使用</a>
+        </li>
+      
+        <li>
           <a href="/cmake/cmake-find-package/">cmake中find_package()函数的使用</a>
         </li>
       
@@ -933,10 +945,6 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
       
         <li>
           <a href="/blockchain/bcos-group-architecture/">BCOS 动态群组架构</a>
-        </li>
-      
-        <li>
-          <a href="/blockchain/bcos-group-architecture-code/">BCOS 动态群组架构源码分析</a>
         </li>
       
     </ul>
@@ -961,7 +969,7 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
 
         <hr>
@@ -974,21 +982,23 @@ ConcurrentHashMap&emsp;本文主要分析 JDK1.8 中的 ConcurrentHashMap。
         
           <a href="categories/#java"><li>java</li></a>
         
-          <a href="categories/#scala"><li>scala</li></a>
-        
           <a href="categories/#Spark"><li>Spark</li></a>
-        
-          <a href="categories/#cmake"><li>cmake</li></a>
-        
-          <a href="categories/#catalogue"><li>catalogue</li></a>
         
           <a href="categories/#blockchain"><li>blockchain</li></a>
         
+          <a href="categories/#cmake"><li>cmake</li></a>
+        
           <a href="categories/#Hexo"><li>Hexo</li></a>
+        
+          <a href="categories/#catalogue"><li>catalogue</li></a>
+        
+          <a href="categories/#scala"><li>scala</li></a>
         
           <a href="categories/#markdown"><li>markdown</li></a>
         
           <a href="categories/#cryptography"><li>cryptography</li></a>
+        
+          <a href="categories/#serialization"><li>serialization</li></a>
         
       </ul>
     </div>
